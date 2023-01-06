@@ -2,3 +2,4 @@
 
 ci/*
 writable/*
+public/.well-known/*
