@@ -1,0 +1,339 @@
+:root {
+	--theme-hue: 14;
+	--theme-color-primary: #B22900;
+	--theme-color-primary-contrast: #eeF;
+	--theme-color-link: #C62E00;
+	--theme-color-hover: #A32600;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: sans-serif;
+}
+
+header, footer {
+	background: var(--theme-color-primary);
+	color: var(--theme-color-primary-contrast);
+	padding: 1em;
+}
+header a, footer a {
+	color: var(--theme-color-primary-contrast);
+}
+
+main {
+	background: #fafafb;
+	color: #633;
+	margin: 0 auto;
+	padding: .5em;
+	max-width: 80em;
+}
+
+pre {
+	background: #eee;
+	overflow-x: scroll;
+	padding: 0.5em;
+	margin: 0;
+}
+
+p {
+	margin: 0.5em 0;
+}
+
+.flex {
+	display: flex;
+	gap: 1em;
+	flex-wrap: wrap;
+}
+
+
+
+figure {
+	display:inline-block;
+	margin:0;
+	padding:.2em;
+}
+figure a {
+	display:block;
+}
+figure figcaption {
+	border:0;
+	font-weight:bold;
+	margin:0;
+	padding:0;
+}
+figure img {
+	border: 0 none;
+	display: block;
+	margin: 0;
+	max-width: 25em;
+	padding: 0;
+	width: 100%;
+}
+
+h1 {
+	margin:0.5em 0;
+	padding:0;
+	font-size: 1.5em;
+}
+
+h2{
+	margin:0.5em 0;
+	padding:0;
+	font-size: 1.3em;
+}
+
+h3 {
+	margin: 0.5em 0 0 0;
+	padding:0;
+	font-size: 1.1em;
+}
+
+main h1,
+main h2,
+main h3,
+main h4,
+main h5,
+main h6 {
+	color:#3d6c87;
+}
+
+hr {
+	background:#555;
+	border:0 solid #555;
+	clear:both;
+	height:1px;
+	width:90%;
+}
+
+dl dt {
+	font-weight: bold;
+	margin: 0.5em 0;
+}
+dl dd {
+	margin: 0.5em 0 0.5em 0.5em;
+}
+
+#masthead {
+	border-color: #666;
+	border-style: solid;
+	border-width: 0 0 2px;
+	padding: 0.3em;
+	text-align: center;
+	position: relative;
+}
+
+#content {
+	background: #EAEAEA;
+	margin:.5em;
+	min-height:12em;
+	position: relative;
+}
+
+#footer {
+	clear:both;
+	margin:.5em;
+	position: relative;
+}
+
+#navpagetop {
+	position: fixed;
+	top: 1vw;
+	right: 1vw;
+}
+
+#radar_img {
+	display:block;
+	margin:3px;
+	padding:3px;
+	width:100%;
+}
+#radar_img img {
+	margin:3px;
+	padding:3px;
+	width:90%;
+}
+#radar_img p {
+	font-size:smaller;
+	font-style:italic;
+	margin-top:0;
+	text-align:center;
+	width:90%;
+}
+
+#statswrap {
+	float: left;
+	margin: 0 0.5em 0 0;
+}
+#statswrap .stats {
+	float:none;
+}
+
+.datatable {
+	border-collapse: collapse;
+}
+.datatable td {
+	border:1px solid #666;
+	padding: 0 .5em; 
+	margin: 0
+}
+.datatable tbody td, 
+.datatable tfoot td { 
+	background: #EEE; 
+	text-align: right;
+}
+.datatable thead td, 
+.datatable thead th {
+	background: #FFF;
+	color: #600;
+	border: 1px solid #999;
+	font-weight: bold;
+}
+
+.files {
+	margin: 0;
+	padding: 0.4em;
+	width: 8em;
+	display: inline-block;
+	vertical-align: top;
+}
+.files li {
+	list-style:none;
+	margin: 2px;
+}
+.files a {
+	text-decoration: none;
+	background: #FFF;
+	display: block;
+	padding: .3em;
+	color: #600;
+}
+.files a:hover{
+	background: #EEE;
+}
+
+.imgbar {
+  float: right;
+  margin: 0 0 0.5em 0.5em;
+  max-width: 40%;
+  width: 200px;
+}
+.imgbar img{ width: 100%;}
+
+.navbar {
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+}
+.navbar li {
+	list-style:outside none none;
+	padding: .1em ;
+}
+.navbar li a,
+.navbar li button {
+	background-color: #633;
+	border-radius: 0.5em;
+	color: #fff;
+	display: block;
+	font-size: 0.9rem;
+	font-weight: bold;
+	line-height: 2em;
+	text-align: center;
+	text-decoration: none;
+	box-shadow: none;
+	border: none;
+	width: 7em;
+}
+
+.navpage {
+	float: right;
+	display: block;
+	background-color: #633;
+	border-radius: 0.5em;
+	color: #fff;
+	font-size: 0.9rem;
+	line-height: 2em;
+	text-align: center;
+	text-decoration: none;
+	width: 2em;
+	cursor: pointer;
+}
+
+.table-responsive {
+	overflow-x: auto;
+}
+
+.updated {
+	color: #444;
+	font-size: 0.9em;
+	font-style: italic;
+	margin: 0;
+	padding: 0;
+	text-align: right;
+}
+.updated:before {
+	content:"Updated:";
+}
+
+.stats {
+	border:thin solid #999;
+	border-collapse:collapse;
+	float:left;
+	margin:.5em;
+}
+.stats .data {
+	text-align:left;
+	color:#711;
+}
+.stats .label {
+	color:#A44;
+	text-align:right;
+}
+.stats .label:after {
+	content: ':';
+}
+.stats .row0 td {
+	background:#EEE;
+	border:0;
+}
+.stats .row1 td {
+	background:#FFF;
+	border:0;
+}
+.stats caption,
+.stats caption a {
+	background: #000;
+	color: #DDF;
+	font-size: 1.1rem;
+	font-weight: bold;
+	text-decoration: none;
+}
+.stats td {
+	border-color:#666;
+	border-style:solid;
+	border-width:1px 0;
+	padding:.1em .2em;
+}
+
+.tides .date {
+	font-size: .9em;
+	text-align: right;
+	margin: 0;
+	padding: 0;
+	color: #226;
+}
+
+.moon img {
+	background: #333;
+	margin: 0.5em;
+	padding: 1em;
+}
+
+.weather {
+	max-width: 25em;
+	border: 1px solid #cecece;
+	padding: 0.5em;
+	background: #FFF;
+	margin: 0.5em;
+}

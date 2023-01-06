@@ -1,0 +1,4 @@
+.env
+
+ci/*
+writable/*

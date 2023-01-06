@@ -1,0 +1,15 @@
+[01-Jan-2023 20:12:38 Europe/London] PHP Fatal error:  Constant expression contains invalid operations in /home/basecamp/weather.base-camp.uk/app/ThirdParty/suninfo-1.0/suninfo.php on line 15
+[03-Jan-2023 12:18:36 Europe/London] PHP Fatal error:  Constant expression contains invalid operations in /home/basecamp/weather.base-camp.uk/app/ThirdParty/suninfo-1.0/suninfo.php on line 20
+[03-Jan-2023 12:19:04 Europe/London] PHP Fatal error:  Constant expression contains invalid operations in /home/basecamp/weather.base-camp.uk/app/ThirdParty/suninfo-1.0/suninfo.php on line 20
+[05-Jan-2023 21:58:44 Europe/London] PHP Fatal error:  Cannot redeclare App\Libraries\Listeners\Listener::convert() in /home/basecamp/weather.base-camp.uk/app/Libraries/Listeners/Listener.php on line 127
+[05-Jan-2023 22:42:55 Europe/London] PHP Fatal error:  Access level to App\Libraries\Listeners\Ecowitt::get_datetime() must be public (as in class App\Libraries\Listeners\Listener) in /home/basecamp/weather.base-camp.uk/app/Libraries/Listeners/Ecowitt.php on line 82
+[06-Jan-2023 10:34:16 Europe/London] PHP Fatal error:  Uncaught TypeError: CodeIgniter\CodeIgniter::__construct(): Argument #1 ($config) must be of type Config\App, null given, called in /home/basecamp/weather.base-camp.uk/ci/4.2.10/system/Config/Services.php on line 148 and defined in /home/basecamp/weather.base-camp.uk/ci/4.2.10/system/CodeIgniter.php:162
+Stack trace:
+#0 /home/basecamp/weather.base-camp.uk/ci/4.2.10/system/Config/Services.php(148): CodeIgniter\CodeIgniter->__construct()
+#1 /home/basecamp/weather.base-camp.uk/ci/4.2.10/system/Config/BaseService.php(253): CodeIgniter\Config\Services::codeigniter()
+#2 /home/basecamp/weather.base-camp.uk/ci/4.2.10/system/Config/BaseService.php(194): CodeIgniter\Config\BaseService::__callStatic()
+#3 /home/basecamp/weather.base-camp.uk/ci/4.2.10/system/Config/Services.php(143): CodeIgniter\Config\BaseService::getSharedInstance()
+#4 /home/basecamp/weather.base-camp.uk/ci/4.2.10/system/Config/BaseService.php(253): CodeIgniter\Config\Services::codeigniter()
+#5 /home/basecamp/weather.base-camp.uk/public/index.php(71): CodeIgniter\Config\BaseService::__callStatic()
+#6 {main}
+  thrown in /home/basecamp/weather.base-camp.uk/ci/4.2.10/system/CodeIgniter.php on line 162

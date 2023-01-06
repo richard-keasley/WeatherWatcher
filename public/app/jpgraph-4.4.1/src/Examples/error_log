@@ -1,0 +1,65 @@
+[27-Dec-2022 11:25:07 Europe/London] PHP Warning:  require_once(jpgraph/jpgraph.php): Failed to open stream: No such file or directory in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex00.php on line 14
+[27-Dec-2022 11:25:07 Europe/London] PHP Fatal error:  Uncaught Error: Failed opening required 'jpgraph/jpgraph.php' (include_path='.:/opt/alt/php80/usr/share/pear:/opt/alt/php80/usr/share/php:/usr/share/pear:/usr/share/php') in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex00.php:14
+Stack trace:
+#0 {main}
+  thrown in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex00.php on line 14
+[27-Dec-2022 11:25:07 Europe/London] PHP Warning:  require_once(jpgraph/jpgraph.php): Failed to open stream: No such file or directory in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex01.php on line 14
+[27-Dec-2022 11:25:07 Europe/London] PHP Warning:  require_once(jpgraph/jpgraph.php): Failed to open stream: No such file or directory in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex02.php on line 14
+[27-Dec-2022 11:25:07 Europe/London] PHP Fatal error:  Uncaught Error: Failed opening required 'jpgraph/jpgraph.php' (include_path='.:/opt/alt/php80/usr/share/pear:/opt/alt/php80/usr/share/php:/usr/share/pear:/usr/share/php') in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex02.php:14
+Stack trace:
+#0 {main}
+  thrown in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex02.php on line 14
+[27-Dec-2022 11:25:07 Europe/London] PHP Fatal error:  Uncaught Error: Failed opening required 'jpgraph/jpgraph.php' (include_path='.:/opt/alt/php80/usr/share/pear:/opt/alt/php80/usr/share/php:/usr/share/pear:/usr/share/php') in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex01.php:14
+Stack trace:
+#0 {main}
+  thrown in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex01.php on line 14
+[27-Dec-2022 11:25:07 Europe/London] PHP Warning:  require_once(jpgraph/jpgraph.php): Failed to open stream: No such file or directory in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex03.php on line 14
+[27-Dec-2022 11:25:07 Europe/London] PHP Warning:  require_once(jpgraph/jpgraph.php): Failed to open stream: No such file or directory in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex04.php on line 15
+[27-Dec-2022 11:25:07 Europe/London] PHP Fatal error:  Uncaught Error: Failed opening required 'jpgraph/jpgraph.php' (include_path='.:/opt/alt/php80/usr/share/pear:/opt/alt/php80/usr/share/php:/usr/share/pear:/usr/share/php') in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex03.php:14
+Stack trace:
+#0 {main}
+  thrown in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex03.php on line 14
+[27-Dec-2022 11:25:07 Europe/London] PHP Fatal error:  Uncaught Error: Failed opening required 'jpgraph/jpgraph.php' (include_path='.:/opt/alt/php80/usr/share/pear:/opt/alt/php80/usr/share/php:/usr/share/pear:/usr/share/php') in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex04.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex04.php on line 15
+[27-Dec-2022 11:25:07 Europe/London] PHP Warning:  require_once(jpgraph/jpgraph.php): Failed to open stream: No such file or directory in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex05.php on line 16
+[27-Dec-2022 11:25:07 Europe/London] PHP Fatal error:  Uncaught Error: Failed opening required 'jpgraph/jpgraph.php' (include_path='.:/opt/alt/php80/usr/share/pear:/opt/alt/php80/usr/share/php:/usr/share/pear:/usr/share/php') in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex05.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex05.php on line 16
+[27-Dec-2022 11:25:07 Europe/London] PHP Warning:  require_once(jpgraph/jpgraph.php): Failed to open stream: No such file or directory in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex06.php on line 15
+[27-Dec-2022 11:25:07 Europe/London] PHP Fatal error:  Uncaught Error: Failed opening required 'jpgraph/jpgraph.php' (include_path='.:/opt/alt/php80/usr/share/pear:/opt/alt/php80/usr/share/php:/usr/share/pear:/usr/share/php') in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex06.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex06.php on line 15
+[27-Dec-2022 11:25:07 Europe/London] PHP Warning:  require_once(jpgraph/jpgraph.php): Failed to open stream: No such file or directory in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex09.php on line 14
+[27-Dec-2022 11:25:07 Europe/London] PHP Fatal error:  Uncaught Error: Failed opening required 'jpgraph/jpgraph.php' (include_path='.:/opt/alt/php80/usr/share/pear:/opt/alt/php80/usr/share/php:/usr/share/pear:/usr/share/php') in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex09.php:14
+Stack trace:
+#0 {main}
+  thrown in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex09.php on line 14
+[27-Dec-2022 11:25:07 Europe/London] PHP Warning:  require_once(jpgraph/jpgraph.php): Failed to open stream: No such file or directory in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex07.php on line 14
+[27-Dec-2022 11:25:07 Europe/London] PHP Fatal error:  Uncaught Error: Failed opening required 'jpgraph/jpgraph.php' (include_path='.:/opt/alt/php80/usr/share/pear:/opt/alt/php80/usr/share/php:/usr/share/pear:/usr/share/php') in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex07.php:14
+Stack trace:
+#0 {main}
+  thrown in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex07.php on line 14
+[27-Dec-2022 11:25:07 Europe/London] PHP Warning:  require_once(jpgraph/jpgraph.php): Failed to open stream: No such file or directory in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex08.php on line 16
+[27-Dec-2022 11:25:07 Europe/London] PHP Fatal error:  Uncaught Error: Failed opening required 'jpgraph/jpgraph.php' (include_path='.:/opt/alt/php80/usr/share/pear:/opt/alt/php80/usr/share/php:/usr/share/pear:/usr/share/php') in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex08.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex08.php on line 16
+[27-Dec-2022 11:25:07 Europe/London] PHP Warning:  require_once(jpgraph/jpgraph.php): Failed to open stream: No such file or directory in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex010.php on line 14
+[27-Dec-2022 11:25:07 Europe/London] PHP Fatal error:  Uncaught Error: Failed opening required 'jpgraph/jpgraph.php' (include_path='.:/opt/alt/php80/usr/share/pear:/opt/alt/php80/usr/share/php:/usr/share/pear:/usr/share/php') in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex010.php:14
+Stack trace:
+#0 {main}
+  thrown in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex010.php on line 14
+[27-Dec-2022 11:25:07 Europe/London] PHP Warning:  require_once(jpgraph/jpgraph.php): Failed to open stream: No such file or directory in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex011.php on line 15
+[27-Dec-2022 11:25:07 Europe/London] PHP Fatal error:  Uncaught Error: Failed opening required 'jpgraph/jpgraph.php' (include_path='.:/opt/alt/php80/usr/share/pear:/opt/alt/php80/usr/share/php:/usr/share/pear:/usr/share/php') in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex011.php:15
+Stack trace:
+#0 {main}
+  thrown in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex011.php on line 15
+[27-Dec-2022 11:25:07 Europe/London] PHP Warning:  require_once(jpgraph/jpgraph.php): Failed to open stream: No such file or directory in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex012.php on line 14
+[27-Dec-2022 11:25:07 Europe/London] PHP Fatal error:  Uncaught Error: Failed opening required 'jpgraph/jpgraph.php' (include_path='.:/opt/alt/php80/usr/share/pear:/opt/alt/php80/usr/share/php:/usr/share/pear:/usr/share/php') in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex012.php:14
+Stack trace:
+#0 {main}
+  thrown in /home/basecamp/weather.base-camp.uk/public/app/jpgraph-4.4.1/src/Examples/odoex012.php on line 14
