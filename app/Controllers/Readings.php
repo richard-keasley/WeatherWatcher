@@ -3,7 +3,6 @@
 class Readings extends BaseController {
 
 public function getIndex() {
-	
 	$dt = intval($this->request->getGet('dt'));
 	if($dt) {
 		$datetime = new \datetime();
@@ -28,8 +27,15 @@ public function getIndex() {
 	
 	$datetime = new \datetime($this->data['reading']->datetime);
 	$this->data['dt'] = $datetime->format('U');
+	$this->data['date'] = $datetime->format('Y-m-d');
 	
 	return view('readings/index', $this->data);
+}
+
+function getDaily($date=null) {
+	$this->data['date'] = $date;
+	$this->data['daily'] = $this->data['readings']->get_daily($date);
+	return view('readings/daily', $this->data);
 }
 
 }
