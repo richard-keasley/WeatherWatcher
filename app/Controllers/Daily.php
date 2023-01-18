@@ -1,6 +1,6 @@
 <?php namespace App\Controllers;
 
-class Readings extends BaseController {
+class Daily extends BaseController {
 
 public function getIndex() {
 	$dt = intval($this->request->getGet('dt'));

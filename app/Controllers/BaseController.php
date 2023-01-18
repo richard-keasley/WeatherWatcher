@@ -54,7 +54,11 @@ abstract class BaseController extends Controller
 		$this->data['api'] = new \App\Libraries\Apis\Ecowitt;
 		$this->data['listener'] = new \App\Libraries\Listeners\Ecowitt;
 		$this->data['readings'] = new \App\Models\Readings;
-
-		// E.g.: $this->session = \Config\Services::session();
+		
+		// update dailies every page load
+		$cfg_dailies = config('App')->update_dailes;
+		if($cfg_dailies) {
+			$this->data[$cfg_dailies]->update_dailes();
+		}
     }
 }

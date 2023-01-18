@@ -131,4 +131,19 @@ function get_daily($datetime) {
 	return new \App\Entities\Daily($daily);
 }
 
+function update_dailes() {
+	$dt_interval = new \DateInterval('P1D');
+	$dailies = new \App\Models\Dailies;
+	$dt_request = $dailies->dt_last()->add($dt_interval);
+	$dt_last = new \DateTime();
+	$dt_last->setTime(0, 0);
+	while($dt_request<$dt_last) {
+		 d($dt_request);
+		$daily = $this->get_daily($dt_request);
+		# d($daily);
+		$dailies->insert($daily);
+		$dt_request->add($dt_interval);
+	}
+}
+
 }

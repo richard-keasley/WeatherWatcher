@@ -15,5 +15,15 @@ protected $allowedFields = [
 	'uvi_avg', 'uvi_max',
 	'wind_avg', 'wind_max'
 ];
+
+function dt_first() {
+	$daily = $this->orderBy('date', 'asc')->first();
+	return new \datetime($daily->date);
+}
+
+function dt_last() {
+	$daily = $this->orderBy('date', 'desc')->first();
+	return new \datetime($daily->date);
+}
   
 }

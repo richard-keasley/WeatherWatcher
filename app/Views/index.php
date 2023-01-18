@@ -11,7 +11,7 @@ $this->section('main'); ?>
 for live updates from this weather station.</p> 
  
 <section>
-<h4>Current readings</h4>
+<h4><?php echo anchor('readings', 'Current readings');?></h4>
 <?php 
 echo view('widgets/reading', ['reading'=>$readings->get_current()]);
 ?>
@@ -26,6 +26,15 @@ echo $this->include('widgets/weather');
 echo $this->include('widgets/moon');
 
  ?>
+<section>
+<h4>Navigation</h4>
+<ul>
+<li><?php echo anchor('readings', 'Current readings');?></li>
+<li><?php echo anchor('dailies', 'Dailies');?></li>
+</ul>
+</section>
+
+<section>
 <h4>credits</h4>
 <ul>
 <?php
@@ -39,9 +48,11 @@ foreach($ul as $li) {
 	printf('<li>%s</li>', \anchor($li[0], $li[1]));
 }
 ?></ul>
-
+</section>
 
 <?php 
+
+echo anchor('dailies', 'Dailies');
 
 
 

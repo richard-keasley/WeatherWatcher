@@ -9,6 +9,14 @@ class App extends BaseConfig
 {
 	public $latitude = 0.0;
 	public $longitude = 0.0;
+	
+	/**
+	dailies are updated from this source
+	leave empty for no updates
+	choices: api, listener, readings
+	look in \App\Controllers\BaseController
+	**/
+	public $update_dailes = 'api';
 
     /**
      * --------------------------------------------------------------------------
