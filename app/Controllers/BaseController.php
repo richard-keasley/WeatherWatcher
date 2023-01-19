@@ -56,9 +56,22 @@ abstract class BaseController extends Controller
 		$this->data['readings'] = new \App\Models\Readings;
 		
 		// update dailies every page load
-		$cfg_dailies = config('App')->update_dailes;
-		if($cfg_dailies) {
-			$this->data[$cfg_dailies]->update_dailes();
+		$cfg_daily = config('App')->update_daily;
+		if($cfg_daily) {
+			$dt_interval = new \DateInterval('P1D');
+			$dailies = new \App\Models\Dailies;
+			$dt_request = $dailies->dt_last()->add($dt_interval);
+			$dt_last = new \DateTime();
+			$dt_last->setTime(0, 0);
+			while($dt_request<$dt_last) {
+				$daily = $this->data[$cfg_daily]->get_daily($dt_request);
+				# d($dt_request, $daily);
+				if($daily->count) $dailies->insert($daily);
+				$dt_request->add($dt_interval);
+			}
 		}
+		
+		// clear old readings every page load
+		
     }
 }

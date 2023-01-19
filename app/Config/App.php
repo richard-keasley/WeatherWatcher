@@ -13,10 +13,10 @@ class App extends BaseConfig
 	/**
 	dailies are updated from this source
 	leave empty for no updates
-	choices: api, listener, readings
+	choices: api, readings
 	look in \App\Controllers\BaseController
 	**/
-	public $update_dailes = 'api';
+	public $update_daily = 'api';
 
     /**
      * --------------------------------------------------------------------------

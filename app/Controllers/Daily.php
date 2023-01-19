@@ -39,10 +39,4 @@ public function getIndex() {
 	return view('readings/index', $this->data);
 }
 
-function getDaily($date=null) {
-	$this->data['date'] = $date;
-	$this->data['daily'] = $this->data['readings']->get_daily($date);
-	return view('readings/daily', $this->data);
-}
-
 }

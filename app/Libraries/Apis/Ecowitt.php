@@ -116,34 +116,20 @@ function get_daily($datetime) {
 		'date' => $datetime->format('Y-m-d'),
 		'count' => count($day_data)
 	];
-	
-	foreach($map as $dest=>$info) {
-		$column = array_column($day_data, $info[0]);
-		$sum = array_sum($column);
-		foreach($info[1] as $param) {
-			$daily["{$dest}_{$param}"] = match($param) {
-				'min' => min($column),
-				'avg' => $sum / $daily['count'],
-				'max' => max($column)
-			};
+	if($daily['count']) {
+		foreach($map as $dest=>$info) {
+			$column = array_column($day_data, $info[0]);
+			$sum = array_sum($column);
+			foreach($info[1] as $param) {
+				$daily["{$dest}_{$param}"] = match($param) {
+					'min' => min($column),
+					'avg' => $sum / $daily['count'],
+					'max' => max($column)
+				};
+			}
 		}
 	}
 	return new \App\Entities\Daily($daily);
-}
-
-function update_dailes() {
-	$dt_interval = new \DateInterval('P1D');
-	$dailies = new \App\Models\Dailies;
-	$dt_request = $dailies->dt_last()->add($dt_interval);
-	$dt_last = new \DateTime();
-	$dt_last->setTime(0, 0);
-	while($dt_request<$dt_last) {
-		 d($dt_request);
-		$daily = $this->get_daily($dt_request);
-		# d($daily);
-		$dailies->insert($daily);
-		$dt_request->add($dt_interval);
-	}
 }
 
 }

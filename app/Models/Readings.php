@@ -23,16 +23,13 @@ function get_first() {
 	return $this->orderBy('datetime', 'asc')->first();
 }
 
-function get_daily($date) {
-	$datetime = new \DateTime($date);
-	$daily = [
-		'date' => $datetime->format('Y-m-d'),
-	];
-	$start = $daily['date'];
+function get_daily($datetime) {
+	$date = $datetime->format('Y-m-d');
+	$dt_end = new \DateTime($date);
 	$interval = new \DateInterval("P1D");
-	$datetime->add($interval);
-	$end = $datetime->format('Y-m-d');
-	$res = $this->where('datetime >=', $start)
+	$end = $dt_end->add($interval)->format('Y-m-d');
+		
+	$res = $this->where('datetime >=', $date)
 		->where('datetime <', $end)
 		->findAll();
 	
@@ -41,8 +38,6 @@ function get_daily($date) {
 		$row = array_flatten_with_dots($row->readings);
 		$day_data[] = $row;
 	}
-	$daily['count'] = count($day_data);
-	if(!$daily['count']) return new \App\Entities\Daily($daily);
 	
 	$map = [
 	'temperature' => ['temperature.out', ['min', 'avg', 'max']],
@@ -52,18 +47,26 @@ function get_daily($date) {
 	'uvi' => ['solar.uv', ['avg', 'max']],
 	'wind' => ['wind.speed', ['avg', 'max']],
 	];
-	foreach($map as $dest=>$info) {
-		$column = array_column($day_data, $info[0]);
-		// not needed once old dailies are deleted
-		if(!$column) $column = array_column($day_data, $info[0] . '.value');
-		if($column) {
-			$sum = array_sum($column);
-			foreach($info[1] as $param) {
-				$daily["{$dest}_{$param}"] = match($param) {
-					'min' => min($column),
-					'avg' => $sum / $daily['count'],
-					'max' => max($column)
-				};
+		
+	$daily = [
+		'date' => $date,
+		'count' => count($day_data)
+	];
+	
+	if($daily['count']) {
+		foreach($map as $dest=>$info) {
+			$column = array_column($day_data, $info[0]);
+			// not needed once old dailies are deleted
+			if(!$column) $column = array_column($day_data, $info[0] . '.value');
+			if($column) {
+				$sum = array_sum($column);
+				foreach($info[1] as $param) {
+					$daily["{$dest}_{$param}"] = match($param) {
+						'min' => min($column),
+						'avg' => $sum / $daily['count'],
+						'max' => max($column)
+					};
+				}
 			}
 		}
 	}

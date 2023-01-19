@@ -40,8 +40,14 @@ public function getIndex() {
 }
 
 function getDaily($date=null) {
-	$this->data['date'] = $date;
-	$this->data['daily'] = $this->data['readings']->get_daily($date);
+	try {
+		$datetime = new \DateTime($date);
+	}
+	catch(\Exception $ex) {
+		$datetime = new \DateTime();
+	}	
+	$this->data['date'] = $datetime->format('Y-m-d');
+	$this->data['daily'] = $this->data['readings']->get_daily($datetime);
 	return view('readings/daily', $this->data);
 }
 
