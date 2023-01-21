@@ -25,15 +25,7 @@ echo $this->include('widgets/tides');
 echo $this->include('widgets/weather');
 echo $this->include('widgets/moon');
 
- ?>
-<section>
-<h4>Navigation</h4>
-<ul>
-<li><?php echo anchor('readings', 'Current readings');?></li>
-<li><?php echo anchor('dailies', 'Dailies');?></li>
-</ul>
-</section>
-
+?>
 <section>
 <h4>credits</h4>
 <ul>

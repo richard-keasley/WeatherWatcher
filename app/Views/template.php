@@ -22,11 +22,17 @@ ToDo: mobile app
 <footer>
 <?php $this->renderSection('footer');?>
 <div class="flex">
-<p><?php echo anchor('/', 'home');?></p>
+<ul>
+<li><?php echo anchor('/', 'home');?></li>
+<li><?php echo anchor('readings', 'readings');?></li>
+<li><?php echo anchor('dailies', 'dailies');?></li>
+</ul>
+
 <?php if(ENVIRONMENT!='production') { ?>
 <p>Page rendered in {elapsed_time} seconds</p>
 <p>Environment: <?= ENVIRONMENT ?></p>
 <?php } ?>
+
 </div>
 </footer>
 <?php $this->renderSection('bottom');?>
