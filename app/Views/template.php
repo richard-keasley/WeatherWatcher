@@ -22,7 +22,7 @@ ToDo: mobile app
 <footer>
 <?php $this->renderSection('footer');?>
 <div class="flex">
-<ul>
+<ul class="nav">
 <li><?php echo anchor('/', 'home');?></li>
 <li><?php echo anchor('readings', 'readings');?></li>
 <li><?php echo anchor('dailies', 'dailies');?></li>

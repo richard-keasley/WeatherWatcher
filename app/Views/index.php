@@ -11,41 +11,19 @@ $this->section('main'); ?>
 for live updates from this weather station.</p> 
  
 <section>
-<h4><?php echo anchor('readings', 'Current readings');?></h4>
-<?php 
-echo view('widgets/reading', ['reading'=>$readings->get_current()]);
-?>
+<h3>Current readings</h3>
+<?php echo view('widgets/reading', ['reading'=>$readings->get_current()]); ?>
 </section>
 
+<div class="flex flex-border">
 <?php 
-
 echo $this->include('widgets/sun');
-
 echo $this->include('widgets/tides');
 echo $this->include('widgets/weather');
 echo $this->include('widgets/moon');
-
 ?>
-<section>
-<h4>credits</h4>
-<ul>
-<?php
-$ul = [
-	['https://moonphases.co.uk/', 'moon images'],
-	['http://www.astropixels.com/', 'Solstice info'],
-	['https://jpgraph.net/', 'JP graph'],
-	['https://github.com/Moskito89/php-moon-phase', 'PHP moon phase calcuations']
-];
-foreach($ul as $li) {
-	printf('<li>%s</li>', \anchor($li[0], $li[1]));
-}
-?></ul>
-</section>
+</div>
 
-<?php 
+<?php echo $this->include('widgets/credits'); ?>
 
-echo anchor('dailies', 'Dailies');
-
-
-
-$this->endSection();
+<?php $this->endSection();

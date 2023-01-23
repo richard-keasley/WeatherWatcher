@@ -55,13 +55,26 @@ foreach($inputs as $name=>$input) {
 }
 ?></fieldset>
 
-<fieldset>
+<fieldset class="navbar">
+	<?php echo anchor('test', 'back');?>
 	<button name="cmd" value="call" type="submit">call</button>
 	<button name="cmd" value="daily" type="submit">daily</button>
 </fieldset>
 <?php echo form_close();?>
 
 <?php 
-d($api->get_data());
-echo $this->include('widgets/daily');
+
+if($api_data) {
+	$api_path = $daily ? '[daily]' : $api::paths[$pathkey] ?? '??' ;
+	echo "<p>API call: {$api_path}</p>";
+	
+	echo '<p>';
+	foreach($api->query as $key=>$val) echo "{$key}: {$val}<br>";
+	echo '</p>';
+	
+	d($api_data);
+	if($daily) echo $this->include('widgets/daily');
+}
+
+
 $this->endSection();

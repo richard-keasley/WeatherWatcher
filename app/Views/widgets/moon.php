@@ -2,6 +2,25 @@
 $datetime = null;
 $moonphase = \App\ThirdParty\moonphase::load($datetime);
 helper('html');
+?>
+<div class="float-start"><?php 
+echo \App\ThirdParty\moonphase::img($moonphase); 
+/*
+$datetime = new \datetime('2023-02-19');
+$interval = new \DateInterval('PT2H');
+$count = 0;
+do {
+	$datetime->add($interval);
+	$test = \App\ThirdParty\moonphase::load($datetime);
+	echo $datetime->format('Y-m-d H:i ');
+	echo \App\ThirdParty\moonphase::img($test, 'test');
+	$count++;
+} while ($count<40);
+*/
+?></div>
+<?php
+
+$tbody = []; 
 
 $timestamps = [
 	'this_new'  => $moonphase->getPhaseNewMoon(),
@@ -10,11 +29,6 @@ $timestamps = [
 	'next_full' => $moonphase->getPhaseNextFullMoon(),
 ];
 asort($timestamps);
-
-$phase = $moonphase->getPhase();
-$phase_name = $moonphase->getPhaseName();
-
-$tbody = []; 
 $now = time();
 $datetime = new \DateTime;
 foreach($timestamps as $key=>$timestamp) {
@@ -26,11 +40,11 @@ foreach($timestamps as $key=>$timestamp) {
 	}
 }
 
+$phase = $moonphase->getPhase();
+$phase_name = $moonphase->getPhaseName();
 $tbody[] = ['Phase', sprintf('%s (%s%%)', $phase_name, round($phase * 100))];
 
-echo \App\ThirdParty\moonphase::img($moonphase);
-
-$table = new \CodeIgniter\View\Table();
+$table = \App\Views\Htm\table::load('list');
 $table->autoHeading = false;
 echo $table->generate($tbody);
 

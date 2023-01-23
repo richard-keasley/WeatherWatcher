@@ -27,17 +27,18 @@ function getIndex() {
 	}	
 	
 	$dt_first = $this->model->dt_first();
-	if($dt_start<$dt_first) $dt_start = $dt_first;
-	if($dt_end<$dt_first) $dt_end = $dt_first;
-		
 	$dt_last = $this->model->dt_last();
+	if($dt_start<$dt_first) $dt_start = $dt_first;
+	if($dt_start>$dt_last) $dt_start = $dt_last;
+
 	$max_range = new \DateInterval('P60D');
 	$dt_max = new \datetime($dt_start->format(DATE_W3C));
 	$dt_max->add($max_range);
-	if($dt_max<$dt_last) $dt_last = $dt_max;
-	if($dt_start>$dt_last) $dt_start = $dt_last;
-	if($dt_end>$dt_last) $dt_end = $dt_last;
+	if($dt_max>$dt_last) $dt_max = $dt_last;
 	
+	if($dt_end<$dt_first) $dt_end = $dt_first;
+	if($dt_end>$dt_max) $dt_end = $dt_max;
+
 	$nav = $this->request->getGet('nav');
 	$this_range = $dt_start->diff($dt_end);
 	if($nav) {
@@ -64,6 +65,8 @@ function getIndex() {
 	}
 		
 	// view	
+	$this->data['dt_first'] = $dt_first;
+	$this->data['dt_last'] = $dt_last;
 	$this->data['this_range'] = $this_range;
 	$this->data['max_range'] = $max_range;
 	$this->data['start'] = $dt_start->format('Y-m-d');

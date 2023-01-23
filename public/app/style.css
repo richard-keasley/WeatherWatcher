@@ -1,9 +1,11 @@
 :root {
-	--theme-hue: 14;
 	--theme-color-primary: #B22900;
-	--theme-color-primary-contrast: #eeF;
+	--theme-color-primary-contrast: #f7f7fd;
 	--theme-color-link: #C62E00;
 	--theme-color-hover: #A32600;
+	--theme-color: #633;
+	--theme-background: #fafafa;
+	--theme-border-color: #d7bebe;
 }
 
 body {
@@ -17,16 +19,46 @@ header, footer {
 	color: var(--theme-color-primary-contrast);
 	padding: 1em;
 }
-header a, footer a {
-	color: var(--theme-color-primary-contrast);
-}
 
 main {
-	background: #fafafb;
-	color: #633;
+	background: var(--theme-background);
+	color: var(--theme-color);
 	margin: 0 auto;
 	padding: .5em;
 	max-width: 80em;
+}
+
+
+h1 {
+	margin:0.5em 0;
+	padding:0;
+	font-size: 1.5em;
+}
+
+h2{
+	margin:0.5em 0;
+	padding:0;
+	font-size: 1.3em;
+}
+
+h3 {
+	margin: 0.5em 0 0 0;
+	padding:0;
+	font-size: 1.1em;
+}
+
+main h1,
+main h2,
+main h3 {
+	color: var(--theme-color-primary);
+}
+
+hr {
+	background: var(--theme-border-color);
+	border:0 solid var(--theme-border-color);
+	clear:both;
+	height:1px;
+	width:90%;
 }
 
 pre {
@@ -40,10 +72,14 @@ p {
 	margin: 0.5em 0;
 }
 
-.flex {
-	display: flex;
-	gap: 1em;
-	flex-wrap: wrap;
+
+
+a {
+	color: var(--theme-color-link);
+}
+ 
+header a, footer a { 
+	color: var(--theme-color-primary-contrast);
 }
 
 
@@ -71,40 +107,18 @@ figure img {
 	width: 100%;
 }
 
-h1 {
-	margin:0.5em 0;
-	padding:0;
-	font-size: 1.5em;
+
+
+
+
+.flex {
+	display: flex;
+	gap: 1em;
+	flex-wrap: wrap;
 }
 
-h2{
-	margin:0.5em 0;
-	padding:0;
-	font-size: 1.3em;
-}
 
-h3 {
-	margin: 0.5em 0 0 0;
-	padding:0;
-	font-size: 1.1em;
-}
 
-main h1,
-main h2,
-main h3,
-main h4,
-main h5,
-main h6 {
-	color:#3d6c87;
-}
-
-hr {
-	background:#555;
-	border:0 solid #555;
-	clear:both;
-	height:1px;
-	width:90%;
-}
 
 dl dt {
 	font-weight: bold;
@@ -114,6 +128,141 @@ dl dd {
 	margin: 0.5em 0 0.5em 0.5em;
 }
 
+.table {
+	border-collapse: collapse;
+}
+.table td {
+	border: 1px solid #CCC;
+	padding: 0 1em;
+	white-space: nowrap;
+}
+.table tbody td, 
+.table tfoot td { 
+	background: #EEE; 
+}
+.table thead td, 
+.table thead th {
+	background: #FFF;
+	color: #600;
+	border: 1px solid #999;
+	font-weight: bold;
+}
+
+.table-list {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+.table-list td {
+	padding: 0.15em 0;
+	border: 0;
+	background: transparent;
+}
+.table-list td:first-child {
+	text-align: right;
+	padding-right: 0.5em;
+	font-weight: bold;
+}
+
+
+.table-responsive {
+	overflow: auto;
+	max-height: 35rem;
+}
+.table-responsive table {
+	position: relative;
+}
+.table-responsive table thead th,
+.table-responsive table thead td {
+	position: sticky;
+	top: 0;
+}
+
+table td.text-end {
+	text-align: right;
+}
+
+button {
+	border-radius: 0.3em;
+	background-color: var(--theme-color-primary-contrast);
+	color: var(--theme-color-primary);
+	border: 1px solid var(--theme-color-primary);
+	font-size: 0.9rem;
+	font-weight: bold;
+	line-height: 1.6rem;
+	text-align: center;
+	text-decoration: none;
+	box-shadow: none;
+	min-width: 4rem;
+}
+
+section {
+	overflow: hidden;
+}
+
+.float-start {
+	float: left;
+	margin: 0 0.5em 0 0;
+	max-width: 50%;
+}
+.float-end {
+	float: right;
+	margin: 0 0.5em 0 0;
+	max-width: 50%;
+}
+
+
+.flex.flex-border > * ,
+.border {
+	border: 1px solid var(--theme-border-color);
+	margin: 0.5em;
+	padding: 0.5em;
+}
+
+.nav {
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+}
+.nav li {
+	list-style:outside none none;
+	padding: .1em ;
+}
+.nav li a {
+	border-radius: 0.5em;
+	font-size: 0.9rem;
+	font-weight: bold;
+	display: block;
+	line-height: 1.6rem;
+	text-decoration: none;
+	border: none;
+	min-width: 7em;
+}
+.nav li a:hover {
+	text-decoration: underline;
+}
+
+.navbar {
+	border: 0;
+	padding: 0.5em;
+	margin: 0.5em 0;
+	display: flex;
+	gap: 1em;
+	align-items: center;
+}
+.navbar a {
+	text-decoration: none;
+	display: block;
+	padding: 0 0.5em;
+	line-height: 1.5em;
+}
+.navbar a:hover {
+	text-decoration: underline;
+}
+
+
+
+/*
 #masthead {
 	border-color: #666;
 	border-style: solid;
@@ -169,26 +318,7 @@ dl dd {
 	float:none;
 }
 
-.datatable {
-	border-collapse: collapse;
-}
-.datatable td {
-	border:1px solid #666;
-	padding: 0 .5em; 
-	margin: 0
-}
-.datatable tbody td, 
-.datatable tfoot td { 
-	background: #EEE; 
-	text-align: right;
-}
-.datatable thead td, 
-.datatable thead th {
-	background: #FFF;
-	color: #600;
-	border: 1px solid #999;
-	font-weight: bold;
-}
+
 
 .files {
 	margin: 0;
@@ -220,36 +350,11 @@ dl dd {
 }
 .imgbar img{ width: 100%;}
 
-.navbar {
-	margin: 0;
-	padding: 0;
-	display: flex;
-	flex-wrap: wrap;
-}
-.navbar li {
-	list-style:outside none none;
-	padding: .1em ;
-}
-.navbar li a,
-.navbar li button {
-	background-color: #633;
-	border-radius: 0.5em;
-	color: #fff;
-	display: block;
-	font-size: 0.9rem;
-	font-weight: bold;
-	line-height: 2em;
-	text-align: center;
-	text-decoration: none;
-	box-shadow: none;
-	border: none;
-	width: 7em;
-}
 
 .navpage {
 	float: right;
 	display: block;
-	background-color: #633;
+	background-color: var(--theme-color);
 	border-radius: 0.5em;
 	color: #fff;
 	font-size: 0.9rem;
@@ -260,9 +365,7 @@ dl dd {
 	cursor: pointer;
 }
 
-.table-responsive {
-	overflow-x: auto;
-}
+
 
 .updated {
 	color: #444;
@@ -337,3 +440,4 @@ dl dd {
 	background: #FFF;
 	margin: 0.5em;
 }
+*/

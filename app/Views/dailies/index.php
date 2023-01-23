@@ -8,8 +8,9 @@ $this->section('header'); ?>
 
 $this->section('main'); ?>
 <form method="GET">
-<fieldset>
+<fieldset class="flex">
 <?php
+
 $inputs = [
 	'start' => [
 		'name' => "start",
@@ -22,17 +23,34 @@ $inputs = [
 		'value' => $end
 	]
 ];
+$tbody = [];
 foreach($inputs as $label=>$input) {
-	printf('<span><label>%s</label> %s</span> ', 
-	humanize($label),
-	form_input($input));
+	$tbody[] = [
+		"<label>{$label}</label>",
+		form_input($input)
+	];
 }
+$table = \App\Views\Htm\table::load('list');
+$table->autoHeading = false;
+echo $table->generate($tbody);
+
+$tbody = [
+	['Max span', $max_range->format('%d days')],
+	['This span', $this_range->days . ' days']
+];
+$table->autoHeading = false;
+echo $table->generate($tbody);
+
+$tbody = [
+	['First daily:', $dt_first->format('Y-m-d')],
+	['Last daily:', $dt_last->format('Y-m-d')]
+];
+$table->autoHeading = false;
+echo $table->generate($tbody);
 ?>
-<span>Max time span: <?php echo $max_range->format('%d days');?>.</span> 
-<span>This range: <?php echo $this_range->format('%d days');?>.</span> 
 </fieldset>
 
-<fieldset>
+<fieldset class="navbar">
 <button type="submit">OK</button>
 <button type="submit" name="nav" value="prev"> &lt; </button>
 <button type="submit" name="nav" value="next"> &gt; </button>
@@ -47,7 +65,7 @@ foreach($datarows as $daily) {
 	if(!$thead) $thead = $daily->table_head();
 	$tbody[] = $row;
 }
-$table = new \CodeIgniter\View\Table();
+$table = \App\Views\Htm\table::load();
 $table->setHeading($thead);
 echo $table->generate($tbody);
 

@@ -7,7 +7,7 @@ $this->section('header'); ?>
 $this->section('main'); ?>
 
 
-<form method="GET">
+<form method="GET" class="navbar">
 <?php 
 helper('form');
 $input = [
@@ -16,14 +16,15 @@ $input = [
 	'value' => $dt
 ];
 echo form_input($input);
+echo anchor("", ' back ');
 ?>
 <button type="submit" name="nav" value="first"> |&lt; </button>
 <button type="submit" name="nav" value="prev"> &lt; </button>
 <button type="submit" name="nav" value="next"> &gt; </button>
 <button type="submit" name="nav" value="last"> &gt;| </button>
-<button type="button"> <?php 
-	echo anchor("readings/daily/{$date}", 'daily');
-?> </button>
+<?php 
+echo anchor("readings/daily/{$date}", 'daily');
+?> 
 </form>
 
 <section>

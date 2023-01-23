@@ -1,4 +1,4 @@
-<?php
+<section><?php
 helper('inflector');
 $config = config('App');
 $now = time();
@@ -42,9 +42,12 @@ foreach($suninfo->solstices as $event) {
 	}
 }
 
-$table = new \CodeIgniter\View\Table();
 $tbody = array_merge($info, $events);
+
+$table = \App\Views\Htm\table::load('list');
 $table->autoHeading = false;
 echo $table->generate($tbody);
 
 echo $suninfo::credit;
+?>
+</section>
