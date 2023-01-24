@@ -4,16 +4,15 @@ class Home extends \App\Controllers\BaseController {
 	
 private $model = null;
 
-function __construct() {
-	$this->model = new \App\Models\Dailies;
-}
-
 function getIndex() {
+	// compare to App\Controllers\Graph\Dailies
+	$start = $this->request->getGet('start');
+	$end = $this->request->getGet('end');
+	$this->model = new \App\Models\Dailies;
+	
 	try {
-		$string = $this->request->getGet('start');
-		$dt_start = new \datetime($string);
-		$string = $this->request->getGet('end');
-		$dt_end = new \datetime($string);
+		$dt_start = new \datetime($start);
+		$dt_end = new \datetime($end);
 	}
 	catch(\Exception $e) {
 		$dt_start = new \datetime();
@@ -38,7 +37,7 @@ function getIndex() {
 	
 	if($dt_end<$dt_first) $dt_end = $dt_first;
 	if($dt_end>$dt_max) $dt_end = $dt_max;
-
+		
 	$nav = $this->request->getGet('nav');
 	$this_range = $dt_start->diff($dt_end);
 	if($nav) {
@@ -78,28 +77,6 @@ function getIndex() {
 		->findAll();
 	
 	return view('dailies/index', $this->data);
-	
-	
-	# d($last);
-	
-	/*
-	$yesterday = new \datetime('yesterday'); 
-	if($last_daily<$yesterday) {
-		$api = new \App\Libraries\Apis\Ecowitt;
-		 d($yesterday->format('Y-m-d'));
-		 d($last_daily->format('Y-m-d'));
-		
-		$get_daily = $last_daily;
-		$one_day = new \DateInterval('P1D');
-		
-		while($get_daily<$yesterday) {
-			$get_daily->add($one_day);
-			$results = $api->get_daily($get_daily);
-			d($results);
-		}
-	}
-	*/
-
 }
 
 }

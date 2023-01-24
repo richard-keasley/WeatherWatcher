@@ -54,6 +54,12 @@ echo $table->generate($tbody);
 <button type="submit">OK</button>
 <button type="submit" name="nav" value="prev"> &lt; </button>
 <button type="submit" name="nav" value="next"> &gt; </button>
+<?php
+$types = ['temperature', 'rain'];
+foreach($types as $type) {
+	echo anchor("graph/dailies/{$type}/{$start}/{$end}", $type);
+}
+?>
 </fieldset>
 
 </form>

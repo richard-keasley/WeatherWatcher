@@ -6,8 +6,8 @@ const version = '2.1.0';
 const date = '2022-05-20';
 	
 static function load($datetime=null) {
-	$path = __DIR__ . '/php-moon-phase-' . self::version;
-	include_once "{$path}/src/MoonPhase.php";
+	$include = sprintf('%s/php-moon-phase-%s/src/MoonPhase.php' , __DIR__, self::version);
+	require_once $include;
 	return new \Solaris\MoonPhase($datetime);
 }
 
