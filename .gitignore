@@ -5,3 +5,4 @@ writable/*
 public/.well-known/*
 public/app/test/*
 public/error_log
+.env
