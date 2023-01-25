@@ -6,8 +6,7 @@ protected function init() {
 }
 
 public function getIndex() {
-	$this->init();
-	d($this->data);
+	die;
 }
 
 }

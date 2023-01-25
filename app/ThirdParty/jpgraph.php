@@ -46,33 +46,44 @@ static function stroke($jpgraph, $cache_name=null) {
 	die;
 }
 
-static function aggregate($data, $maxrows=24) {
+static function aggregate($data, $maxrows=96) {
 	// aggregate large data sets to ensure it's not too many points
-	if(!$maxrows || !count($data)) return;
-	$row_ratio = $maxrows / count($data) ;
-	if($row_ratio>=1) return $data;
 	
-	$buffer = array();
-	foreach($data as $data_key=>$data_row) {
-		$buffer_key = intval($data_key * $row_ratio);
-		$buffer[$buffer_key][] = $data_row;
-	}
-	
-	$new_data = array();
-	$new_row = array();
-	foreach($buffer as $buffer_key=>$buffer_row) {
-		// compile buffer_row
-		$buffer_count = count($buffer_row);
-		if($buffer_count) { // add buffer_row to new_data
-			foreach(array_keys($data[0]) as $this_key) {
-				$this_val = column_merge($buffer_row, $this_key);
-				$new_row[$this_key] = $this_val;
+	if(!$maxrows) return $data;
+	$series = current($data);
+	$data_count = count($series);
+	if($data_count <= $maxrows) return $data;
+	$agg_ratio = $maxrows / $data_count;
+	# d($data_count, $maxrows, $agg_ratio);
+		
+	$aggregate = [];
+	foreach($data as $series_key=>$series) {
+		$agg_series = [];
+		foreach($series as $data_key=>$data_value) {
+			$agg_key = floor($agg_ratio * $data_key);
+			if(!isset($agg_series[$agg_key])) {
+				$agg_series[$agg_key] = [];
 			}
-			$new_data[] = $new_row;
+			$agg_series[$agg_key][] = $data_value;
+		}
+		$aggregate[$series_key] = [];
+		foreach($agg_series as $values) {
+			$agg_count = count($values);
+			switch($series_key) {
+				case 'label':
+				$value = $values[0];
+				break;
+				
+				default:
+				$total = array_sum($values);
+				$value = $total / $agg_count;
+			}
+			$aggregate[$series_key][] = $value;
 		}
 	}
-	return $new_data;
+	# d($data, $aggregate);  die;	
 	
+	return $aggregate;
 }
 
 }
