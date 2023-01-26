@@ -69,16 +69,12 @@ static function aggregate($data, $maxrows=96) {
 		$aggregate[$series_key] = [];
 		foreach($agg_series as $values) {
 			$agg_count = count($values);
-			switch($series_key) {
-				case 'label':
-				$value = $values[0];
-				break;
-				
-				default:
-				$total = array_sum($values);
-				$value = $total / $agg_count;
-			}
-			$aggregate[$series_key][] = $value;
+			$aggregate[$series_key][] = match($series_key) {
+				'label' => $values[0],
+				'min' => min($values),
+				'max' => max($values),
+				default => array_sum($values) / count($values)
+			};
 		}
 	}
 	# d($data, $aggregate);  die;	
