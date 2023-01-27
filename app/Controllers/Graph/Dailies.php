@@ -9,22 +9,16 @@ public function getIndex() {
 }
 
 protected function load_data($map) {
-	parent::init();
-	
-	// compare to App\Controllers\Dailies\home
+	// compare to App\Controllers\Dailies::index
 	$segments = $this->request->uri->getSegments();
-	$start = $segments[3] ?? '' ;
-	$end = $segments[4] ?? '' ;
+	$value = $segments[3] ?? '' ;
+	$dt_start = $this->get_datetime($value, 'value');
+	if(!$dt_start) $dt_start = new \DateTime();
 	
-	try {
-		$dt_start = new \datetime($start);
-		$dt_end = new \datetime($end);
-	}
-	catch(\Exception $e) {
-		$dt_start = new \datetime();
-		$dt_end = new \datetime();
-	}
-	
+	$value = $segments[4] ?? '' ;
+	$dt_end = $this->get_datetime($value, 'value');
+	if(!$dt_end) $dt_end = new \DateTime();
+		
 	if($dt_end<$dt_start) {
 		$swap = $dt_end;
 		$dt_end = $dt_start;

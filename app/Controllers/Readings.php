@@ -39,13 +39,10 @@ public function getIndex() {
 	return view('readings/index', $this->data);
 }
 
-function getDaily($date=null) {
-	try {
-		$datetime = new \DateTime($date);
-	}
-	catch(\Exception $ex) {
-		$datetime = new \DateTime();
-	}	
+function getDaily($datetime='') {
+	$datetime = $this->get_datetime($datetime, 'value');
+	if(!$datetime) $datetime = new \DateTime;
+		
 	$this->data['date'] = $datetime->format('Y-m-d');
 	$this->data['daily'] = $this->data['readings']->get_daily($datetime);
 	return view('readings/daily', $this->data);

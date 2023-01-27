@@ -1,30 +1,22 @@
-<?php namespace App\Controllers\Dailies;
+<?php namespace App\Controllers;
 
-class Home extends \App\Controllers\BaseController {
+class Dailies extends \App\Controllers\BaseController {
 	
 private $model = null;
 
 function getIndex() {
 	// compare to App\Controllers\Graph\Dailies
-	$start = $this->request->getGet('start');
-	$end = $this->request->getGet('end');
-	$this->model = new \App\Models\Dailies;
-	
-	try {
-		$dt_start = new \datetime($start);
-		$dt_end = new \datetime($end);
-	}
-	catch(\Exception $e) {
-		$dt_start = new \datetime();
-		$dt_end = new \datetime();
-	}
-	
+	$dt_start = $this->get_datetime('start');
+	if(!$dt_start) $dt_start = new \DateTime;
+	$dt_end = $this->get_datetime('end');
+	if(!$dt_end) $dt_end = new \DateTime;
 	if($dt_end<$dt_start) {
 		$swap = $dt_end;
 		$dt_end = $dt_start;
 		$dt_start = $swap;
 	}	
 	
+	$this->model = new \App\Models\Dailies;
 	$dt_first = $this->model->dt_first();
 	$dt_last = $this->model->dt_last();
 	if($dt_start<$dt_first) $dt_start = $dt_first;
@@ -77,6 +69,13 @@ function getIndex() {
 		->findAll();
 	
 	return view('dailies/index', $this->data);
+}
+
+function getView($datetime=null) {
+	$datetime = $this->get_datetime($datetime, 'value');
+	if(!$datetime) $datetime = new \DateTime;
+	die('not done');	
+	
 }
 
 }

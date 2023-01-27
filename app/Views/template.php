@@ -16,24 +16,29 @@ ToDo: mobile app
 </head>
 <body>
 
-<?php $this->renderSection('top');?>
 <header><?php $this->renderSection('header');?></header>
-<main><?php $this->renderSection('main');?></main>
+<main>
+<?php $this->renderSection('top');?>
+<?php $this->renderSection('main');?>
+<?php $this->renderSection('bottom');?>
+</main>
+
 <footer>
 <?php $this->renderSection('footer');?>
-<div class="flex">
 <ul class="nav">
 <li><?php echo anchor('/', 'home');?></li>
 <li><?php echo anchor('readings', 'readings');?></li>
 <li><?php echo anchor('dailies', 'dailies');?></li>
+<li><?php echo anchor('about', 'about');?></li>
 </ul>
 
 <?php if(ENVIRONMENT!='production') { ?>
+<div class="flex">
 <p>Page rendered in {elapsed_time} seconds</p>
 <p>Environment: <?= ENVIRONMENT ?></p>
+</div>
 <?php } ?>
 
-</div>
 </footer>
 <?php $this->renderSection('bottom');?>
 </body>

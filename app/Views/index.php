@@ -24,6 +24,4 @@ echo $this->include('widgets/moon');
 ?>
 </div>
 
-<?php echo $this->include('widgets/credits'); ?>
-
 <?php $this->endSection();
