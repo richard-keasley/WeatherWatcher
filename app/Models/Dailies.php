@@ -15,6 +15,7 @@ protected $allowedFields = [
 	'uvi_avg', 'uvi_max',
 	'wind_avg', 'wind_max'
 ];
+protected $primaryKey = 'date';
 
 function dt_first() {
 	$daily = $this->orderBy('date', 'asc')->first();

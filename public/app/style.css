@@ -244,10 +244,14 @@ section {
 	text-decoration: none;
 	display: block;
 	padding: 0 0.5em;
-	line-height: 1.5em;
+	line-height: 1.7em;
+	background: #EEF;
+	min-width: 4em;
+	text-align: center;
+	border-radius: .3em;
 }
 .navbar a:hover {
-	text-decoration: underline;
+	background: #FEE;
 }
 
 .float-start {

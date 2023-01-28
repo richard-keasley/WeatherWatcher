@@ -2,13 +2,44 @@
 
 class Dailies extends \App\Controllers\BaseController {
 	
-private $model = null;
-
 function getIndex() {
+	$model = new \App\Models\Dailies;
+	$this->data['daily'] = $model->orderBy('date', 'desc')->first();
+	$this->data['navdate'] = $this->data['daily']->date;
+	return view('dailies/index', $this->data);
+}
+
+function getDay($datetime=null) {
+	$model = new \App\Models\Dailies;
+	$datetime = $this->get_datetime($datetime, 'value');
+	if(!$datetime) $datetime = new \DateTime('yesterday');
+	$this->data['navdate'] = $datetime->format('Y-m-d');
+	$this->data['daily'] = $model->find($this->data['navdate']);
+	return view('dailies/index', $this->data);	
+}	
+
+function getMonth($datetime=null) {
+	$model = new \App\Models\Dailies;
+	$datetime = $this->get_datetime($datetime, 'value');
+	if(!$datetime) $datetime = new \DateTime('yesterday');
+	$this->data['start'] = $datetime->format('Y-m-01');
+	$this->data['end'] = $datetime->format('Y-m-t');
+
+	$model = new \App\Models\Dailies;
+	$this->data['dailies'] = $model
+		->where('date >=', $this->data['start'])
+		->where('date <=', $this->data['end'])
+		->findAll();
+	$this->data['navdate'] = $this->data['start'];
+	
+	return view('dailies/month', $this->data);	
+}
+
+function getCustom($start='', $end='') {
 	// compare to App\Controllers\Graph\Dailies
-	$dt_start = $this->get_datetime('start');
+	$dt_start = $this->get_datetime($start, 'value');
 	if(!$dt_start) $dt_start = new \DateTime;
-	$dt_end = $this->get_datetime('end');
+	$dt_end = $this->get_datetime($end, 'value');
 	if(!$dt_end) $dt_end = new \DateTime;
 	if($dt_end<$dt_start) {
 		$swap = $dt_end;
@@ -16,9 +47,9 @@ function getIndex() {
 		$dt_start = $swap;
 	}	
 	
-	$this->model = new \App\Models\Dailies;
-	$dt_first = $this->model->dt_first();
-	$dt_last = $this->model->dt_last();
+	$model = new \App\Models\Dailies;
+	$dt_first = $model->dt_first();
+	$dt_last = $model->dt_last();
 	if($dt_start<$dt_first) $dt_start = $dt_first;
 	if($dt_start>$dt_last) $dt_start = $dt_last;
 
@@ -63,19 +94,12 @@ function getIndex() {
 	$this->data['start'] = $dt_start->format('Y-m-d');
 	$this->data['end'] = $dt_end->format('Y-m-d');
 	
-	$this->data['datarows'] = $this->model
+	$this->data['datarows'] = $model
 		->where('date >=', $this->data['start'])
 		->where('date <=', $this->data['end'])
 		->findAll();
 	
-	return view('dailies/index', $this->data);
-}
-
-function getView($datetime=null) {
-	$datetime = $this->get_datetime($datetime, 'value');
-	if(!$datetime) $datetime = new \DateTime;
-	die('not done');	
-	
+	return view('dailies/custom', $this->data);
 }
 
 }

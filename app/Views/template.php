@@ -18,11 +18,20 @@ ToDo: mobile app
 
 <header><?php $this->renderSection('header');?></header>
 <main>
-<?php $this->renderSection('top');?>
+<?php if(!empty($this->sections['top'])) { ?>
+	<section class="top">
+	<?php $this->renderSection('top');?>
+	</section>
+<?php } ?>
+<section class="main">
 <?php $this->renderSection('main');?>
-<?php $this->renderSection('bottom');?>
+</section>
+<?php if(!empty($this->sections['bottom'])) { ?>
+	<section class="bottom">
+	<?php $this->renderSection('bottom');?>
+	</section>
+<?php } ?>
 </main>
-
 <footer>
 <?php $this->renderSection('footer');?>
 <ul class="nav">
