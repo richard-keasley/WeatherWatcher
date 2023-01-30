@@ -6,7 +6,7 @@ function getIndex() {
 	$model = new \App\Models\Dailies;
 	$this->data['daily'] = $model->orderBy('date', 'desc')->first();
 	$this->data['start'] = $this->data['daily']->date;
-	return view('dailies/index', $this->data);
+	return view('dailies/day', $this->data);
 }
 
 function getDay($datetime=null) {
@@ -15,7 +15,7 @@ function getDay($datetime=null) {
 	if(!$datetime) $datetime = new \DateTime('yesterday');
 	$this->data['start'] = $datetime->format('Y-m-d');
 	$this->data['daily'] = $model->find($this->data['start']);
-	return view('dailies/index', $this->data);	
+	return view('dailies/day', $this->data);	
 }	
 
 function getMonth($datetime=null) {

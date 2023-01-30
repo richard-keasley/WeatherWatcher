@@ -36,11 +36,21 @@ static function stroke($jpgraph, $cache_name=null) {
 	// send image back to browser
 	# d($jpgraph); return;
 	
+	if($cache_name) {
+		$cache = \Config\Services::cache();
+		$image = $cache->get($cache_name);
+		if($image) {
+			# header('content-type: image/png');
+			echo $image; 
+			die;
+		}
+	}
+		
 	ob_start();
 	$jpgraph->stroke();
 	$image = ob_get_flush();
+	
 	if($cache_name) {
-		$cache = \Config\Services::cache();
 		$success = $cache->save($cache_name, $image, 14400);
 	}
 	die;
