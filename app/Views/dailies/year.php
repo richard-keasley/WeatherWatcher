@@ -1,15 +1,15 @@
 <?php $this->extend('template');
 helper('form');
 helper('inflector');
-$interval = new \DateInterval('P1M');
+$interval = new \DateInterval('P1Y');
 $datetime = new \DateTime($start);
-$title = $datetime->format('F Y');
+$title = $datetime->format('Y');
 $datetime->sub($interval);
-$nav_prev = $datetime->format('Y-m-01');
+$nav_prev = $datetime->format('Y-01-01');
 
 $datetime = new \DateTime($start);
 $datetime->add($interval);
-$nav_next = $datetime->format('Y-m-01');
+$nav_next = $datetime->format('Y-01-01');
 
 $this->section('header'); ?>
 <h1>Dailies - <?php echo $title;?></h1>
@@ -18,8 +18,8 @@ $this->section('header'); ?>
 $this->section('main'); ?>
 <div class="navbar">
 <?php
-echo anchor("dailies/month/{$nav_prev}", ' &lt; ');
-echo anchor("dailies/month/{$nav_next}", ' &gt; ');
+echo anchor("dailies/year/{$nav_prev}", ' &lt; ');
+echo anchor("dailies/year/{$nav_next}", ' &gt; ');
 
 $types = ['temperature', 'rain'];
 foreach($types as $type) {
