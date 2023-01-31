@@ -12,28 +12,21 @@ $datetime->add($interval);
 $nav_next = $datetime->format('Y-m-01');
 
 $this->section('header'); ?>
-<h1>Dailies - <?php echo $title;?></h1>
+<h1>Daily: month <?php echo $title;?></h1>
 <?php $this->endSection();
 
-$this->section('main'); ?>
+$this->section('top'); ?>
 <div class="navbar">
 <?php
 echo anchor("dailies/month/{$nav_prev}", ' &lt; ');
 echo anchor("dailies/month/{$nav_next}", ' &gt; ');
-
-$types = ['temperature', 'rain'];
-foreach($types as $type) {
-	echo anchor("graph/dailies/{$type}/{$start}/{$end}", $type);
-}
 ?>
 </div>
 <?php 
 $this->endSection();
 
 $this->section('main');
-echo $this->include('dailies/table');
-$this->endSection();
-
-$this->section('bottom');
+echo $this->include('dailies/graphs');
 echo $this->include('dailies/nav');
+echo $this->include('dailies/table');
 $this->endSection();

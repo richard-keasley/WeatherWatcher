@@ -27,6 +27,13 @@ static function load($tkey = 'default') {
 
 /* return formatted table cell  */
 static function cell($value, $format='') {
+	if(is_null($value)) {
+		return [
+			'data' => '-',
+			'class' => 'null'
+		];
+	}
+	
 	switch($format) {
 		case 'number':
 		return [
@@ -46,7 +53,7 @@ static function cell($value, $format='') {
 		
 		case 'humidity':
 		return [
-			'data' => $value ? round($value) : '-' ,
+			'data' => round($value),
 			'class' => "text-end"
 		];
 		

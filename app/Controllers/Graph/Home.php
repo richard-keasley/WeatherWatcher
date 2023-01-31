@@ -3,7 +3,7 @@
 class Home extends \App\Controllers\BaseController {
 
 public function getIndex() {
-	die;
+	\App\ThirdParty\jpgraph::blank();
 }
 
 }

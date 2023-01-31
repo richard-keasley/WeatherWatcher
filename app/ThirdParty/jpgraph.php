@@ -5,14 +5,23 @@ class jpgraph {
 const version = '4.4.1';
 const date = '2022-05-12';
 
+const defaults = [
+	'width' => 1280,
+	'height' => 768
+];
+
 static $path = '';
 	
-static function load($width=1024, $height=768, $scale='textlin') {
+static function load($width=0, $height=0, $scale='textlin') {
 	self::$path = sprintf('%s/jpgraph-%s/src/' , __DIR__, self::version);
+	
+	if(!$width) $width = self::defaults['width'];
+	if(!$height) $height = self::defaults['height'];
 	
 	self::include_file('jpgraph');
 	$graph = new \Graph($width, $height);
-	$graph->SetScale('textlin');
+	$graph->SetScale($scale);
+	$graph->SetMargin(40, 20, 30, 80);
 	return $graph;
 }
 
@@ -36,40 +45,74 @@ static function stroke($jpgraph, $cache_name=null) {
 	// send image back to browser
 	# d($jpgraph); return;
 	
-	ob_start();
-	$jpgraph->stroke();
-	$image = ob_get_flush();
+	if(ENVIRONMENT!='production') $cache_name = null;
+	
 	if($cache_name) {
 		$cache = \Config\Services::cache();
-		$success = $cache->save($cache_name, $image, 14400);
+		$response = $cache->get($cache_name);
+		if($response) {
+			header('content-type: image/png');
+			echo $response; 
+			die;
+		}
+	}
+		
+	ob_start();
+	$jpgraph->stroke();
+	$response = ob_get_flush();
+	
+	if($cache_name) {
+		$success = $cache->save($response, $image, 14400);
 	}
 	die;
 }
 
-static function aggregate($data, $maxrows=96) {
-	// aggregate large data sets to ensure it's not too many points
+static function blank($width=0, $height=0) {
+	//  send empty image back to browser
+	if(!$width) $width = self::defaults['width'];
+	if(!$height) $height = self::defaults['height'];
+	$im = imagecreatetruecolor($width, $height);
+	$colour = imagecolorallocate($im, 255, 255, 255);
+	imagefill($im, 0, 0, $colour);
+	header('Content-Type: image/png');
+	imagepng($im);
+	imagedestroy($im);	
+	die;
+}
+
+static function aggregate($data, $maxrows=96, $minrows=3) {
+	// aggregate large datasets
+	// prevent small datasets from being plotted
 	
-	if(!$maxrows) return $data;
-	$series = current($data);
-	$data_count = count($series);
-	if($data_count <= $maxrows) return $data;
+	if(!$data) return [];
+	$dataset = current($data);
+	$data_count = count($dataset);
+	if($data_count < $minrows) return []; // no graph for small datasets
+	// remove empty datasets
+	foreach($data as $dataname=>$dataset) {
+		$nodata = (is_null(min($dataset)) && is_null(max($dataset)));
+		if($nodata) unset($data[$dataname]);
+	}
+	
+	if(!$maxrows) return $data; // no aggregation
+	if($data_count <= $maxrows) return $data; // no aggregation
 	$agg_ratio = $maxrows / $data_count;
 	# d($data_count, $maxrows, $agg_ratio);
 		
 	$aggregate = [];
-	foreach($data as $series_key=>$series) {
+	foreach($data as $dataname=>$dataset) {
 		$agg_series = [];
-		foreach($series as $data_key=>$data_value) {
+		foreach($dataset as $data_key=>$data_value) {
 			$agg_key = floor($agg_ratio * $data_key);
 			if(!isset($agg_series[$agg_key])) {
 				$agg_series[$agg_key] = [];
 			}
 			$agg_series[$agg_key][] = $data_value;
 		}
-		$aggregate[$series_key] = [];
+		$aggregate[$dataname] = [];
 		foreach($agg_series as $values) {
 			$agg_count = count($values);
-			$aggregate[$series_key][] = match($series_key) {
+			$aggregate[$dataname][] = match($dataname) {
 				'label' => $values[0],
 				'min' => min($values),
 				'max' => max($values),

@@ -5,7 +5,7 @@ class Dailies extends Home {
 private $model = null;
 
 public function getIndex() {
-	die;
+	\App\ThirdParty\jpgraph::blank();
 }
 
 protected function load_data($map) {
@@ -40,11 +40,11 @@ protected function load_data($map) {
 	$cache_name[4] = $dt_end->format('Ymd');
 	$this->data['cache_name'] = implode('_', $cache_name);
 	$cache = \Config\Services::cache();
-	$image = $cache->get($this->data['cache_name']);
-	# $image = null;
-	if($image) {
+	$response = $cache->get($this->data['cache_name']);
+	if(ENVIRONMENT=='production' && $response) {
 		header('content-type: image/png');
-		echo $image; die;
+		echo $response;
+		die;
 	}
 		
 	// load data
@@ -67,25 +67,68 @@ protected function load_data($map) {
 	return $retval;
 }
 
-private function stroke($data, $colours=null, $type='line') {
-	# if(!$data) die;
-	
-	// aggregate data for large data sets
+private function stroke($data, $options=[]) {
+	// aggregate data 
 	$data = \App\ThirdParty\jpgraph::aggregate($data);
 	# d($data); die;
 		
 	$graph = \App\ThirdParty\jpgraph::load();
-	foreach($data as $series_key=>$series) {
-		if($series_key=='label') {
+	$dataset_count = 0;
+	
+	$colours = $options['colours'] ?? null;
+	$type = $options['type'] ?? 'line';
+	$labels = null;
+	foreach($data as $dataname=>$dataset) {
+		if($dataname=='label') {
+			$labels = $dataset;
 		}
 		else {
-			$plot = \App\ThirdParty\jpgraph::plot($type, $series);
+			$dataset_count++;
+			$plot = \App\ThirdParty\jpgraph::plot($type, $dataset);
 			$graph->Add($plot);
-			$colour = $colours[$series_key] ?? null;
-			if($colour) $plot->SetColor($colour);
+			$plot->SetLegend($dataname);
+			$colour = $colours[$dataname] ?? null;
+			switch($type) {
+				case 'bar':
+				$plot->SetWidth(1);
+				if($colour) $plot->SetFillColor($colour);
+				$plot->SetColor('#666');
+				$plot->SetWeight(1);
+				break;
+				
+				case 'line':
+				default:
+				$plot->SetWeight(2);
+				if($colour) $plot->SetColor($colour);
+			}
 		}
 	}
-	\App\ThirdParty\jpgraph::stroke($graph, $this->data['cache_name']);
+			
+	if($dataset_count) {
+		$graph->legend->SetPos(0.05, 0.01, 'left', 'top');
+	
+		if($labels) {
+			$graph->xaxis->SetTickLabels($labels);
+			$graph->xaxis->SetLabelAngle(90);
+			$interval = intval(count($labels)/20) + 1;
+			$graph->xaxis->SetTextLabelInterval($interval);
+		}
+		$graph->xaxis->SetPos("min");
+		
+		$ytitle = $options['ytitle'] ?? null;
+		if($ytitle) {
+			$graph->yaxis->title->Set($ytitle);
+		}
+		
+		$title = $options['title'] ?? 'Daily averages';
+		if($title) $graph->title->Set($title);
+				
+		\App\ThirdParty\jpgraph::stroke($graph, $this->data['cache_name']);
+		die;
+	}
+	
+	\App\ThirdParty\jpgraph::blank();
+	die;
 }
 
 public function getRain($start='', $end='') {
@@ -96,10 +139,14 @@ public function getRain($start='', $end='') {
 	];
 	$data = $this->load_data($map);
 	
-	$colours = [
-		'rain' => 'blue'
+	$options = [
+		'ytitle' => 'Rainfall [mm]',
+		'colours' => [
+			'rain' => '#66F'
+		],
+		'type' => 'bar'
 	];
-	$this->stroke($data, $colours, 'bar');		
+	$this->stroke($data, $options);		
 }
 
 public function getTemperature($start='', $end='') {
@@ -112,12 +159,15 @@ public function getTemperature($start='', $end='') {
 	];
 	$data = $this->load_data($map);
 	
-	$colours = [
-		'max' => '#c11',
-		'avg' => '#ccc',
-		'min' => '#11c'
+	$options = [
+		'ytitle' => 'Temperature [°C]',
+		'colours' => [
+			'max' => '#c11',
+			'avg' => '#ccc',
+			'min' => '#11c'
+		]
 	];
-	$this->stroke($data, $colours, 'line');
+	$this->stroke($data, $options);
 }
 
 public function getSolar($start='', $end='') {
@@ -129,11 +179,14 @@ public function getSolar($start='', $end='') {
 	];
 	$data = $this->load_data($map);
 	
-	$colours = [
-		'max' => '#c11',
-		'avg' => '#ccc'
+	$options = [
+		'ytitle' => 'Solar [W/m²]',
+		'colours' => [
+			'max' => '#c11',
+			'avg' => '#ccc'
+		]
 	];
-	$this->stroke($data, $colours, 'line');
+	$this->stroke($data, $options);
 }
 
 public function getWind($start='', $end='') {
@@ -145,11 +198,14 @@ public function getWind($start='', $end='') {
 	];
 	$data = $this->load_data($map);
 	
-	$colours = [
-		'max' => '#c11',
-		'avg' => '#ccc'
+	$options = [
+		'ytitle' => 'Wind [mph]',
+		'colours' => [
+			'max' => '#c11',
+			'avg' => '#ccc'
+		]
 	];
-	$this->stroke($data, $colours, 'line');
+	$this->stroke($data, $options);
 }
 
 public function getHumidity($start='', $end='') {
@@ -161,11 +217,14 @@ public function getHumidity($start='', $end='') {
 	];
 	$data = $this->load_data($map);
 	
-	$colours = [
-		'max' => '#c11',
-		'avg' => '#ccc'
+	$options = [
+		'ytitle' => 'Humidity [%]',
+		'colours' => [
+			'max' => '#c11',
+			'avg' => '#ccc'
+		]
 	];
-	$this->stroke($data, $colours, 'line');
+	$this->stroke($data, $options);
 }
 
 }

@@ -6,7 +6,8 @@ function getIndex() {
 	$model = new \App\Models\Dailies;
 	$this->data['daily'] = $model->orderBy('date', 'desc')->first();
 	$this->data['start'] = $this->data['daily']->date;
-	return view('dailies/index', $this->data);
+	$this->data['end'] = $this->data['start'];
+	return view('dailies/day', $this->data);
 }
 
 function getDay($datetime=null) {
@@ -14,8 +15,9 @@ function getDay($datetime=null) {
 	$datetime = $this->get_datetime($datetime, 'value');
 	if(!$datetime) $datetime = new \DateTime('yesterday');
 	$this->data['start'] = $datetime->format('Y-m-d');
+	$this->data['end'] = $this->data['start'];
 	$this->data['daily'] = $model->find($this->data['start']);
-	return view('dailies/index', $this->data);	
+	return view('dailies/day', $this->data);	
 }	
 
 function getMonth($datetime=null) {
@@ -96,7 +98,7 @@ function getCustom($start='', $end='') {
 	if($dt_start<$dt_first) $dt_start = $dt_first;
 	if($dt_start>$dt_last) $dt_start = $dt_last;
 
-	$max_range = new \DateInterval('P60D');
+	$max_range = new \DateInterval('P90D');
 	$dt_max = new \datetime($dt_start->format(DATE_W3C));
 	$dt_max->add($max_range);
 	if($dt_max>$dt_last) $dt_max = $dt_last;

@@ -72,8 +72,6 @@ p {
 	margin: 0.5em 0;
 }
 
-
-
 a {
 	color: var(--theme-color-link);
 }
@@ -82,12 +80,12 @@ header a, footer a {
 	color: var(--theme-color-primary-contrast);
 }
 
-
-
 figure {
-	display:inline-block;
-	margin:0;
-	padding:.2em;
+	border: 1px solid var(--theme-border-color);
+	display: inline-block;
+	margin: .3rem;
+	padding: .3rem;
+	width: 24rem;
 }
 figure a {
 	display:block;
@@ -97,14 +95,14 @@ figure figcaption {
 	font-weight:bold;
 	margin:0;
 	padding:0;
+	color: var(--theme-color-primary);
 }
 figure img {
 	border: 0 none;
 	display: block;
 	margin: 0;
-	max-width: 25em;
+	max-width: 100%;
 	padding: 0;
-	width: 100%;
 }
 
 
@@ -168,6 +166,9 @@ dl dd {
 table td.text-end {
 	text-align: right;
 }
+table td.null {
+	color: #CCC;
+}
 
 button {
 	border-radius: 0.3em;
@@ -191,6 +192,7 @@ section {
 	display: flex;
 	gap: 1em;
 	flex-wrap: wrap;
+	align-items: start;
 }
 
 .border {
