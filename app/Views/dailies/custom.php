@@ -51,8 +51,6 @@ $table = \App\Views\Htm\table::load('list');
 $table->autoHeading = false;
 echo $table->generate($tbody);
 
-echo '<button type="button" onclick="sendform()">OK</button>';
-
 $tbody = [
 	['Max span:', $max_range->format('%d days')],
 	['This span:', $interval->days . ' days'],
