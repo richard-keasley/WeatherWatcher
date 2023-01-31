@@ -2,7 +2,7 @@
 
 class graph implements \stringable {
 
-public $dataname = null;
+public $type = null;
 public $start = null;
 public $end = null;
 public $template = 
@@ -11,18 +11,15 @@ public $template =
 <figcaption>{caption}</figcaption>
 </figure>';
 
-function __construct($controller='dailies', $dataname='temperature', $start=null, $end=null) {
-	$this->controller = $controller;
-	$this->dataname = $dataname;
+function __construct($type='temperature', $start=null, $end=null) {
+	$this->type = $type;
 	$this->start = $start;
 	$this->end = $end;
 }
 
 function __toString() {
-	$controller = $this->controller;
-	if(!$controller) return '';
-	$dataname = $this->dataname;
-	if(!$dataname) return '';
+	$type = $this->type;
+	if(!$type) return '';
 	$start = $this->start;
 	if(!$start) return '';
 	$end = $this->end; 
@@ -34,12 +31,19 @@ function __toString() {
 		$start = $swap;
 	}
 	
-	$translate = [
-		'{src}' => base_url("graph/{$controller}/{$dataname}/{$start}/{$end}"),
-		'{caption}' => $dataname
+	$trans = [
+		'{src}' => base_url("graph/dailies/{$type}/{$start}/{$end}"),
+		'{caption}' => $type
+
 	];
 	
-	return strtr($this->template, $translate);
+	return strtr($this->template, $trans);
+	
+	
+	
+	
+	
+	
 }
 
 }
