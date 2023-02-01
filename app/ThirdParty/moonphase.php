@@ -26,16 +26,17 @@ static function img($moonphase, $test=false) {
 	$img = [
 		'src' => site_url(sprintf('app/moon/%02d.png', $key)),
 		'alt' => $phase_name,
+		'title' => $phase_name,
 		'style' => "width: 6em;"
 	];
 	$attrs = [
-		'title' => $phase_name,
 		'style' => "
 			background: #1b1b30;
 			padding:.4em;
+			display:inline-block;
 			"
 	];
-	return sprintf('<figure %s>%s</figure>', \stringify_attributes($attrs), \img($img));
+	return sprintf('<div %s>%s</div>', \stringify_attributes($attrs), \img($img));
 }
 
 }

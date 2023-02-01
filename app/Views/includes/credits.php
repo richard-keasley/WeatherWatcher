@@ -7,7 +7,7 @@ $ul = [
 	['https://moonphases.co.uk/', 'moon images'],
 	['http://www.astropixels.com/', 'Solstice info'],
 	['https://jpgraph.net/', 'JP graph'],
-	['https://github.com/Moskito89/php-moon-phase', 'PHP moon phase calcuations']
+	['https://github.com/Moskito89/php-moon-phase', 'PHP moon phase calculations']
 ];
 foreach($ul as $li) {
 	printf('<li>%s</li>', \anchor($li[0], $li[1]));

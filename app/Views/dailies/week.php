@@ -16,14 +16,16 @@ $this->section('header'); ?>
 <?php $this->endSection();
 
 $this->section('top'); ?>
-<div class="navbar">
-<?php
-echo anchor("dailies/week/{$nav_prev}", ' &lt; ');
-echo anchor("dailies/week/{$nav_next}", ' &gt; ');
-?>
-</div>
-<?php 
-$this->endSection();
+<div class="navbar"><?php
+$anchors = [
+	anchor("dailies/week/{$nav_prev}", '&lt;'),
+	anchor("dailies/week/{$nav_next}", '&gt;')
+];
+foreach($anchors as $anchor) {
+	printf('<button>%s</button>', $anchor);
+}
+?></div>
+<?php $this->endSection();
 
 $this->section('main');
 echo $this->include('dailies/graphs');

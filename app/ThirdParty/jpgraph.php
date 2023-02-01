@@ -45,13 +45,16 @@ static function stroke($jpgraph, $cache_name=null) {
 	// send image back to browser
 	# d($jpgraph); return;
 	
-	if(ENVIRONMENT!='production') $cache_name = null;
+	header('content-type: image/png');
 	
+	if(ENVIRONMENT!='production') $cache_name = null;
+	$cache_time = 14400;
+			
 	if($cache_name) {
+		header("Cache-Control: max-age={$cache_time}");
 		$cache = \Config\Services::cache();
 		$response = $cache->get($cache_name);
 		if($response) {
-			header('content-type: image/png');
 			echo $response; 
 			die;
 		}
@@ -62,7 +65,7 @@ static function stroke($jpgraph, $cache_name=null) {
 	$response = ob_get_flush();
 	
 	if($cache_name) {
-		$success = $cache->save($response, $image, 14400);
+		$success = $cache->save($cache_name, $response, $cache_time);
 	}
 	die;
 }

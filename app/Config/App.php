@@ -9,6 +9,7 @@ class App extends BaseConfig
 {
 	public $latitude = 0.0;
 	public $longitude = 0.0;
+	public $bbc = 0; // look up for BBC weather forecast
 	
 	/**
 	dailies are updated from this source

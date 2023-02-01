@@ -68,6 +68,8 @@ protected function load_data($map) {
 }
 
 private function stroke($data, $options=[]) {
+	// send image back to browser
+	
 	// aggregate data 
 	$data = \App\ThirdParty\jpgraph::aggregate($data);
 	# d($data); die;

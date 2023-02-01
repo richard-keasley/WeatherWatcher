@@ -1,8 +1,12 @@
 <section><?php 
 try {
-	$source = 'https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/2639998';
+	$config = config('App');
+	$id = $config->bbc;
+	if(!$id) throw new \Exception("No BBC id in config");
+	
+	$source = 'https://weather-broker-cdn.api.bbci.co.uk/en/forecast/rss/3day/' . $id;
 	$xml = simplexml_load_file($source);
-	if(!$xml) throw new Exception("Couldn't load $source");
+	if(!$xml) throw new \Exception("Couldn't load {$source}");
 	
 	$channel = $xml->channel;
 	
@@ -37,7 +41,7 @@ try {
 	// */
 	
 }
-catch(Exception $e) {
+catch(\Exception $e) {
 	echo $e->getMessage();
 }
 

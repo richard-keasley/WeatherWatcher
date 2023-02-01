@@ -1,27 +1,39 @@
 <?php $this->extend('template');
-
-$this->section('header'); ?>
-<h1>Daily aggregate of readings</h1>
-<?php $this->endSection();
-
-$this->section('main'); 
-
 $datetime = new \DateTime($date);
 $interval = new \DateInterval("P1D");
+$title = $datetime->format('j M Y');
+
 $datetime->sub($interval);
 $prev = $datetime->format('Y-m-d');
+
 $datetime = new \DateTime($date);
 $datetime->add($interval);
 $next = $datetime->format('Y-m-d');
 
-?>
+$reading = $readings->get_current();
+$value = $reading->datetime ?? null;
+$nav = new \DateTime($value);
+$last = $nav ? $nav->format('Y-m-d') : '#' ;
+
+$reading = $readings->get_first();
+$value = $reading->datetime ?? null;
+$nav = new \DateTime($value);
+$first = $nav ? $nav->format('Y-m-d') : '#' ;
+
+$this->section('header'); ?>
+<h1>Readings for <?php echo $title;?></h1>
+<?php $this->endSection();
+
+$this->section('top'); ?>
 <form method="GET" class="navbar">
 <button><?php echo anchor("readings", ' back ');?></button>	
+<button><?php echo anchor("readings/daily/{$first}", ' |&lt; ');?></button>
 <button><?php echo anchor("readings/daily/{$prev}", ' &lt; ');?></button>
 <button><?php echo anchor("readings/daily/{$next}", ' &gt; ');?></button>
+<button><?php echo anchor("readings/daily/{$last}", ' &gt;| ');?></button>
 </form>
+<?php $this->endSection();
 
-<?php
-echo $this->include('widgets/daily');
-
+$this->section('main');
+echo $this->include('dailies/daily');
 $this->endSection();

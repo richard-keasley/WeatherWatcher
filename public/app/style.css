@@ -80,24 +80,24 @@ header a, footer a {
 	color: var(--theme-color-primary-contrast);
 }
 
-figure {
+figure.graph {
 	border: 1px solid var(--theme-border-color);
 	display: inline-block;
 	margin: .3rem;
 	padding: .3rem;
 	width: 24rem;
 }
-figure a {
+figure.graph a {
 	display:block;
 }
-figure figcaption {
+figure.graph figcaption {
 	border:0;
 	font-weight:bold;
 	margin:0;
 	padding:0;
 	color: var(--theme-color-primary);
 }
-figure img {
+figure.graph img {
 	border: 0 none;
 	display: block;
 	margin: 0;
@@ -169,20 +169,6 @@ table td.null {
 	color: #CCC;
 }
 
-button {
-	border-radius: 0.3em;
-	background-color: var(--theme-color-primary-contrast);
-	color: var(--theme-color-primary);
-	border: 1px solid var(--theme-color-primary);
-	font-size: 0.9rem;
-	font-weight: bold;
-	line-height: 1.6rem;
-	text-align: center;
-	text-decoration: none;
-	box-shadow: none;
-	min-width: 4rem;
-}
-
 section {
 	overflow: hidden;
 }
@@ -241,12 +227,27 @@ section {
 	align-items: center;
 	flex-wrap: wrap;
 }
+
+button {
+	border-radius: 0.3em;
+	background-color: var(--theme-color-primary-contrast);
+	color: var(--theme-color-primary);
+	border: 1px solid var(--theme-color-primary);
+	font-size: 1rem;
+	line-height: 1.6rem;
+	text-align: center;
+	text-decoration: none;
+	box-shadow: none;
+	min-width: 4rem;
+	padding: 0;
+}
+
 .navbar a {
 	text-decoration: none;
 	display: block;
 	padding: 0 0.5em;
 	line-height: 1.7em;
-	background: #EEF;
+	background-color: var(--theme-color-primary-contrast);
 	min-width: 4em;
 	text-align: center;
 	border-radius: .3em;

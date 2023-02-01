@@ -73,7 +73,7 @@ if($api_data) {
 	echo '</p>';
 	
 	d($api_data);
-	if($daily) echo $this->include('widgets/daily');
+	if($daily) echo $this->include('dailies/daily');
 }
 
 

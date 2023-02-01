@@ -74,12 +74,17 @@ window.location.href = '/dailies/custom/' + start + '/' + end;
 
 <div class="navbar">
 <?php
-echo anchor("dailies/custom/{$prev_start}/{$prev_end}", ' &lt; ');
-echo anchor("dailies/custom/{$next_start}/{$next_end}", ' &gt; ');
+$anchors = [
+	anchor("dailies/custom/{$prev_start}/{$prev_end}", ' &lt; '),
+	anchor("dailies/custom/{$next_start}/{$next_end}", ' &gt; ')
+];
 
 $types = ['temperature', 'rain', 'wind', 'solar'];
 foreach($types as $type) {
-	echo anchor("graph/dailies/{$type}/{$start}/{$end}", $type);
+	$anchors[] = anchor("graph/dailies/{$type}/{$start}/{$end}", $type);
+}
+foreach($anchors as $anchor) {
+	printf('<button>%s</button>', $anchor);
 }
 ?>
 </div>

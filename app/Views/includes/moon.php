@@ -1,4 +1,4 @@
-<section><?php
+<section class="moon"><?php
 $datetime = null;
 $moonphase = \App\ThirdParty\moonphase::load($datetime);
 helper('html');

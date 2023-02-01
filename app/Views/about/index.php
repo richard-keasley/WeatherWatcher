@@ -9,5 +9,5 @@ $this->section('header'); ?>
 <?php $this->endSection();
 
 $this->section('bottom');
-echo $this->include('widgets/credits'); 
+echo $this->include('includes/credits'); 
 $this->endSection();

@@ -12,7 +12,7 @@ public function getIndex() {
 	}
 	else $nav = 'current';
 	
-	$val = match($nav) {
+	$reading = match($nav) {
 		'prev' => $this->data['readings']
 			->where('datetime <', $this_dt)
 			->orderBy('datetime', 'desc')
@@ -23,14 +23,14 @@ public function getIndex() {
 			->first(),
 		default => null
 	};
-	if(!$val) {
-		$val = match($nav) {
+	if(!$reading) {
+		$reading = match($nav) {
 			'first' => $this->data['readings']->get_first(),
 			'prev' => $this->data['readings']->get_first(),
 			default => $this->data['readings']->get_current()
 		};
 	}
-	$this->data['reading'] = $val;
+	$this->data['reading'] = $reading;
 		
 	$datetime = new \datetime($this->data['reading']->datetime);
 	$this->data['dt'] = $datetime->format('U');
@@ -42,7 +42,7 @@ public function getIndex() {
 function getDaily($datetime='') {
 	$datetime = $this->get_datetime($datetime, 'value');
 	if(!$datetime) $datetime = new \DateTime;
-		
+			
 	$this->data['date'] = $datetime->format('Y-m-d');
 	$this->data['daily'] = $this->data['readings']->get_daily($datetime);
 	return view('readings/daily', $this->data);
