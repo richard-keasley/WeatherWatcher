@@ -1,38 +1,25 @@
 <?php namespace App\Controllers\Graph;
 
-class Dailies extends Home {
+class Readings extends Home {
 
 private function stroke($map, $options=[]) {
-	// compare to App\Controllers\Dailies::index
 	$segments = $this->request->uri->getSegments();
-	$value = $segments[3] ?? '' ;
-	$dt_start = $this->get_datetime($value, 'value');
-	if(!$dt_start) $dt_start = new \DateTime();
+	$date = $segments[3] ?? 'today' ;
+	$datetime = $this->get_datetime($date, 'value');
+	if(!$datetime) $datetime = new \DateTime;
 	
-	$value = $segments[4] ?? '' ;
-	$dt_end = $this->get_datetime($value, 'value');
-	if(!$dt_end) $dt_end = new \DateTime();
-		
-	if($dt_end<$dt_start) {
-		$swap = $dt_end;
-		$dt_end = $dt_start;
-		$dt_start = $swap;
-	}
-		
-	// check valid dates
-	$model = new \App\Models\Dailies;
-	$dt_first = $model->dt_first();
-	$dt_last = $model->dt_last();
-	if($dt_start<$dt_first) $dt_start = $dt_first;
-	if($dt_start>$dt_last) $dt_start = $dt_last;
-	if($dt_end<$dt_first) $dt_end = $dt_first;
-	if($dt_end>$dt_last) $dt_end = $dt_last;
+	$string = $datetime->format('Y-m-d 00:00:00');
+	$dt_start = new \DateTime($string);
+	$interval = new \DateInterval('PT24H');
+	$dt_next = new \DateTime($string);
+	$dt_next->add($interval);
+	# d($dt_start, $dt_next); return;
 	
 	// check for cached image
 	$cache_name = $segments;
 	$cache_name[3] = $dt_start->format('Ymd');
-	$cache_name[4] = $dt_end->format('Ymd');
 	$this->data['cache_name'] = implode('_', $cache_name);
+	# d($this->data['cache_name']); return;
 	$cache = \Config\Services::cache();
 	$response = $cache->get($this->data['cache_name']);
 	if(ENVIRONMENT=='production' && $response) {
@@ -40,24 +27,29 @@ private function stroke($map, $options=[]) {
 		echo $response;
 		die;
 	}
-		
+	
 	// load data
 	$this->data['dt_start'] = $dt_start;
-	$this->data['dt_end'] = $dt_end;
+	$this->data['dt_next'] = $dt_next;
+	$model = new \App\Models\Readings;
 	$raw_data = $model
-		->where('date >=', $dt_start->format('Y-m-d'))
-		->where('date <=', $dt_end->format('Y-m-d'))
+		->where('datetime >=', $dt_start->format('Y-m-d H:i:s'))
+		->where('datetime <', $dt_next->format('Y-m-d H:i:s'))
 		->findAll();
+	# d($raw_data); return; 
 	
 	// apply map
 	$data = ['label'=>[]];
 	foreach($map as $source=>$dest) {
 		$data[$dest] = [];
 	}
-	foreach($raw_data as $daily) {
-		$data['label'][] = $daily->date;
+	foreach($raw_data as $entity) {
+		$datetime = new \DateTime($entity->datetime);
+		$data['label'][] = $datetime->format('H:i');
+		$readings = array_flatten_with_dots($entity->readings);
+		# d($readings);
 		foreach($map as $source=>$dest) {
-			$data[$dest][] = $daily->$source;
+			$data[$dest][] = $readings[$source];
 		}
 	}
 	# d($data); die;
@@ -115,7 +107,7 @@ private function stroke($map, $options=[]) {
 			$graph->yaxis->title->Set($ytitle);
 		}
 		
-		$title = $options['title'] ?? 'Daily averages';
+		$title = $options['title'] ?? 'Current weather';
 		if($title) $graph->title->Set($title);
 				
 		\App\ThirdParty\jpgraph::stroke($graph, $this->data['cache_name']);
@@ -128,7 +120,7 @@ private function stroke($map, $options=[]) {
 
 public function getRain($start='', $end='') {
 	$map = [
-		'rain_max' => 'rain'
+		'rain.day' => 'rain'
 	];
 	
 	$options = [
@@ -143,33 +135,27 @@ public function getRain($start='', $end='') {
 
 public function getTemperature($start='', $end='') {
 	$map = [
-		'temperature_max' => 'max',
-		'temperature_avg' => 'avg',
-		'temperature_min' => 'min'
+		'temperature.out' => 'temperature'
 	];
 	$options = [
 		'ytitle' => 'Temperature [°C]',
 		'colours' => [
-			'max' => '#c11',
-			'avg' => '#ccc',
-			'min' => '#11c'
+			'temperature' => '#c11'
 		]
 	];
 	$this->stroke($map, $options);
 }
 
 public function getSolar($start='', $end='') {
-
+	// load data
 	$map = [
-		'solar_max' => 'max',
-		'solar_avg' => 'avg'
+		'solar.radiation' => 'solar'
 	];
 	
 	$options = [
 		'ytitle' => 'Solar [W/m²]',
 		'colours' => [
-			'max' => '#c11',
-			'avg' => '#ccc'
+			'solar' => '#c11'
 		]
 	];
 	$this->stroke($map, $options);
@@ -177,15 +163,15 @@ public function getSolar($start='', $end='') {
 
 public function getWind($start='', $end='') {
 	$map = [
-		'wind_max' => 'max',
-		'wind_avg' => 'avg'
+		'wind.speed' => 'speed',
+		'wind.gust' => 'gust'
 	];
 	
 	$options = [
 		'ytitle' => 'Wind [mph]',
 		'colours' => [
-			'max' => '#c11',
-			'avg' => '#ccc'
+			'speed' => '#ccc',
+			'gust' => '#FAA'
 		]
 	];
 	$this->stroke($map, $options);
@@ -193,15 +179,13 @@ public function getWind($start='', $end='') {
 
 public function getHumidity($start='', $end='') {
 	$map = [
-		'humidity_max' => 'max',
-		'humidity_avg' => 'avg'
+		'humidity.out' => 'humidity'
 	];
 	
 	$options = [
 		'ytitle' => 'Humidity [%]',
 		'colours' => [
-			'max' => '#c11',
-			'avg' => '#ccc'
+			'humidity' => '#339'
 		]
 	];
 	$this->stroke($map, $options);

@@ -25,17 +25,20 @@ function __toString() {
 	if(!$dataname) return '';
 	$start = $this->start;
 	if(!$start) return '';
-	$end = $this->end; 
-	if(!$end) return '';
 	
-	if($end<$start) {
-		$swap = $end;
-		$end = $start;
-		$start = $swap;
+	$end = $this->end;
+	if($end) {
+		if($end<$start) {
+			$swap = $end;
+			$end = $start;
+			$start = $swap;
+		}
+		$params = "{$start}/{$end}"; 
 	}
+	else $params = $start; 
 	
 	$translate = [
-		'{src}' => base_url("graph/{$controller}/{$dataname}/{$start}/{$end}"),
+		'{src}' => base_url("graph/{$controller}/{$dataname}/{$params}"),
 		'{caption}' => $dataname
 	];
 	

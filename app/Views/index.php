@@ -12,7 +12,11 @@ for live updates from this weather station.</p>
  
 <section>
 <h3>Current readings</h3>
-<?php echo $this->include('readings/reading'); ?>
+<?php 
+echo $this->include('readings/reading'); 
+echo $this->include('readings/graphs');
+
+?>
 </section>
 
 <div class="flex flex-border">

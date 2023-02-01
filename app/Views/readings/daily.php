@@ -36,4 +36,6 @@ $this->section('top'); ?>
 
 $this->section('main');
 echo $this->include('dailies/daily');
+echo $this->include('readings/graphs');
+
 $this->endSection();

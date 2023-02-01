@@ -21,7 +21,7 @@ static function load($width=0, $height=0, $scale='textlin') {
 	self::include_file('jpgraph');
 	$graph = new \Graph($width, $height);
 	$graph->SetScale($scale);
-	$graph->SetMargin(40, 20, 30, 80);
+	$graph->SetMargin(60, 20, 40, 80);
 	return $graph;
 }
 
