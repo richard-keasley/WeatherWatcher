@@ -34,8 +34,11 @@ $this->section('top'); ?>
 </form>
 <?php $this->endSection();
 
-$this->section('main');
-echo $this->include('dailies/daily');
+$this->section('main'); ?>
+<div class="float-start">
+<?php echo $this->include('dailies/daily'); ?>
+</div>
+<?php 
 echo $this->include('readings/graphs');
 
 $this->endSection();

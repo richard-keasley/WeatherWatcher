@@ -14,7 +14,7 @@ foreach($reading->readings as $section=>$values) {
 			$value = $value['value'] ?? '';
 		}
 		
-		$label = "{$section} {$key}";
+		$label = "{$section} {$key}:";
 		$format = $reading::format($section, $key);
 		$value = sprintf($format, $value);
 		$tbody[] = [$label, $value];
