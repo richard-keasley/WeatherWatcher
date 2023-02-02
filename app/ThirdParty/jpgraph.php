@@ -83,90 +83,49 @@ static function blank($width=0, $height=0) {
 	die;
 }
 
-static function periodise($data, $period='YmdH', $label_format='H:00') {
-	// ensures each item of dataset covers the same amount of time
-	
-	if(empty($data['label'])) return $data; // no change
-	
-	// setup labels
-	$aggregate = ['label'=>[]];
-	foreach($data['label'] as $label) {
-		$datetime = new \DateTime($label);
-		$agg_key = $datetime->format($period);
-		$aggregate['label'][$agg_key] = $datetime->format($label_format);
-	}
-	
-	
-	foreach($data as $dataname=>$dataset) {
-		if($dataname=='label') continue;
-		$agg_series = [];
-		foreach($dataset as $data_key=>$data_value) {
-			$agg_key = floor($agg_ratio * $data_key);
-			if(!isset($agg_series[$agg_key])) {
-				$agg_series[$agg_key] = [];
-			}
-			$agg_series[$agg_key][] = $data_value;
-		}
-		$aggregate[$dataname] = [];
-		foreach($agg_series as $values) {
-			$agg_count = count($values);
-			$aggregate[$dataname][] = match($dataname) {
-				'label' => $values[0],
-				'min' => min($values),
-				'max' => max($values),
-				default => array_sum($values) / count($values)
-			};
-		}
-	}
-	# d($data, $aggregate);  die;	
-	
-	
-	
-}
+static function periodise($data, $key_format='Ymd', $label_format='d/m/y') {
+	/*
+	ensures each item of dataset covers the same amount of time
+	aggregates datasets so there's not too may for grpah
+	ensure 'label' dataset items are datetime
+	key_format: key for each aggregated data item
+	label_format: how the label is formatted
+	*/
 
-static function aggregate($data, $maxrows=96, $minrows=3) {
-	// aggregate large datasets
-	// prevent small datasets from being plotted
-	// only works for datasets with equal time gap between items
-	
-	if(!$data) return [];
-	$dataset = current($data);
-	$data_count = count($dataset);
-	if($data_count < $minrows) return []; // no graph for small datasets
-	// remove empty datasets
-	foreach($data as $dataname=>$dataset) {
-		$nodata = (is_null(min($dataset)) && is_null(max($dataset)));
-		if($nodata) unset($data[$dataname]);
+	// setup category keys
+	$agg_keys = []; $agg_labels = [];
+	foreach($data['label'] as $data_key=>$datetime) {
+		$agg_key = $datetime->format($key_format);
+		$agg_keys[$data_key] = $agg_key;
+		if(!isset($agg_labels[$agg_key])) {
+			$agg_labels[$agg_key] = $datetime->format($label_format);
+		}
 	}
+	# d($agg_keys); die;
 	
-	if(!$maxrows) return $data; // no aggregation
-	if($data_count <= $maxrows) return $data; // no aggregation
-	$agg_ratio = $maxrows / $data_count;
-	# d($data_count, $maxrows, $agg_ratio);
-		
-	$aggregate = [];
+	// aggregate data 	
 	foreach($data as $dataname=>$dataset) {
 		$agg_series = [];
 		foreach($dataset as $data_key=>$data_value) {
-			$agg_key = floor($agg_ratio * $data_key);
+			$agg_key = $agg_keys[$data_key];
 			if(!isset($agg_series[$agg_key])) {
 				$agg_series[$agg_key] = [];
 			}
 			$agg_series[$agg_key][] = $data_value;
 		}
 		$aggregate[$dataname] = [];
-		foreach($agg_series as $values) {
-			$agg_count = count($values);
-			$aggregate[$dataname][] = match($dataname) {
-				'label' => $values[0],
+		foreach($agg_series as $agg_key=>$values) {
+			$value = match($dataname) {
+				'label' => $agg_labels[$agg_key],
 				'min' => min($values),
 				'max' => max($values),
 				default => array_sum($values) / count($values)
 			};
+			$aggregate[$dataname][] = $value;
+			# d($values, $value);
 		}
 	}
-	# d($data, $aggregate);  die;	
-	
+	# d($data, $aggregate);  die;
 	return $aggregate;
 }
 

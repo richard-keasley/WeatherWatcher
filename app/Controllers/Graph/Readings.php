@@ -5,20 +5,23 @@ class Readings extends Home {
 private function stroke($map, $options=[]) {
 	$segments = $this->request->uri->getSegments();
 	$date = $segments[3] ?? 'today' ;
+	
 	$datetime = $this->get_datetime($date, 'value');
 	if(!$datetime) $datetime = new \DateTime;
-	
 	$string = $datetime->format('Y-m-d 00:00:00');
+	if(empty($options['title'])) {
+		$options['title'] = sprintf('Station readings for %s', $datetime->format('j F Y'));
+	}
 	$dt_start = new \DateTime($string);
+
 	$interval = new \DateInterval('PT25H');
 	$dt_next = new \DateTime($string);
 	$dt_next->add($interval);
 	# d($dt_start, $dt_next); return;
 	
 	// check for cached image
-	$cache_name = $segments;
-	$cache_name[3] = $dt_start->format('Ymd');
-	$this->data['cache_name'] = implode('_', $cache_name);
+	$segments[3] = $dt_start->format('Ymd');
+	$this->data['cache_name'] = implode('_', $segments);
 	# d($this->data['cache_name']); return;
 	$cache = \Config\Services::cache();
 	$response = $cache->get($this->data['cache_name']);
@@ -45,7 +48,7 @@ private function stroke($map, $options=[]) {
 	}
 	foreach($raw_data as $entity) {
 		$datetime = new \DateTime($entity->datetime);
-		$data['label'][] = $datetime->format('H:i');
+		$data['label'][] = $entity->get_datetime();
 		$readings = $entity->get_readings();
 #		d($readings); return;
 		foreach($map as $source=>$dest) {
@@ -53,30 +56,19 @@ private function stroke($map, $options=[]) {
 		}
 	}
 	# d($data); die;
-	
-	
-	/*
-	aggregation doesn't work
-	you don't know the period between each observation
-	periods my not be linear
-	need to cycle through dataset and put data in (hourly) categories
-	*/
-	# $test = \App\ThirdParty\jpgraph::periodise($data);
-	# die;
-
-	
-	
 		
-	// aggregate data 
-	$data = \App\ThirdParty\jpgraph::aggregate($data, 25);
+	// aggregate data
+	$data = \App\ThirdParty\jpgraph::periodise($data, 'YmdH', 'H:00');
 	# d($data); die;
-		
+	
 	// send image back to browser
 	$graph = \App\ThirdParty\jpgraph::load();
 	$dataset_count = 0;
 	
 	$colours = $options['colours'] ?? null;
 	$type = $options['type'] ?? 'line';
+	$fillcolor = $options['fillcolor'] ?? null;
+	
 	$labels = null;
 	foreach($data as $dataname=>$dataset) {
 		if($dataname=='label') {
@@ -100,6 +92,7 @@ private function stroke($map, $options=[]) {
 				default:
 				$plot->SetWeight(2);
 				if($colour) $plot->SetColor($colour);
+				if($fillcolor) $plot->Setfillcolor($fillcolor);				
 			}
 		}
 	}
@@ -120,8 +113,7 @@ private function stroke($map, $options=[]) {
 			$graph->yaxis->title->Set($ytitle);
 		}
 		
-		$title = $options['title'] ?? 'Current weather';
-		if($title) $graph->title->Set($title);
+		$graph->title->Set($options['title']);
 				
 		\App\ThirdParty\jpgraph::stroke($graph, $this->data['cache_name']);
 		die;
@@ -131,7 +123,7 @@ private function stroke($map, $options=[]) {
 	die;
 }
 
-public function getRain($start='', $end='') {
+public function getRain($date='') {
 	$map = [
 		'rain_day' => 'rain'
 	];
@@ -139,14 +131,15 @@ public function getRain($start='', $end='') {
 	$options = [
 		'ytitle' => 'Rainfall [mm]',
 		'colours' => [
-			'rain' => '#66F'
+			'rain' => "#66F"
 		],
-		'type' => 'bar'
+		'fillcolor' => "#66F",
+		# 'type' => 'bar'
 	];
 	$this->stroke($map, $options);		
 }
 
-public function getTemperature($start='', $end='') {
+public function getTemperature($date='') {
 	$map = [
 		'temperature_out' => 'temperature'
 	];
@@ -159,7 +152,7 @@ public function getTemperature($start='', $end='') {
 	$this->stroke($map, $options);
 }
 
-public function getSolar($start='', $end='') {
+public function getSolar($date='') {
 	// load data
 	$map = [
 		'solar_radiation' => 'solar'
@@ -174,7 +167,7 @@ public function getSolar($start='', $end='') {
 	$this->stroke($map, $options);
 }
 
-public function getWind($start='', $end='') {
+public function getWind($date='') {
 	$map = [
 		'wind_speed' => 'speed',
 		'wind_gust' => 'gust'
@@ -190,7 +183,7 @@ public function getWind($start='', $end='') {
 	$this->stroke($map, $options);
 }
 
-public function getHumidity($start='', $end='') {
+public function getHumidity($date='') {
 	$map = [
 		'humidity_out' => 'humidity'
 	];

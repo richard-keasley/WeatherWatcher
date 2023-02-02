@@ -55,17 +55,31 @@ private function stroke($map, $options=[]) {
 		$data[$dest] = [];
 	}
 	foreach($raw_data as $daily) {
-		$data['label'][] = $daily->date;
+		$data['label'][] = $daily->get_date();
 		foreach($map as $source=>$dest) {
 			$data[$dest][] = $daily->$source;
 		}
 	}
 	# d($data); die;
 		
-	// aggregate data 
-	$data = \App\ThirdParty\jpgraph::aggregate($data);
-	# d($data); die;
-		
+	// aggregate data
+	$span = intval($dt_start->diff($dt_end)->format('%a'));
+	$key_format = null;
+	$label_format = null;
+	
+	if($span>100) {
+		$key_format = 'Y_W';
+		$label_format = 'd/m/y';
+	}
+	if($span>700) {
+		\App\ThirdParty\jpgraph::blank();
+		die;
+	}
+	if($key_format && $label_format) {
+		$data = \App\ThirdParty\jpgraph::periodise($data, $key_format, $label_format);
+		# d($span, $data); die;
+	}
+	
 	// send image back to browser
 	$graph = \App\ThirdParty\jpgraph::load();
 	$dataset_count = 0;
@@ -105,7 +119,7 @@ private function stroke($map, $options=[]) {
 		if($labels) {
 			$graph->xaxis->SetTickLabels($labels);
 			$graph->xaxis->SetLabelAngle(90);
-			$interval = intval(count($labels)/20) + 1;
+			$interval = intval(count($labels)/17.5) + 1;
 			$graph->xaxis->SetTextLabelInterval($interval);
 		}
 		$graph->xaxis->SetPos("min");
