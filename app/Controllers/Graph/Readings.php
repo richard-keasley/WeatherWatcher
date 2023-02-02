@@ -10,7 +10,7 @@ private function stroke($map, $options=[]) {
 	
 	$string = $datetime->format('Y-m-d 00:00:00');
 	$dt_start = new \DateTime($string);
-	$interval = new \DateInterval('PT24H');
+	$interval = new \DateInterval('PT25H');
 	$dt_next = new \DateTime($string);
 	$dt_next->add($interval);
 	# d($dt_start, $dt_next); return;
@@ -34,7 +34,7 @@ private function stroke($map, $options=[]) {
 	$model = new \App\Models\Readings;
 	$raw_data = $model
 		->where('datetime >=', $dt_start->format('Y-m-d H:i:s'))
-		->where('datetime <', $dt_next->format('Y-m-d H:i:s'))
+		->where('datetime <=', $dt_next->format('Y-m-d H:i:s'))
 		->findAll();
 	# d($raw_data); return; 
 	
@@ -46,16 +46,29 @@ private function stroke($map, $options=[]) {
 	foreach($raw_data as $entity) {
 		$datetime = new \DateTime($entity->datetime);
 		$data['label'][] = $datetime->format('H:i');
-		$readings = array_flatten_with_dots($entity->readings);
-		# d($readings);
+		$readings = $entity->get_readings();
+#		d($readings); return;
 		foreach($map as $source=>$dest) {
 			$data[$dest][] = $readings[$source];
 		}
 	}
 	# d($data); die;
+	
+	
+	/*
+	aggregation doesn't work
+	you don't know the period between each observation
+	periods my not be linear
+	need to cycle through dataset and put data in (hourly) categories
+	*/
+	# $test = \App\ThirdParty\jpgraph::periodise($data);
+	# die;
+
+	
+	
 		
 	// aggregate data 
-	$data = \App\ThirdParty\jpgraph::aggregate($data);
+	$data = \App\ThirdParty\jpgraph::aggregate($data, 25);
 	# d($data); die;
 		
 	// send image back to browser
@@ -97,7 +110,7 @@ private function stroke($map, $options=[]) {
 		if($labels) {
 			$graph->xaxis->SetTickLabels($labels);
 			$graph->xaxis->SetLabelAngle(90);
-			$interval = intval(count($labels)/20) + 1;
+			$interval = 1;#intval(count($labels)/24) + 1;
 			$graph->xaxis->SetTextLabelInterval($interval);
 		}
 		$graph->xaxis->SetPos("min");
@@ -120,7 +133,7 @@ private function stroke($map, $options=[]) {
 
 public function getRain($start='', $end='') {
 	$map = [
-		'rain.day' => 'rain'
+		'rain_day' => 'rain'
 	];
 	
 	$options = [
@@ -135,7 +148,7 @@ public function getRain($start='', $end='') {
 
 public function getTemperature($start='', $end='') {
 	$map = [
-		'temperature.out' => 'temperature'
+		'temperature_out' => 'temperature'
 	];
 	$options = [
 		'ytitle' => 'Temperature [°C]',
@@ -149,7 +162,7 @@ public function getTemperature($start='', $end='') {
 public function getSolar($start='', $end='') {
 	// load data
 	$map = [
-		'solar.radiation' => 'solar'
+		'solar_radiation' => 'solar'
 	];
 	
 	$options = [
@@ -163,8 +176,8 @@ public function getSolar($start='', $end='') {
 
 public function getWind($start='', $end='') {
 	$map = [
-		'wind.speed' => 'speed',
-		'wind.gust' => 'gust'
+		'wind_speed' => 'speed',
+		'wind_gust' => 'gust'
 	];
 	
 	$options = [
@@ -179,7 +192,7 @@ public function getWind($start='', $end='') {
 
 public function getHumidity($start='', $end='') {
 	$map = [
-		'humidity.out' => 'humidity'
+		'humidity_out' => 'humidity'
 	];
 	
 	$options = [

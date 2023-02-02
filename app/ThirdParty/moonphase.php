@@ -12,8 +12,6 @@ static function load($datetime=null) {
 }
 
 static function img($moonphase, $test=false) {
-	\helper('html');
-	
 	$phase = $moonphase->getPhase();
 	$phase_name = $moonphase->getPhaseName();
 	$key = round($phase * 16) % 16; // 16 images

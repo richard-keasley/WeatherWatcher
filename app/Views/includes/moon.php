@@ -1,7 +1,6 @@
 <section class="moon"><?php
 $datetime = null;
 $moonphase = \App\ThirdParty\moonphase::load($datetime);
-helper('html');
 ?>
 <div class="float-start"><?php 
 echo \App\ThirdParty\moonphase::img($moonphase); 

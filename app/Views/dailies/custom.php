@@ -1,6 +1,4 @@
 <?php $this->extend('template');
-helper('form');
-helper('inflector');
 
 $dt_start = new \DateTime($start);
 $dt_end = new \DateTime($end);

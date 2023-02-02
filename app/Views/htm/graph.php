@@ -6,10 +6,10 @@ public $dataname = null;
 public $start = null;
 public $end = null;
 public $template = 
-'<figure class="graph">
+'<div class="graph"><figure>
 <a href="{src}"><img src="{src}"></a>
 <figcaption>{caption}</figcaption>
-</figure>';
+</figure></div>';
 
 function __construct($controller='dailies', $dataname='temperature', $start=null, $end=null) {
 	$this->controller = $controller;

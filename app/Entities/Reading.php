@@ -10,6 +10,29 @@ protected $casts = [
 	'inputs'	=> 'json-array',
 ];
 
+function get_readings($format_values=false) {
+	$retval = [];
+	foreach($this->readings as $section=>$values) {
+		foreach($values as $key=>$value) {
+			
+			
+			// remove this once old readings are deleted
+			if(is_array($value)) {
+				$value = $value['value'] ?? '';
+			}
+			// 
+			
+			if($format_values) {
+				$format = self::format($section, $key);
+				$value = sprintf($format, $value);
+			}
+	
+			$retval["{$section}_{$key}"] = $value;
+		}
+	}
+	return $retval;
+}
+
 function get_datetime($format=null) {
 	// datetime is saved as UTC/GMT string
 	// convert to local time
@@ -21,6 +44,7 @@ function get_datetime($format=null) {
 }
 
 const formats = [
+'count' => '%u',
 'temperature' => '%.1f&deg;C',
 'pressure' => '%umbar',
 'humidity' => '%u%%',

@@ -39,6 +39,7 @@ $this->section('main'); ?>
 <?php echo $this->include('dailies/daily'); ?>
 </div>
 <?php 
-echo $this->include('readings/graphs');
-
+if($daily->count > 3) {
+	echo $this->include('readings/graphs');
+}
 $this->endSection();

@@ -5,7 +5,9 @@
 	--theme-color-hover: #A32600;
 	--theme-color: #633;
 	--theme-background: #fafafa;
+	--theme-bg-light: #F9EFEC;
 	--theme-border-color: #d7bebe;
+	--theme-border-light: #eae1e1;
 }
 
 body {
@@ -62,7 +64,7 @@ hr {
 }
 
 pre {
-	background: #eee;
+	background: var(--theme-bg-light);
 	overflow-x: scroll;
 	padding: 0.5em;
 	margin: 0;
@@ -80,24 +82,29 @@ header a, footer a {
 	color: var(--theme-color-primary-contrast);
 }
 
-figure.graph {
-	border: 1px solid var(--theme-border-color);
+
+.graph {
 	display: inline-block;
+	width: 24rem;
+	max-width: 100%;
+}
+.graph figure {
+	border: 1px solid var(--theme-border-color);
+	display: block;
 	margin: .3rem;
 	padding: .3rem;
-	width: 24rem;
 }
-figure.graph a {
+.graph figure a {
 	display:block;
 }
-figure.graph figcaption {
+.graph figure figcaption {
 	border:0;
 	font-weight:bold;
 	margin:0;
 	padding:0;
 	color: var(--theme-color-primary);
 }
-figure.graph img {
+.graph figure img {
 	border: 0 none;
 	display: block;
 	margin: 0;
@@ -113,24 +120,25 @@ dl dd {
 	margin: 0.5em 0 0.5em 0.5em;
 }
 
+
+
 .table {
 	border-collapse: collapse;
 }
-.table td {
-	border: 1px solid #CCC;
+.table tbody td, .table tfoot td {
+	border: 1px solid var(--theme-border-light);
+	color: var(--theme-color);
+	background: var(--theme-background);
 	padding: 0 1em;
 	white-space: nowrap;
+	
 }
-.table tbody td, 
-.table tfoot td { 
-	background: #EEE; 
-}
-.table thead td, 
-.table thead th {
-	background: #FFF;
-	color: #600;
-	border: 1px solid #999;
+.table thead td, .table thead th {
+	background: var(--theme-bg-light);
+	color: var(--theme-color-primary);
+	border: 1px solid var(--theme-border-color);
 	font-weight: bold;
+	padding: 0 1em;
 }
 
 .table-list {
@@ -138,7 +146,7 @@ dl dd {
 	border-spacing: 0;
 }
 .table-list td {
-	padding: 0.15em 0;
+	padding: 0.15em .5em;
 	border: 0;
 	background: transparent;
 }
@@ -146,6 +154,13 @@ dl dd {
 	text-align: right;
 	padding-right: 0.5em;
 	font-weight: bold;
+}
+.table-list td:first-child::after {
+	content: ':';
+}
+
+.table-list .row-alt td {
+	background: var(--theme-bg-light);
 }
 
 
@@ -166,8 +181,10 @@ table td.text-end {
 	text-align: right;
 }
 table td.null {
-	color: #CCC;
+	color: var(--theme-border-light);
 }
+
+
 
 section {
 	overflow: hidden;
@@ -253,18 +270,23 @@ button {
 	border-radius: .3em;
 }
 .navbar a:hover {
-	background: #FEE;
+	background: var(--theme-bg-light);
 }
 
+
+@media (min-width: 40em) {
+ 
 .float-start {
 	float: left;
-	margin: 0 0.5em 0 0;
+	margin: 0 1em 1em 0;
 	max-width: 50%;
 }
 .float-end {
 	float: right;
-	margin: 0 0.5em 0 0;
+	margin: 0 0 1em 1em;
 	max-width: 50%;
+}
+
 }
 
 /*

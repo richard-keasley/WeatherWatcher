@@ -7,7 +7,8 @@ const templates = [
 	'table_close' => '</table></div>'
 ],
 'list' => [
-	'table_open' => '<table class="table-list">'
+	'table_open' => '<table class="table-list">',
+	'row_alt_start'  => '<tr class="row-alt">',
 ],
 'striped' => [
 	'table_open' => '<table class="table table-striped">'

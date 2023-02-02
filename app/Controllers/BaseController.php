@@ -34,7 +34,7 @@ protected $request;
  *
  * @var array
  */
-protected $helpers = [];
+protected $helpers = ['form', 'inflector', 'html'];
 
 protected $data = [
 	'title' => 'base-camp weather',

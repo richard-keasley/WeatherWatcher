@@ -2,9 +2,10 @@
 if(empty($daily)) { 
 	echo '<p class="error">No data</p>';
 } else {
-	helper('inflector');
+	printf('<p><strong>%s</strong></p>', $daily->get_date('j F Y'));
+	
 	$tbody = [];
-	foreach($daily->toArray() as $key=>$val) {
+	foreach($daily->toArray() as $key=>$value) {
 		$parts = explode('_', $key);
 		$rsec = match($parts[0]) {
 			'uvi' => 'solar',
@@ -18,9 +19,12 @@ if(empty($daily)) {
 			default => ''
 		};
 		$format = \App\Entities\Reading::format($rsec, $rkey);
-		$label = humanize($key) . ':';
-		$val = sprintf($format, $val);
-		$tbody[] = [$label, $val];
+		
+		#d($rsec, $rkey, $format);
+		
+		$label = humanize($key);
+		$value = sprintf($format, $value);
+		$tbody[] = [$label, $value];
 	}
 	
 	$table = \App\Views\Htm\table::load('list');

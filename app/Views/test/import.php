@@ -1,6 +1,4 @@
 <?php $this->extend('template');
-helper('form');
-helper('inflector');
 
 $table = new \CodeIgniter\View\Table();
 

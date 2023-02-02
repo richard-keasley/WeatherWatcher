@@ -1,13 +1,12 @@
 <?php $this->extend('template');
 
 $this->section('header'); ?>
-<h1>Readings</h1>
+<h1>Conditions (<?php echo $reading->get_datetime('j F Y H:i');?>)</h1>
 <?php $this->endSection();
 
 $this->section('top'); ?>
 <form method="GET" class="navbar">
 <?php
-helper('form');
 $input = [
 	'type' => 'hidden',
 	'name' => 'dt',

@@ -1,23 +1,20 @@
 <?php $this->extend('template');
-helper('form');
-helper('inflector');
 
-$interval = new \DateInterval('P1D');
+$this->section('header'); 
 $datetime = new \DateTime($start);
 $title = $datetime->format('j F Y');
-$datetime->sub($interval);
-$nav_prev = $datetime->format('Y-m-d');
-
-$datetime = new \DateTime($start);
-$datetime->add($interval);
-$nav_next = $datetime->format('Y-m-d');
-
-$this->section('header'); ?>
+?>
 <h1>Daily archive - <?php echo $title;?></h1>
 <?php $this->endSection();
 
 $this->section('top'); ?>
 <div class="navbar"><?php
+$interval = new \DateInterval('P1D');
+$datetime = new \DateTime($start);
+$nav_prev = $datetime->sub($interval)->format('Y-m-d');
+$datetime = new \DateTime($start);
+$nav_next = $datetime->add($interval)->format('Y-m-d');
+
 $anchors = [
 	anchor("dailies/day/{$nav_prev}", '&lt;'),
 	anchor("dailies/day/{$nav_next}", '&gt;')

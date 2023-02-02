@@ -1,6 +1,5 @@
 <?php $this->extend('template');
-helper('form');
-helper('inflector');
+
 $interval = new \DateInterval('P7D');
 $datetime = new \DateTime($start);
 $title = $datetime->format('l j F Y');

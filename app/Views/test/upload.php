@@ -4,14 +4,7 @@ $this->section('header'); ?>
 <p>Warning: Exit development mode when you're done testing.</p>
 <?php $this->endSection();
 
-$this->section('main');
-helper('form');
-helper('inflector');
-
-if($message) {
-	echo "<p><strong>{$message}</strong></p>";
-}
-
+$this->section('main');if($message) {	echo "<p><strong>{$message}</strong></p>";}
 $action = 'upload'; # upload;
 echo form_open($action);
 

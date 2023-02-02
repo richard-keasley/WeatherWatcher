@@ -1,5 +1,4 @@
 <section><?php
-helper('inflector');
 $config = config('App');
 $now = time();
 $suninfo = App\ThirdParty\suninfo::load($now, $config->latitude, $config->longitude);

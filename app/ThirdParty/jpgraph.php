@@ -83,9 +83,51 @@ static function blank($width=0, $height=0) {
 	die;
 }
 
+static function periodise($data, $period='YmdH', $label_format='H:00') {
+	// ensures each item of dataset covers the same amount of time
+	
+	if(empty($data['label'])) return $data; // no change
+	
+	// setup labels
+	$aggregate = ['label'=>[]];
+	foreach($data['label'] as $label) {
+		$datetime = new \DateTime($label);
+		$agg_key = $datetime->format($period);
+		$aggregate['label'][$agg_key] = $datetime->format($label_format);
+	}
+	
+	
+	foreach($data as $dataname=>$dataset) {
+		if($dataname=='label') continue;
+		$agg_series = [];
+		foreach($dataset as $data_key=>$data_value) {
+			$agg_key = floor($agg_ratio * $data_key);
+			if(!isset($agg_series[$agg_key])) {
+				$agg_series[$agg_key] = [];
+			}
+			$agg_series[$agg_key][] = $data_value;
+		}
+		$aggregate[$dataname] = [];
+		foreach($agg_series as $values) {
+			$agg_count = count($values);
+			$aggregate[$dataname][] = match($dataname) {
+				'label' => $values[0],
+				'min' => min($values),
+				'max' => max($values),
+				default => array_sum($values) / count($values)
+			};
+		}
+	}
+	# d($data, $aggregate);  die;	
+	
+	
+	
+}
+
 static function aggregate($data, $maxrows=96, $minrows=3) {
 	// aggregate large datasets
 	// prevent small datasets from being plotted
+	// only works for datasets with equal time gap between items
 	
 	if(!$data) return [];
 	$dataset = current($data);

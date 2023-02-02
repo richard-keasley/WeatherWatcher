@@ -14,7 +14,6 @@ try {
 	
 	$image = $channel->image;
 		
-	helper('html');
 	$src = new \CodeIgniter\HTTP\URI($image->url ?? '');
 	$src->setScheme('https');
 	$img = [
