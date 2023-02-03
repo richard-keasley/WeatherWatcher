@@ -5,7 +5,6 @@ class Readings extends Home {
 private function stroke($map, $options=[]) {
 	$segments = $this->request->uri->getSegments();
 	$date = $segments[3] ?? 'today' ;
-	
 	$datetime = $this->get_datetime($date, 'value');
 	if(!$datetime) $datetime = new \DateTime;
 	$string = $datetime->format('Y-m-d 00:00:00');
@@ -14,17 +13,13 @@ private function stroke($map, $options=[]) {
 	}
 	$dt_start = new \DateTime($string);
 
-	$interval = new \DateInterval('PT25H');
-	$dt_next = new \DateTime($string);
-	$dt_next->add($interval);
-	# d($dt_start, $dt_next); return;
-	
 	// check for cached image
-	$segments[3] = $dt_start->format('Ymd');
-	$this->data['cache_name'] = implode('_', $segments);
-	# d($this->data['cache_name']); return;
 	$cache = \Config\Services::cache();
-	$response = $cache->get($this->data['cache_name']);
+	$segments[3] = $dt_start->format('Ymd');
+	$cache_name = implode('_', $segments);
+	$version = $this->request->getGet('v');
+	$response = $version ? false : $cache->get($cache_name);
+	# d($cache_name); echo $response ? 'cached' : 'not cached'; return;
 	if(ENVIRONMENT=='production' && $response) {
 		header('content-type: image/png');
 		echo $response;
@@ -32,25 +27,24 @@ private function stroke($map, $options=[]) {
 	}
 	
 	// load data
-	$this->data['dt_start'] = $dt_start;
-	$this->data['dt_next'] = $dt_next;
+	$interval = new \DateInterval('PT25H');
+	$dt_end = new \DateTime($string);
+	$dt_end->add($interval);
+	# d($dt_start, $dt_end); return;
 	$model = new \App\Models\Readings;
 	$raw_data = $model
 		->where('datetime >=', $dt_start->format('Y-m-d H:i:s'))
-		->where('datetime <=', $dt_next->format('Y-m-d H:i:s'))
+		->where('datetime <=', $dt_end->format('Y-m-d H:i:s'))
 		->findAll();
 	# d($raw_data); return; 
 	
 	// apply map
 	$data = ['label'=>[]];
-	foreach($map as $source=>$dest) {
-		$data[$dest] = [];
-	}
+	foreach($map as $source=>$dest) $data[$dest] = [];
 	foreach($raw_data as $entity) {
 		$datetime = new \DateTime($entity->datetime);
 		$data['label'][] = $entity->get_datetime();
 		$readings = $entity->get_readings();
-#		d($readings); return;
 		foreach($map as $source=>$dest) {
 			$data[$dest][] = $readings[$source];
 		}
@@ -115,7 +109,7 @@ private function stroke($map, $options=[]) {
 		
 		$graph->title->Set($options['title']);
 				
-		\App\ThirdParty\jpgraph::stroke($graph, $this->data['cache_name']);
+		\App\ThirdParty\jpgraph::stroke($graph, $cache_name);
 		die;
 	}
 	

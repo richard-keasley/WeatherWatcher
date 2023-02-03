@@ -34,8 +34,20 @@ function __toString() {
 			$start = $swap;
 		}
 		$params = "{$start}/{$end}"; 
+		$dt_check = new \DateTime($end);
 	}
-	else $params = $start; 
+	else {
+		$params = $start;
+		$dt_check = new \DateTime($start);
+	}
+	
+	// stop current data being cached
+	$dt_now = new \DateTime;
+	$format = 'Ymd'; // only check day
+	if($dt_check->format($format)>=$dt_now->format($format)) {
+		$params .= '?v=' . $dt_now->format('YmdHi');
+	}
+	# return "<p>{$params}</p>";
 	
 	$translate = [
 		'{src}' => base_url("graph/{$controller}/{$dataname}/{$params}"),

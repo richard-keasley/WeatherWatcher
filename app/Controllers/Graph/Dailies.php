@@ -29,12 +29,13 @@ private function stroke($map, $options=[]) {
 	if($dt_end>$dt_last) $dt_end = $dt_last;
 	
 	// check for cached image
-	$cache_name = $segments;
-	$cache_name[3] = $dt_start->format('Ymd');
-	$cache_name[4] = $dt_end->format('Ymd');
-	$this->data['cache_name'] = implode('_', $cache_name);
 	$cache = \Config\Services::cache();
-	$response = $cache->get($this->data['cache_name']);
+	$segments[3] = $dt_start->format('Ymd');
+	$segments[4] = $dt_end->format('Ymd');
+	$cache_name = implode('_', $segments);
+	$version = $this->request->getGet('v');
+	$response = $version ? false : $cache->get($cache_name);
+	# d($cache_name); echo $response ? 'cached' : 'not cached'; return;
 	if(ENVIRONMENT=='production' && $response) {
 		header('content-type: image/png');
 		echo $response;
@@ -42,8 +43,6 @@ private function stroke($map, $options=[]) {
 	}
 		
 	// load data
-	$this->data['dt_start'] = $dt_start;
-	$this->data['dt_end'] = $dt_end;
 	$raw_data = $model
 		->where('date >=', $dt_start->format('Y-m-d'))
 		->where('date <=', $dt_end->format('Y-m-d'))
@@ -51,9 +50,7 @@ private function stroke($map, $options=[]) {
 	
 	// apply map
 	$data = ['label'=>[]];
-	foreach($map as $source=>$dest) {
-		$data[$dest] = [];
-	}
+	foreach($map as $source=>$dest) $data[$dest] = [];
 	foreach($raw_data as $daily) {
 		$data['label'][] = $daily->get_date();
 		foreach($map as $source=>$dest) {
@@ -63,22 +60,14 @@ private function stroke($map, $options=[]) {
 	# d($data); die;
 		
 	// aggregate data
+	$key_format = 'Ymd';
+	$label_format = 'd/m/y';
 	$span = intval($dt_start->diff($dt_end)->format('%a'));
-	$key_format = null;
-	$label_format = null;
-	
 	if($span>100) {
 		$key_format = 'Y_W';
-		$label_format = 'd/m/y';
 	}
-	if($span>700) {
-		\App\ThirdParty\jpgraph::blank();
-		die;
-	}
-	if($key_format && $label_format) {
-		$data = \App\ThirdParty\jpgraph::periodise($data, $key_format, $label_format);
-		# d($span, $data); die;
-	}
+	$data = \App\ThirdParty\jpgraph::periodise($data, $key_format, $label_format);
+	# d($span, $data); die;
 	
 	// send image back to browser
 	$graph = \App\ThirdParty\jpgraph::load();
@@ -132,7 +121,7 @@ private function stroke($map, $options=[]) {
 		$title = $options['title'] ?? 'Daily averages';
 		if($title) $graph->title->Set($title);
 				
-		\App\ThirdParty\jpgraph::stroke($graph, $this->data['cache_name']);
+		\App\ThirdParty\jpgraph::stroke($graph, $cache_name);
 		die;
 	}
 	

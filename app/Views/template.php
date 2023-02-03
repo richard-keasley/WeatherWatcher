@@ -16,7 +16,17 @@ ToDo: mobile app
 </head>
 <body>
 
-<header><?php $this->renderSection('header');?></header>
+<header class="flex">
+<div><?php
+$img = [
+	'src' => 'app/header.png',
+	'style' => "width:5em;"
+];
+$label = img($img);
+echo anchor('/', $label);
+?></div>
+<div><?php $this->renderSection('header');?></div>
+</header>
 <main>
 <?php if(!empty($this->sections['top'])) { ?>
 	<section class="top">
