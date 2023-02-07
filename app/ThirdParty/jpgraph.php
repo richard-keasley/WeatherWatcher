@@ -86,7 +86,7 @@ static function blank($width=0, $height=0) {
 static function periodise($data, $key_format='Ymd', $label_format='d/m/y') {
 	/*
 	ensures each item of dataset covers the same amount of time
-	aggregates datasets so there's not too may for grpah
+	aggregates datasets so there's not too many for graph
 	ensure 'label' dataset items are datetime
 	key_format: key for each aggregated data item
 	label_format: how the label is formatted
@@ -104,6 +104,7 @@ static function periodise($data, $key_format='Ymd', $label_format='d/m/y') {
 	# d($agg_keys); die;
 	
 	// aggregate data 	
+	$aggregate = [];
 	foreach($data as $dataname=>$dataset) {
 		$agg_series = [];
 		foreach($dataset as $data_key=>$data_value) {

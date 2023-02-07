@@ -34,20 +34,57 @@ private function stroke($map, $options=[]) {
 		
 	// aggregate data
 	$key_format = 'W';
-	$label_format = 'd-m-y';
+	$label_format = 'W';
 	$data = \App\ThirdParty\jpgraph::periodise($data, $key_format, $label_format);
+	# d($data); # die;
 
 	// sort data
-	// starting from today
-	
-	
 	foreach($data as $dataname=>$values) {
 		if($dataname=='label') continue;
 		$order = $data['label'];
-		# array_multisort($order, $data[$dataname]);
+		array_multisort($order, $data[$dataname]);
 	}
-	# sort($data['label']);
+	sort($data['label']);
 	
+	// find key for today
+	$datetime = new \DateTime();
+	$now_label = $datetime->format('W');
+	$start_key = array_search($now_label, $data['label']);
+	
+	// friendly labels
+	$dt_label = new \DateTime('1999-12-25'); 
+	$week = new \DateInterval('P7D');
+	foreach($data['label'] as $key=>$value) {
+		$data['label'][$key] = $dt_label->add($week)->format('d M');
+	}
+	
+	// re-sort to make today last
+	$sorted = [];
+	foreach($data as $dataname=>$values) {
+		unset($values['52']); // discard last day, too much noise
+		$last_key = count($values) - 1;
+		for($key=$start_key+1; $key<=$last_key; $key++) {
+			$sorted[$dataname][] = $values[$key];
+		}
+		for($key=0; $key<=$start_key; $key++) {
+			$sorted[$dataname][] = $values[$key];		}
+	}
+	# d($sorted);d($data); die;
+	$data = $sorted;
+
+	// get current data
+	$mapkey = array_key_first($map);
+	$datetime = new \DateTime();
+	$year = new \DateInterval('P1Y');
+	$start = $datetime->sub($year)->format('Y-m-d');
+	$current = [];
+	$raw_data = $model->orderBy('date')->where('date >', $start)->findAll();
+	foreach($raw_data as $daily) {
+		$current[] = $daily->$mapkey;
+		
+	}
+	# d($data, $current); 	die;
+
 	// send image back to browser
 	$graph = \App\ThirdParty\jpgraph::load();
 	$dataset_count = 0;
@@ -87,7 +124,7 @@ private function stroke($map, $options=[]) {
 		if($labels) {
 			$graph->xaxis->SetTickLabels($labels);
 			$graph->xaxis->SetLabelAngle(90);
-			$interval = intval(count($labels)/17.5) + 1;
+			$interval = 4; #intval(count($labels)/17.5) + 1;
 			$graph->xaxis->SetTextLabelInterval($interval);
 		}
 		$graph->xaxis->SetPos("min");
@@ -125,8 +162,8 @@ public function getRain($start='', $end='') {
 
 public function getTemperature($start='', $end='') {
 	$map = [
-		'temperature_max' => 'max',
 		'temperature_avg' => 'avg',
+		'temperature_max' => 'max',
 		'temperature_min' => 'min'
 	];
 	$options = [
@@ -143,8 +180,8 @@ public function getTemperature($start='', $end='') {
 public function getSolar($start='', $end='') {
 
 	$map = [
-		'solar_max' => 'max',
-		'solar_avg' => 'avg'
+		'solar_avg' => 'avg',
+		'solar_max' => 'max'
 	];
 	
 	$options = [
@@ -159,8 +196,8 @@ public function getSolar($start='', $end='') {
 
 public function getWind($start='', $end='') {
 	$map = [
-		'wind_max' => 'max',
-		'wind_avg' => 'avg'
+		'wind_avg' => 'avg',
+		'wind_max' => 'max'
 	];
 	
 	$options = [
@@ -175,8 +212,8 @@ public function getWind($start='', $end='') {
 
 public function getHumidity($start='', $end='') {
 	$map = [
-		'humidity_max' => 'max',
-		'humidity_avg' => 'avg'
+		'humidity_avg' => 'avg',
+		'humidity_max' => 'max'
 	];
 	
 	$options = [
