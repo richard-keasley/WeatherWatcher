@@ -7,8 +7,8 @@ public $start = null;
 public $end = null;
 public $template = 
 '<div class="graph"><figure>
-<a href="{src}"><img src="{src}"></a>
 <figcaption>{caption}</figcaption>
+<a href="{src}"><img src="{src}"></a>
 </figure></div>';
 
 function __construct($controller='dailies', $dataname='temperature', $start=null, $end=null) {

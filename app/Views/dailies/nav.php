@@ -8,6 +8,11 @@ $views = ['custom'];
 foreach($views as $view) {
 	$anchors[] = anchor("dailies/{$view}/{$start}/{$end}", humanize($view));
 }
+$views = ['averages'];
+foreach($views as $view) {
+	$anchors[] = anchor("dailies/{$view}", humanize($view));
+}
+
 foreach($anchors as $anchor) {
 	printf('<button>%s</button>', $anchor);
 }

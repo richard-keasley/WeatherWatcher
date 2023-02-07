@@ -177,7 +177,7 @@ dl dd {
 	top: 0;
 }
 
-table td.text-end {
+.text-end {
 	text-align: right;
 }
 table td.null {

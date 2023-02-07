@@ -44,16 +44,19 @@ foreach($inputs as $label=>$input) {
 		form_input($input)
 	];
 }
-$tbody[] = ['', '<button type="button" onclick="sendform()">OK</button>'];
 $table = \App\Views\Htm\table::load('list');
 $table->autoHeading = false;
-echo $table->generate($tbody);
+?><div>
+<?php echo $table->generate($tbody); ?>
+<div class="text-end"><button type="button" onclick="sendform()">OK</button></div>
+</div>
+<?php
 
 $tbody = [
-	['Max span:', $max_range->format('%d days')],
-	['This span:', $interval->days . ' days'],
-	['First daily:', $dt_first->format('d/m/y')],
-	['Last daily:', $dt_last->format('d/m/y')]
+	['Max span', $max_range->format('%d days')],
+	['This span', $interval->days . ' days'],
+	['First daily', $dt_first->format('d/m/y')],
+	['Last daily', $dt_last->format('d/m/y')]
 ];
 $table->autoHeading = false;
 echo $table->generate($tbody);

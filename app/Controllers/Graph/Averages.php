@@ -1,39 +1,12 @@
 <?php namespace App\Controllers\Graph;
 
-class Readings extends Home {
+class Averages extends Home {
 
 private function stroke($map, $options=[]) {
 	$segments = $this->request->uri->getSegments();
-	$title = $options['title'] ?? '' ;
-	
-	$start = $segments[3] ?? '' ;
-	$dt_start = $this->get_datetime($start, 'value');
-	if(!$dt_start) $dt_start = new \DateTime('today');
-		
-	$end = $segments[4] ?? '' ;
-	$dt_end = $this->get_datetime($end, 'value');
-	if($dt_end) {
-		if($dt_end<$dt_start) {
-			$swap = $dt_end;
-			$dt_end = $dt_start;
-			$dt_start = $swap;
-		}
-		if(!$title) $title = sprintf('Station readings: %s-%s', $dt_start->format('d/m/y'), $dt_end->format('d/m/y'));
-	}
-	else {
-		// get daily according to dt_start 
-		$start = $dt_start->format('Y-m-d 00:00:00');
-		$dt_start = new \DateTime($start);
-		$interval = new \DateInterval('PT24H');
-		$dt_end = new \DateTime($start);
-		$dt_end->add($interval);
-		if(!$title) $title = sprintf('Station readings for %s', $dt_start->format('j F Y'));
-	}
 	
 	// check for cached image
 	$cache = \Config\Services::cache();
-	$segments[3] = $dt_start->format('YmdHi');
-	$segments[4] = $dt_end->format('YmdHi');
 	$cache_name = implode('_', $segments);
 	$version = $this->request->getGet('v');
 	$response = $version ? false : $cache->get($cache_name);
@@ -43,31 +16,37 @@ private function stroke($map, $options=[]) {
 		echo $response;
 		die;
 	}
-	
+		
 	// load data
-	$model = new \App\Models\Readings;
-	$raw_data = $model
-		->where('datetime >=', $dt_start->format('Y-m-d H:i:s'))
-		->where('datetime <', $dt_end->format('Y-m-d H:i:s'))
-		->findAll();
-	# d($raw_data); return; 
+	$model = new \App\Models\Dailies;	
+	$raw_data = $model->orderBy('date')->findAll();
 	
 	// apply map
 	$data = ['label'=>[]];
 	foreach($map as $source=>$dest) $data[$dest] = [];
-	foreach($raw_data as $entity) {
-		$datetime = new \DateTime($entity->datetime);
-		$data['label'][] = $entity->get_datetime();
-		$readings = $entity->get_readings();
+	foreach($raw_data as $daily) {
+		$data['label'][] = $daily->get_date();
 		foreach($map as $source=>$dest) {
-			$data[$dest][] = $readings[$source];
+			$data[$dest][] = $daily->$source;
 		}
 	}
 	# d($data); die;
 		
 	// aggregate data
-	$data = \App\ThirdParty\jpgraph::periodise($data, 'YmdH', 'H:00');
-	# d($data); die;
+	$key_format = 'W';
+	$label_format = 'd-m-y';
+	$data = \App\ThirdParty\jpgraph::periodise($data, $key_format, $label_format);
+
+	// sort data
+	// starting from today
+	
+	
+	foreach($data as $dataname=>$values) {
+		if($dataname=='label') continue;
+		$order = $data['label'];
+		# array_multisort($order, $data[$dataname]);
+	}
+	# sort($data['label']);
 	
 	// send image back to browser
 	$graph = \App\ThirdParty\jpgraph::load();
@@ -75,8 +54,6 @@ private function stroke($map, $options=[]) {
 	
 	$colours = $options['colours'] ?? null;
 	$type = $options['type'] ?? 'line';
-	$fillcolor = $options['fillcolor'] ?? null;
-	
 	$labels = null;
 	foreach($data as $dataname=>$dataset) {
 		if($dataname=='label') {
@@ -100,7 +77,6 @@ private function stroke($map, $options=[]) {
 				default:
 				$plot->SetWeight(2);
 				if($colour) $plot->SetColor($colour);
-				if($fillcolor) $plot->Setfillcolor($fillcolor);				
 			}
 		}
 	}
@@ -111,7 +87,7 @@ private function stroke($map, $options=[]) {
 		if($labels) {
 			$graph->xaxis->SetTickLabels($labels);
 			$graph->xaxis->SetLabelAngle(90);
-			$interval = intval(count($labels)/25) + 1;
+			$interval = intval(count($labels)/17.5) + 1;
 			$graph->xaxis->SetTextLabelInterval($interval);
 		}
 		$graph->xaxis->SetPos("min");
@@ -121,7 +97,8 @@ private function stroke($map, $options=[]) {
 			$graph->yaxis->title->Set($ytitle);
 		}
 		
-		$graph->title->Set($title);
+		$title = $options['title'] ?? 'Daily averages';
+		if($title) $graph->title->Set($title);
 				
 		\App\ThirdParty\jpgraph::stroke($graph, $cache_name);
 		die;
@@ -133,43 +110,48 @@ private function stroke($map, $options=[]) {
 
 public function getRain($start='', $end='') {
 	$map = [
-		'rain_day' => 'rain'
+		'rain_max' => 'rain'
 	];
 	
 	$options = [
 		'ytitle' => 'Rainfall [mm]',
 		'colours' => [
-			'rain' => "#66F"
+			'rain' => '#66F'
 		],
-		'fillcolor' => "#66F",
-		# 'type' => 'bar'
+		'type' => 'bar'
 	];
 	$this->stroke($map, $options);		
 }
 
 public function getTemperature($start='', $end='') {
 	$map = [
-		'temperature_out' => 'temperature'
+		'temperature_max' => 'max',
+		'temperature_avg' => 'avg',
+		'temperature_min' => 'min'
 	];
 	$options = [
 		'ytitle' => 'Temperature [°C]',
 		'colours' => [
-			'temperature' => '#c11'
+			'max' => '#c11',
+			'avg' => '#ccc',
+			'min' => '#11c'
 		]
 	];
 	$this->stroke($map, $options);
 }
 
 public function getSolar($start='', $end='') {
-	// load data
+
 	$map = [
-		'solar_radiation' => 'solar'
+		'solar_max' => 'max',
+		'solar_avg' => 'avg'
 	];
 	
 	$options = [
 		'ytitle' => 'Solar [W/m²]',
 		'colours' => [
-			'solar' => '#c11'
+			'max' => '#c11',
+			'avg' => '#ccc'
 		]
 	];
 	$this->stroke($map, $options);
@@ -177,15 +159,15 @@ public function getSolar($start='', $end='') {
 
 public function getWind($start='', $end='') {
 	$map = [
-		'wind_speed' => 'speed',
-		'wind_gust' => 'gust'
+		'wind_max' => 'max',
+		'wind_avg' => 'avg'
 	];
 	
 	$options = [
 		'ytitle' => 'Wind [mph]',
 		'colours' => [
-			'speed' => '#ccc',
-			'gust' => '#FAA'
+			'max' => '#c11',
+			'avg' => '#ccc'
 		]
 	];
 	$this->stroke($map, $options);
@@ -193,13 +175,15 @@ public function getWind($start='', $end='') {
 
 public function getHumidity($start='', $end='') {
 	$map = [
-		'humidity_out' => 'humidity'
+		'humidity_max' => 'max',
+		'humidity_avg' => 'avg'
 	];
 	
 	$options = [
 		'ytitle' => 'Humidity [%]',
 		'colours' => [
-			'humidity' => '#339'
+			'max' => '#c11',
+			'avg' => '#ccc'
 		]
 	];
 	$this->stroke($map, $options);
