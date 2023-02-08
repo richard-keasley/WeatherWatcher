@@ -4,32 +4,33 @@ class Readings extends Home {
 
 private function stroke($map, $options=[]) {
 	$segments = $this->request->uri->getSegments();
-	$title = $options['title'] ?? '' ;
 	
-	$start = $segments[3] ?? '' ;
-	$dt_start = $this->get_datetime($start, 'value');
+	$string = $segments[3] ?? '' ;
+	$dt_start = $this->get_datetime($string, 'value');
+	$string = $segments[4] ?? '' ;
+	$dt_end = $this->get_datetime($string, 'value');
 	if(!$dt_start) $dt_start = new \DateTime('today');
-		
-	$end = $segments[4] ?? '' ;
-	$dt_end = $this->get_datetime($end, 'value');
-	if($dt_end) {
-		if($dt_end<$dt_start) {
-			$swap = $dt_end;
-			$dt_end = $dt_start;
-			$dt_start = $swap;
-		}
-		if(!$title) $title = sprintf('Station readings: %s-%s', $dt_start->format('d/m/y'), $dt_end->format('d/m/y'));
-	}
-	else {
-		// get daily according to dt_start 
-		$start = $dt_start->format('Y-m-d 00:00:00');
-		$dt_start = new \DateTime($start);
-		$interval = new \DateInterval('PT24H');
-		$dt_end = new \DateTime($start);
-		$dt_end->add($interval);
-		if(!$title) $title = sprintf('Station readings for %s', $dt_start->format('j F Y'));
-	}
 	
+	$title = $options['title'] ?? '' ;
+	if(!$title) {
+		$title = 'Station readings: ';
+		$title .= $dt_end ? 
+			$dt_start->format('d/m/y') . '-' . $dt_end->format('d/m/y') :
+			$dt_start->format('j F Y');
+	}
+	// don't set dt_end until title is set
+	if(!$dt_end) $dt_end = clone $dt_start; // get daily according to dt_start 
+	# d($dt_start, $dt_end);
+		
+	if($dt_end<$dt_start) {
+		$swap = $dt_end;
+		$dt_end = $dt_start;
+		$dt_start = $swap;
+	}
+	$oneday = new \DateInterval('PT24H');
+	$dt_end->add($oneday);
+	# d($dt_start, $dt_end); die;
+		
 	// check for cached image
 	$cache = \Config\Services::cache();
 	$segments[3] = $dt_start->format('YmdHi');
@@ -69,14 +70,15 @@ private function stroke($map, $options=[]) {
 	$data = \App\ThirdParty\jpgraph::periodise($data, 'YmdH', 'H:00');
 	# d($data); die;
 	
-	// send image back to browser
-	$graph = \App\ThirdParty\jpgraph::load();
-	$dataset_count = 0;
 	
 	$colours = $options['colours'] ?? null;
 	$type = $options['type'] ?? 'line';
 	$fillcolor = $options['fillcolor'] ?? null;
-	
+	$y2 = $options['y2'] ?? '#none#';
+		
+	// send image back to browser
+	$graph = \App\ThirdParty\jpgraph::load();
+	$dataset_count = 0;
 	$labels = null;
 	foreach($data as $dataname=>$dataset) {
 		if($dataname=='label') {
@@ -85,7 +87,13 @@ private function stroke($map, $options=[]) {
 		else {
 			$dataset_count++;
 			$plot = \App\ThirdParty\jpgraph::plot($type, $dataset);
-			$graph->Add($plot);
+			if($dataname===$y2) {
+				$graph->SetY2Scale('lin');
+				$graph->AddY2($plot);
+			}
+			else {
+				$graph->Add($plot);
+			}
 			$plot->SetLegend($dataname);
 			$colour = $colours[$dataname] ?? null;
 			switch($type) {
@@ -200,6 +208,22 @@ public function getHumidity($start='', $end='') {
 		'ytitle' => 'Humidity [%]',
 		'colours' => [
 			'humidity' => '#339'
+		]
+	];
+	$this->stroke($map, $options);
+}
+
+public function getIndoors($start='', $end='') {
+	$map = [
+		'temperature_in' => 'temperature',
+		'humidity_in' => 'humidity'
+	];
+	$options = [
+		'ytitle' => 'Temperature [°C] / Humidity [%]',
+		# 'y2' => 'humidity',
+		'colours' => [
+			'temperature' => '#c11',
+			'humidity' => '#444'
 		]
 	];
 	$this->stroke($map, $options);

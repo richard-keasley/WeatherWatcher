@@ -39,12 +39,12 @@ public function getIndex() {
 	return view('readings/index', $this->data);
 }
 
-function getDaily($datetime='') {
-	$datetime = $this->get_datetime($datetime, 'value');
-	if(!$datetime) $datetime = new \DateTime;
+function getDaily($start='') {
+	$dt_start = $this->get_datetime($start, 'value');
+	if(!$dt_start) $dt_start = new \DateTime;
 			
-	$this->data['date'] = $datetime->format('Y-m-d');
-	$this->data['daily'] = $this->data['readings']->get_daily($datetime);
+	$this->data['start'] = $dt_start->format('Y-m-d');
+	$this->data['daily'] = $this->data['readings']->get_daily($dt_start);
 	return view('readings/daily', $this->data);
 }
 

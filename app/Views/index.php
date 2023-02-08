@@ -15,6 +15,7 @@ $this->section('main'); ?>
 </div>
 <?php 
 echo $this->include('readings/graphs'); 
+echo new \App\Views\Htm\graph('readings', 'indoors', $start, $end);
 $this->endSection();
 
 $this->section('bottom'); ?>

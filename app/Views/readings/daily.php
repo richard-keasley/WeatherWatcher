@@ -1,12 +1,12 @@
 <?php $this->extend('template');
-$datetime = new \DateTime($date);
+$datetime = new \DateTime($start);
 $interval = new \DateInterval("P1D");
 $title = $datetime->format('j M Y');
 
 $datetime->sub($interval);
 $prev = $datetime->format('Y-m-d');
 
-$datetime = new \DateTime($date);
+$datetime = new \DateTime($start);
 $datetime->add($interval);
 $next = $datetime->format('Y-m-d');
 
