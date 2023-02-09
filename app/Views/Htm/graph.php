@@ -23,34 +23,29 @@ function __toString() {
 	if(!$controller) return '';
 	$dataname = $this->dataname;
 	if(!$dataname) return '';
+	
 	$start = $this->start;
-	if(!$start) return '';
-	
 	$end = $this->end;
-	if($end) {
-		if($end<$start) {
-			$swap = $end;
-			$end = $start;
-			$start = $swap;
-		}
-		$params = "{$start}/{$end}"; 
-		$dt_check = new \DateTime($end);
-	}
-	else {
-		$params = $start;
-		$dt_check = new \DateTime($start);
-	}
 	
+	$src = ['graph', $controller, $dataname];
+	if($start) $src[] = $start;
+	if($end) $src[] = $end;
+	$src = implode('/', $src);
+		
 	// stop current data being cached
-	$dt_now = new \DateTime;
-	$format = 'Ymd'; // only check day
-	if($dt_check->format($format)>=$dt_now->format($format)) {
-		$params .= '?v=' . $dt_now->format('YmdHi');
+	$check = max($end, $start);
+	$dt_check = $check ? new \DateTime($check) : null;
+	if($dt_check) {
+		$dt_now = new \DateTime;
+		$format = 'Ymd'; // only check day
+		if($dt_check->format($format)>=$dt_now->format($format)) {
+			$src .= '?v=' . $dt_now->format('YmdHi');
+		}
 	}
-	# return "<p>{$params}</p>";
+	# return "<p>{$src}</p>";
 	
 	$translate = [
-		'{src}' => base_url("graph/{$controller}/{$dataname}/{$params}"),
+		'{src}' => base_url($src),
 		'{caption}' => $dataname
 	];
 	

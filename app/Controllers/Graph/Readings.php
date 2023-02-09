@@ -3,13 +3,10 @@
 class Readings extends Home {
 
 private function stroke($map, $options=[]) {
-	$segments = $this->request->uri->getSegments();
+	$segments = $this->getSegments();
 	
-	$string = $segments[3] ?? '' ;
-	$dt_start = $this->get_datetime($string, 'value');
-	$string = $segments[4] ?? '' ;
-	$dt_end = $this->get_datetime($string, 'value');
-	if(!$dt_start) $dt_start = new \DateTime('today');
+	$dt_start = $segments['dt_start'] ?? new \DateTime('today');
+	$dt_end = $segments['dt_end'] ?? null;
 	
 	$title = $options['title'] ?? '' ;
 	if(!$title) {
@@ -22,28 +19,11 @@ private function stroke($map, $options=[]) {
 	if(!$dt_end) $dt_end = clone $dt_start; // get daily according to dt_start 
 	# d($dt_start, $dt_end);
 		
-	if($dt_end<$dt_start) {
-		$swap = $dt_end;
-		$dt_end = $dt_start;
-		$dt_start = $swap;
-	}
 	$oneday = new \DateInterval('PT24H');
 	$dt_end->add($oneday);
 	# d($dt_start, $dt_end); die;
-		
-	// check for cached image
-	$cache = \Config\Services::cache();
-	$segments[3] = $dt_start->format('YmdHi');
-	$segments[4] = $dt_end->format('YmdHi');
-	$cache_name = implode('_', $segments);
-	$version = $this->request->getGet('v');
-	$response = $version ? false : $cache->get($cache_name);
-	# d($cache_name); echo $response ? 'cached' : 'not cached'; return;
-	if(ENVIRONMENT=='production' && $response) {
-		header('content-type: image/png');
-		echo $response;
-		die;
-	}
+	
+	$cache_name = $this->check_cache($segments);
 	
 	// load data
 	$model = new \App\Models\Readings;
@@ -69,8 +49,7 @@ private function stroke($map, $options=[]) {
 	// aggregate data
 	$data = \App\ThirdParty\jpgraph::periodise($data, 'YmdH', 'H:00');
 	# d($data); die;
-	
-	
+		
 	$colours = $options['colours'] ?? null;
 	$type = $options['type'] ?? 'line';
 	$fillcolor = $options['fillcolor'] ?? null;

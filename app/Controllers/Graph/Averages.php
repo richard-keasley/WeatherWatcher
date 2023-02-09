@@ -3,20 +3,11 @@
 class Averages extends Home {
 
 private function stroke($map, $options=[]) {
-	$segments = $this->request->uri->getSegments();
+	$segments = $this->getSegments();
+	$segments['dt_start'] = new \DateTime('today');
+	$cache_name = $this->check_cache($segments);
+	# d($segments, $cache_name); die;
 	
-	// check for cached image
-	$cache = \Config\Services::cache();
-	$cache_name = implode('_', $segments);
-	$version = $this->request->getGet('v');
-	$response = $version ? false : $cache->get($cache_name);
-	# d($cache_name); echo $response ? 'cached' : 'not cached'; return;
-	if(ENVIRONMENT=='production' && $response) {
-		header('content-type: image/png');
-		echo $response;
-		die;
-	}
-		
 	// load data
 	$model = new \App\Models\Dailies;	
 	$raw_data = $model->orderBy('date')->findAll();
@@ -31,59 +22,61 @@ private function stroke($map, $options=[]) {
 		}
 	}
 	# d($data); die;
-		
+	
+	// get current data
+	$mapkey = array_key_first($map);
+	
+	$datetime = new \DateTime('today');
+	$end = $datetime->format('Y-m-d');
+	$year = new \DateInterval('P1Y');
+	$start = $datetime->sub($year)->format('Y-m-d');
+	$current = ['label'=>[], 'current'=>[]];
+	$raw_data = $model->orderBy('date')->where('date >=', $start)->where('date <', $end)->findAll();
+	foreach($raw_data as $daily) {
+		$current['label'][] = $daily->get_date();
+		$current['current'][] = $daily->$mapkey;
+	}
+			
 	// aggregate data
 	$key_format = 'W';
 	$label_format = 'W';
 	$data = \App\ThirdParty\jpgraph::periodise($data, $key_format, $label_format);
-	# d($data); # die;
-
-	// sort data
-	foreach($data as $dataname=>$values) {
-		if($dataname=='label') continue;
-		$order = $data['label'];
-		array_multisort($order, $data[$dataname]);
+	$current = \App\ThirdParty\jpgraph::periodise($current, $key_format, $label_format);
+	
+	// sort and join datasets, starting a year ago
+	$combined = [];
+	$wk_format = '%02u';
+	foreach($current['current'] as $key=>$value) {	
+		$wknum = sprintf($wk_format, $current['label'][$key]);
+		$combined[$wknum]['current'] = $value;
 	}
-	sort($data['label']);
-	
-	// find key for today
-	$datetime = new \DateTime();
-	$now_label = $datetime->format('W');
-	$start_key = array_search($now_label, $data['label']);
-	
+	foreach($data as $dataname=>$dataset) {
+		if($dataname=='label') continue;
+		foreach($dataset as $key=>$value) {
+			$wknum = sprintf($wk_format, $data['label'][$key]);
+			$combined[$wknum][$dataname] = $value;
+		}
+	}
 	// friendly labels
 	$dt_label = new \DateTime('1999-12-25'); 
 	$week = new \DateInterval('P7D');
-	foreach($data['label'] as $key=>$value) {
-		$data['label'][$key] = $dt_label->add($week)->format('d M');
-	}
 	
-	// re-sort to make today last
-	$sorted = [];
-	foreach($data as $dataname=>$values) {
-		unset($values['52']); // discard last day, too much noise
-		$last_key = count($values) - 1;
-		for($key=$start_key+1; $key<=$last_key; $key++) {
-			$sorted[$dataname][] = $values[$key];
-		}
-		for($key=0; $key<=$start_key; $key++) {
-			$sorted[$dataname][] = $values[$key];		}
+	for($key=1; $key<53; $key++) {
+		$wknum = sprintf($wk_format, $key);
+		$combined[$wknum]['label'] = $dt_label->add($week)->format('d M');
 	}
-	# d($sorted);d($data); die;
-	$data = $sorted;
+	unset($combined['53']); // discard week 53, too much noise
+	# d($data, $current, $combined); return;
 
-	// get current data
-	$mapkey = array_key_first($map);
-	$datetime = new \DateTime();
-	$year = new \DateInterval('P1Y');
-	$start = $datetime->sub($year)->format('Y-m-d');
-	$current = [];
-	$raw_data = $model->orderBy('date')->where('date >', $start)->findAll();
-	foreach($raw_data as $daily) {
-		$current[] = $daily->$mapkey;
-		
+	// convert so graph can read it
+	$data = [];
+	foreach($combined as $key=>$row) {
+		foreach($row as $dataname=>$value) {
+			$data[$dataname][] = $value;
+		}
 	}
-	# d($data, $current); 	die;
+	# d($data); return;
+	
 
 	// send image back to browser
 	$graph = \App\ThirdParty\jpgraph::load();
@@ -145,7 +138,7 @@ private function stroke($map, $options=[]) {
 	die;
 }
 
-public function getRain($start='', $end='') {
+public function getRain() {
 	$map = [
 		'rain_max' => 'rain'
 	];
@@ -153,14 +146,14 @@ public function getRain($start='', $end='') {
 	$options = [
 		'ytitle' => 'Rainfall [mm]',
 		'colours' => [
-			'rain' => '#66F'
-		],
-		'type' => 'bar'
+			'rain' => '#66F',
+			'current' => '#090'
+		]
 	];
 	$this->stroke($map, $options);		
 }
 
-public function getTemperature($start='', $end='') {
+public function getTemperature() {
 	$map = [
 		'temperature_avg' => 'avg',
 		'temperature_max' => 'max',
@@ -169,15 +162,16 @@ public function getTemperature($start='', $end='') {
 	$options = [
 		'ytitle' => 'Temperature [°C]',
 		'colours' => [
-			'max' => '#c11',
-			'avg' => '#ccc',
-			'min' => '#11c'
+			'max' => '#E99',
+			'avg' => '#C8C8C8',
+			'min' => '#99E',
+			'current' => '#090'
 		]
 	];
 	$this->stroke($map, $options);
 }
 
-public function getSolar($start='', $end='') {
+public function getSolar() {
 
 	$map = [
 		'solar_avg' => 'avg',
@@ -188,13 +182,14 @@ public function getSolar($start='', $end='') {
 		'ytitle' => 'Solar [W/m²]',
 		'colours' => [
 			'max' => '#c11',
-			'avg' => '#ccc'
+			'avg' => '#ccc',
+			'current' => '#090'
 		]
 	];
 	$this->stroke($map, $options);
 }
 
-public function getWind($start='', $end='') {
+public function getWind() {
 	$map = [
 		'wind_avg' => 'avg',
 		'wind_max' => 'max'
@@ -204,13 +199,14 @@ public function getWind($start='', $end='') {
 		'ytitle' => 'Wind [mph]',
 		'colours' => [
 			'max' => '#c11',
-			'avg' => '#ccc'
+			'avg' => '#ccc',
+			'current' => '#090'
 		]
 	];
 	$this->stroke($map, $options);
 }
 
-public function getHumidity($start='', $end='') {
+public function getHumidity() {
 	$map = [
 		'humidity_avg' => 'avg',
 		'humidity_max' => 'max'
@@ -220,7 +216,8 @@ public function getHumidity($start='', $end='') {
 		'ytitle' => 'Humidity [%]',
 		'colours' => [
 			'max' => '#c11',
-			'avg' => '#ccc'
+			'avg' => '#ccc',
+			'current' => '#090'
 		]
 	];
 	$this->stroke($map, $options);

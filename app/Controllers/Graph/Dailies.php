@@ -4,21 +4,11 @@ class Dailies extends Home {
 
 private function stroke($map, $options=[]) {
 	// compare to App\Controllers\Dailies::index
-	$segments = $this->request->uri->getSegments();
-	$value = $segments[3] ?? '' ;
-	$dt_start = $this->get_datetime($value, 'value');
-	if(!$dt_start) $dt_start = new \DateTime();
+	$segments = $this->getSegments();
 	
-	$value = $segments[4] ?? '' ;
-	$dt_end = $this->get_datetime($value, 'value');
-	if(!$dt_end) $dt_end = new \DateTime();
-		
-	if($dt_end<$dt_start) {
-		$swap = $dt_end;
-		$dt_end = $dt_start;
-		$dt_start = $swap;
-	}
-		
+	$dt_start = $segments['dt_start'] ?? new \DateTime();
+	$dt_end = $segments['dt_end'] ?? new \DateTime();
+			
 	// check valid dates
 	$model = new \App\Models\Dailies;
 	$dt_first = $model->dt_first();
@@ -28,19 +18,9 @@ private function stroke($map, $options=[]) {
 	if($dt_end<$dt_first) $dt_end = $dt_first;
 	if($dt_end>$dt_last) $dt_end = $dt_last;
 	
-	// check for cached image
-	$cache = \Config\Services::cache();
-	$segments[3] = $dt_start->format('Ymd');
-	$segments[4] = $dt_end->format('Ymd');
-	$cache_name = implode('_', $segments);
-	$version = $this->request->getGet('v');
-	$response = $version ? false : $cache->get($cache_name);
-	# d($cache_name); echo $response ? 'cached' : 'not cached'; return;
-	if(ENVIRONMENT=='production' && $response) {
-		header('content-type: image/png');
-		echo $response;
-		die;
-	}
+	$segments['dt_start'] = $dt_start;
+	$segments['dt_end'] = $dt_end;
+	$cache_name = $this->check_cache($segments);
 		
 	// load data
 	$raw_data = $model

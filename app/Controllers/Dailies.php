@@ -125,13 +125,6 @@ function getAverages() {
 	$datetime = new \DateTime;	
 	$this->data['start'] = $datetime->format('Y-m-d');
 	$this->data['end'] = $datetime->format('Y-m-d');
-
-	$model = new \App\Models\Dailies;
-	$this->data['dailies'] = $model->orderBy('date')->findAll();
-	
-	
-	
-	
 	return view('dailies/averages', $this->data);
 }
 
