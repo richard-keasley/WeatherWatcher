@@ -60,7 +60,6 @@ private function stroke($map, $options=[]) {
 	// friendly labels
 	$dt_label = new \DateTime('1999-12-25'); 
 	$week = new \DateInterval('P7D');
-	
 	for($key=1; $key<53; $key++) {
 		$wknum = sprintf($wk_format, $key);
 		$combined[$wknum]['label'] = $dt_label->add($week)->format('d M');
@@ -146,7 +145,7 @@ public function getRain() {
 	$options = [
 		'ytitle' => 'Rainfall [mm]',
 		'colours' => [
-			'rain' => '#66F',
+			'rain' => '#CCE',
 			'current' => '#090'
 		]
 	];
@@ -172,17 +171,15 @@ public function getTemperature() {
 }
 
 public function getSolar() {
-
 	$map = [
-		'solar_avg' => 'avg',
-		'solar_max' => 'max'
+		'solar_avg' => 'avg'
 	];
 	
 	$options = [
 		'ytitle' => 'Solar [W/m²]',
 		'colours' => [
-			'max' => '#c11',
-			'avg' => '#ccc',
+			'max' => '#Fcc',
+			'avg' => '#C8C8C8',
 			'current' => '#090'
 		]
 	];
@@ -191,15 +188,13 @@ public function getSolar() {
 
 public function getWind() {
 	$map = [
-		'wind_avg' => 'avg',
-		'wind_max' => 'max'
+		'wind_avg' => 'avg'
 	];
 	
 	$options = [
 		'ytitle' => 'Wind [mph]',
 		'colours' => [
-			'max' => '#c11',
-			'avg' => '#ccc',
+			'avg' => '#C8C8C8',
 			'current' => '#090'
 		]
 	];
@@ -208,15 +203,14 @@ public function getWind() {
 
 public function getHumidity() {
 	$map = [
-		'humidity_avg' => 'avg',
-		'humidity_max' => 'max'
+		'humidity_avg' => 'avg'
 	];
 	
 	$options = [
 		'ytitle' => 'Humidity [%]',
 		'colours' => [
 			'max' => '#c11',
-			'avg' => '#ccc',
+			'avg' => '#C8C8C8',
 			'current' => '#090'
 		]
 	];

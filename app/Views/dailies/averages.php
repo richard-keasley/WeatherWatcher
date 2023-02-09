@@ -8,7 +8,8 @@ $this->section('top');
 $this->endSection();
 
 $this->section('main'); ?>
-<p>Averages over the year.</p>
+<p>Averages over the year. 
+The "current" line shows recorded values for the last 12 months.</p>
 <section class="flex"><?php
 $datanames = ['temperature', 'rain', 'humidity', 'wind', 'solar'];
 foreach($datanames as $dataname) {

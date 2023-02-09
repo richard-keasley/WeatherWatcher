@@ -116,14 +116,22 @@ static function periodise($data, $key_format='Ymd', $label_format='d/m/y') {
 		}
 		$aggregate[$dataname] = [];
 		foreach($agg_series as $agg_key=>$values) {
-			$value = match($dataname) {
-				'label' => $agg_labels[$agg_key],
-				'min' => min($values),
-				'max' => max($values),
-				default => array_sum($values) / count($values)
-			};
+			$buffer = [];
+			foreach($values as $value) {
+				// strip out missing readings
+				if(!is_null($value)) $buffer[] = $value;
+			}
+			if($buffer) {
+				$value = match($dataname) {
+					'label' => $agg_labels[$agg_key],
+					'min' => min($buffer),
+					'max' => max($buffer),
+					default => array_sum($buffer) / count($buffer)
+				};
+			}
+			else $value = null;
 			$aggregate[$dataname][] = $value;
-			# d($values, $value);
+			# d($buffer, $value);
 		}
 	}
 	# d($data, $aggregate);  die;
