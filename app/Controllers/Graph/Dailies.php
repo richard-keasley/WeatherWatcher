@@ -37,7 +37,7 @@ private function stroke($map, $options=[]) {
 			$data[$dest][] = $daily->$source;
 		}
 	}
-	# d($data); die;
+	# d($raw_data, $data); return;
 		
 	// aggregate data
 	$key_format = 'Ymd';
@@ -47,7 +47,7 @@ private function stroke($map, $options=[]) {
 		$key_format = 'Y_W';
 	}
 	$data = \App\ThirdParty\jpgraph::periodise($data, $key_format, $label_format);
-	# d($span, $data); die;
+	# d($span, $data); return;
 	
 	// send image back to browser
 	$graph = \App\ThirdParty\jpgraph::load();

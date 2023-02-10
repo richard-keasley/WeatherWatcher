@@ -1,9 +1,9 @@
 */*.env
+.env
 app/ThirdParty/*/*
 ci/*
-writable/*
+custom/*
 public/.well-known/*
 public/app/test/*
 public/error_log
-.env
-custom/about.php
+writable/*

@@ -3,7 +3,7 @@ if(!$reading) return;
 ?>
 <section>
 <?php
-printf('<p>Time: %s</p>', $reading->get_datetime('j M Y H:i'));
+printf('<p><strong>%s</strong></p>', $reading->get_datetime('j M Y H:i'));
 
 $tbody = [];
 foreach($reading->get_readings(true) as $key=>$value) {

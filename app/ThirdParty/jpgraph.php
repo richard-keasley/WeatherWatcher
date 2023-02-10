@@ -48,7 +48,7 @@ static function stroke($jpgraph, $cache_name=null) {
 	header('content-type: image/png');
 	
 	if(ENVIRONMENT!='production') $cache_name = null;
-	$cache_time = 14400;
+	$cache_time = 86400; // one day
 			
 	if($cache_name) {
 		header("Cache-Control: max-age={$cache_time}");
@@ -114,7 +114,9 @@ static function periodise($data, $key_format='Ymd', $label_format='d/m/y') {
 			}
 			$agg_series[$agg_key][] = $data_value;
 		}
-		$aggregate[$dataname] = [];
+
+		$dataset_buffer = [];
+		$has_data = false;
 		foreach($agg_series as $agg_key=>$values) {
 			$buffer = [];
 			foreach($values as $value) {
@@ -122,6 +124,7 @@ static function periodise($data, $key_format='Ymd', $label_format='d/m/y') {
 				if(!is_null($value)) $buffer[] = $value;
 			}
 			if($buffer) {
+				$has_data = true;
 				$value = match($dataname) {
 					'label' => $agg_labels[$agg_key],
 					'min' => min($buffer),
@@ -130,9 +133,11 @@ static function periodise($data, $key_format='Ymd', $label_format='d/m/y') {
 				};
 			}
 			else $value = null;
-			$aggregate[$dataname][] = $value;
+			$dataset_buffer[] = $value;
 			# d($buffer, $value);
 		}
+		// don't add empty datasets
+		if($has_data) $aggregate[$dataname] = $dataset_buffer;
 	}
 	# d($data, $aggregate);  die;
 	return $aggregate;

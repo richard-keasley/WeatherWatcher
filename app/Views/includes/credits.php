@@ -4,6 +4,7 @@
 <ul>
 <?php
 $ul = [
+	['https://realfavicongenerator.net/', 'Favicon Generator'],
 	['https://moonphases.co.uk/', 'moon images'],
 	['http://www.astropixels.com/', 'Solstice info'],
 	['https://jpgraph.net/', 'JP graph'],

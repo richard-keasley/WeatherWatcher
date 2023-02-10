@@ -1,6 +1,14 @@
 <?php $this->extend('template');
 
 $this->section('main');
+
+$img = [
+	'src' => 'app/header.png',
+	'class' => "float-end"
+];
+	echo anchor('/', img($img));
+
+
 echo new \App\Views\Htm\custom('about');
 $this->endSection();
 

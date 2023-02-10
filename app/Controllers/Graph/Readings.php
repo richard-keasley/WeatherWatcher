@@ -17,7 +17,7 @@ private function stroke($map, $options=[]) {
 	}
 	// don't set dt_end until title is set
 	if(!$dt_end) $dt_end = clone $dt_start; // get daily according to dt_start 
-	# d($dt_start, $dt_end);
+	# d($segments, $dt_start, $dt_end); return;
 		
 	$oneday = new \DateInterval('PT24H');
 	$dt_end->add($oneday);

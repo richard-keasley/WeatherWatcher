@@ -1,10 +1,10 @@
 :root {
+	--theme-color-text: #633;
 	--theme-color-primary: #B22900;
-	--theme-color-primary-contrast: #f7f7fd;
+	--theme-color-contrast: #f7f7fd;
 	--theme-color-link: #C62E00;
 	--theme-color-hover: #A32600;
-	--theme-color: #633;
-	--theme-background: #fafafa;
+	--theme-bg-body: #fafafa;
 	--theme-bg-light: #F9EFEC;
 	--theme-border-color: #d7bebe;
 	--theme-border-light: #eae1e1;
@@ -18,13 +18,13 @@ body {
 
 header, footer {
 	background: var(--theme-color-primary);
-	color: var(--theme-color-primary-contrast);
+	color: var(--theme-color-contrast);
 	padding: 1em;
 }
 
 main {
-	background: var(--theme-background);
-	color: var(--theme-color);
+	background: var(--theme-bg-body);
+	color: var(--theme-color-text);
 	margin: 0 auto;
 	padding: .5em;
 	max-width: 80em;
@@ -79,7 +79,7 @@ a {
 }
  
 header a, footer a { 
-	color: var(--theme-color-primary-contrast);
+	color: var(--theme-color-contrast);
 }
 
 
@@ -93,6 +93,7 @@ header a, footer a {
 	display: block;
 	margin: .3rem;
 	padding: .3rem;
+	min-height: 11rem;
 }
 .graph figure a {
 	display:block;
@@ -120,15 +121,13 @@ dl dd {
 	margin: 0.5em 0 0.5em 0.5em;
 }
 
-
-
 .table {
 	border-collapse: collapse;
 }
 .table tbody td, .table tfoot td {
 	border: 1px solid var(--theme-border-light);
-	color: var(--theme-color);
-	background: var(--theme-background);
+	color: var(--theme-color-text);
+	background: var(--theme-bg-body);
 	padding: 0 1em;
 	white-space: nowrap;
 	
@@ -142,6 +141,7 @@ dl dd {
 }
 
 .table-list {
+	min-width: 15em;
 	border-collapse: collapse;
 	border-spacing: 0;
 }
@@ -209,27 +209,27 @@ section {
 	max-width: 30em;
 }
 
-
-
 .nav {
 	margin: 0;
 	padding: 0;
 	display: flex;
 	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 0.6em;
 }
 .nav li {
 	list-style:outside none none;
-	padding: .1em ;
+	padding: 0;
+	margin: 0;
 }
 .nav li a {
 	border-radius: 0.5em;
-	font-size: 0.9rem;
 	font-weight: bold;
 	display: block;
 	line-height: 1.6rem;
+	padding: 0 .5em;
 	text-decoration: none;
 	border: none;
-	min-width: 7em;
 }
 .nav li a:hover {
 	text-decoration: underline;
@@ -247,7 +247,7 @@ section {
 
 button {
 	border-radius: 0.3em;
-	background-color: var(--theme-color-primary-contrast);
+	background-color: var(--theme-color-contrast);
 	color: var(--theme-color-primary);
 	border: 1px solid var(--theme-color-primary);
 	font-size: 1rem;
@@ -264,7 +264,7 @@ button {
 	display: block;
 	padding: 0 0.5em;
 	line-height: 1.7em;
-	background-color: var(--theme-color-primary-contrast);
+	background-color: var(--theme-color-contrast);
 	min-width: 4em;
 	text-align: center;
 	border-radius: .3em;
@@ -274,8 +274,6 @@ button {
 }
 
 
-@media (min-width: 40em) {
- 
 .float-start {
 	float: left;
 	margin: 0 1em 1em 0;
@@ -286,6 +284,10 @@ button {
 	margin: 0 0 1em 1em;
 	max-width: 50%;
 }
+
+
+@media (min-width: 20em) {
+ 
 
 }
 
@@ -381,7 +383,7 @@ button {
 .navpage {
 	float: right;
 	display: block;
-	background-color: var(--theme-color);
+	background-color: var(--theme-color-text);
 	border-radius: 0.5em;
 	color: #fff;
 	font-size: 0.9rem;

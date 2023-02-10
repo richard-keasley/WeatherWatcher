@@ -15,8 +15,9 @@ protected function getSegments() {
 	
 	$value = $segments[4] ?? '' ;
 	$dt_end = $this->get_datetime($value, 'value');
+	# d($dt_start, $dt_end);
 		
-	if($dt_end<$dt_start) {
+	if($dt_end && $dt_end<$dt_start) {
 		$swap = $dt_end;
 		$dt_end = $dt_start;
 		$dt_start = $swap;
@@ -25,6 +26,9 @@ protected function getSegments() {
 	$segments = array_slice($segments, 0, 3);
 	if($dt_start) $segments['dt_start'] = $dt_start;
 	if($dt_end) $segments['dt_end'] = $dt_end;
+	
+	# d($segments);
+	
 	return $segments;	
 }
 
