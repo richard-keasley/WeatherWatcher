@@ -18,6 +18,12 @@ class App extends BaseConfig
 	look in \App\Controllers\BaseController
 	**/
 	public $update_daily = 'api';
+	
+	/*
+	DateInterval string to delete old readings
+	leave empty to keep all
+	*/
+	public $delete_readings = 'P40D';
 
     /**
      * --------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 $datetime = null;
 $moonphase = \App\ThirdParty\moonphase::load($datetime);
 ?>
-<div class="float-start"><?php 
+<div class="float-start mw-33"><?php 
 echo \App\ThirdParty\moonphase::img($moonphase); 
 /*
 $datetime = new \datetime('2023-02-19');

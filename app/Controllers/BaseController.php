@@ -70,8 +70,13 @@ public function initController(RequestInterface $request, ResponseInterface $res
 	}
 	
 	// clear old readings every page load
-	
-	
+	$delete_readings = config('App')->delete_readings;
+	if($delete_readings) {
+		$datetime = new \DateTime();
+		$interval = new \DateInterval($delete_readings);
+		$where = $datetime->sub($interval)->format('Y-m-d H:i:s');
+		$this->data['readings']->where('datetime <', $where)->delete();
+	}
 }
 	
 protected function get_datetime($fldname, $method='get') {

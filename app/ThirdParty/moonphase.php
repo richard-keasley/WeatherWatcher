@@ -31,10 +31,12 @@ static function img($moonphase, $test=false) {
 		'style' => "
 			background: #1b1b30;
 			padding:.4em;
+			margin: 0;
+			border: 0;
 			display:inline-block;
 			"
 	];
-	return sprintf('<div %s>%s</div>', \stringify_attributes($attrs), \img($img));
+	return sprintf('<figure %s>%s</figure>', \stringify_attributes($attrs), \img($img));
 }
 
 }

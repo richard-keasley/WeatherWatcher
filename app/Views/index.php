@@ -4,13 +4,11 @@ $this->section('header'); ?>
 <h1>Current conditions</h1>
 <?php $this->endSection();
 
-$this->section('top'); ?>
-
- 
-<?php $this->endSection();
+$this->section('top');
+$this->endSection();
 
 $this->section('main'); ?>
-<div class="float-start" style="max-width:none;">
+<div class="float-start">
 <?php echo $this->include('readings/reading'); ?>
 </div>
 <?php 

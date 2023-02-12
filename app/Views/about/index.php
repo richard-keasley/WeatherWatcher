@@ -4,7 +4,7 @@ $this->section('main');
 
 $img = [
 	'src' => 'app/header.png',
-	'class' => "float-end"
+	'class' => "mw-33 float-end"
 ];
 	echo anchor('/', img($img));
 
