@@ -13,16 +13,22 @@ const defaults = [
 static $path = '';
 	
 static function load($width=0, $height=0, $scale='textlin') {
-	self::$path = sprintf('%s/jpgraph-%s/src/' , __DIR__, self::version);
-	
-	if(!$width) $width = self::defaults['width'];
-	if(!$height) $height = self::defaults['height'];
-	
-	self::include_file('jpgraph');
-	$graph = new \Graph($width, $height);
-	$graph->SetScale($scale);
-	$graph->SetMargin(60, 20, 40, 80);
-	return $graph;
+	try {
+		self::$path = sprintf('%s/jpgraph-%s/src/' , __DIR__, self::version);
+		
+		if(!$width) $width = self::defaults['width'];
+		if(!$height) $height = self::defaults['height'];
+		
+		self::include_file('jpgraph');
+		$graph = new \Graph($width, $height);
+		$graph->SetScale($scale);
+		$graph->SetMargin(60, 20, 40, 80);
+		return $graph;
+	}
+	catch(\Exception $e ) {
+		echo new \App\Views\Htm\alert($e->getMessage());
+	}
+	die;
 }
 
 static function include_file($filename) {

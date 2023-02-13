@@ -1,7 +1,8 @@
 <div><?php 
 if(empty($daily)) { 
-	echo '<p class="error">No data</p>';
-} else {
+	echo new \App\Views\Htm\alert('No data');
+} 
+else {
 	printf('<p><strong>%s</strong></p>', $daily->get_date('j F Y'));
 	
 	$tbody = [];

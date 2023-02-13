@@ -12,5 +12,6 @@ if($tbody) {
 	echo $table->generate($tbody);
 }
 else {
-	echo '<p class="warning">No data</p>';
+	echo new \App\Views\Htm\alert('No data');
+
 }

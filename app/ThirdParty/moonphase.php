@@ -6,9 +6,15 @@ const version = '2.1.0';
 const date = '2022-05-20';
 	
 static function load($datetime=null) {
-	$include = sprintf('%s/php-moon-phase-%s/src/MoonPhase.php' , __DIR__, self::version);
-	require_once $include;
-	return new \Solaris\MoonPhase($datetime);
+	try { 
+		$include = sprintf('%s/php-moon-phase-%s/src/MoonPhase.php' , __DIR__, self::version);
+		require_once $include;
+		return new \Solaris\MoonPhase($datetime);
+	}
+	catch(\Exception $e ) {
+		echo new \App\Views\Htm\alert($e->getMessage());
+	}
+	die;
 }
 
 static function img($moonphase, $test=false) {
