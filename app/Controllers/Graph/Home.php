@@ -32,25 +32,29 @@ protected function getSegments() {
 	return $segments;	
 }
 
+// check for cached image
 protected function check_cache($segments) {
-	// don't cache
-	if($this->request->getGet('v')) return '';
+	$cache_data = [];
 	
-	// check for cached image
+	// get cache name
 	$arr = ['dt_start', 'dt_end'];
 	foreach($arr as $key) {
 		if(isset($segments[$key])) {
 			$segments[$key] = $segments[$key]->format('YmdHi');
 		}
 	}
-	$cache_name = implode('_', $segments);
+	$cache_data['name'] = implode('_', $segments);
+	
+	$time = $this->request->getGet('t') ?? 600; // 10 minutes cache
+	if($time) $cache_data['time'] = $time;
+
+	// don't cache
+	# if(ENVIRONMENT!=='production') return ''; 
 	
 	$cache = \Config\Services::cache();
-	$response = $cache->get($cache_name);
-
-	# d($cache_name); echo $response ? 'cached' : 'not cached'; die;
-	if(!$response) return $cache_name; // nothing in cache
-	if(ENVIRONMENT!=='production') return $cache_name; // don't cache development
+	$response = $cache->get($cache_data['name']);
+	# d($cache_data); echo $response ? 'cached' : 'not cached'; die;
+	if(!$response) return $cache_data; // nothing in cache
 	
 	// send cached image
 	header('content-type: image/png');

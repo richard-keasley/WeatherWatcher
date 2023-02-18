@@ -39,7 +39,11 @@ function __toString() {
 		$dt_now = new \DateTime;
 		$format = 'Ymd'; // only check day
 		if($dt_check->format($format)>=$dt_now->format($format)) {
-			$src .= '?v=' . $dt_now->format('YmdHi');
+			$query = [
+				'v' => $dt_now->format('YmdHi'),
+				't' => 1800 // 30 minutes
+			];
+			$src .= '?' . http_build_query($query);
 		}
 	}
 	# return "<p>{$src}</p>";

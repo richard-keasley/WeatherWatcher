@@ -20,7 +20,7 @@ private function stroke($map, $options=[]) {
 	
 	$segments['dt_start'] = $dt_start;
 	$segments['dt_end'] = $dt_end;
-	$cache_name = $this->check_cache($segments);
+	$cache_data = $this->check_cache($segments);
 		
 	// load data
 	$raw_data = $model
@@ -101,7 +101,7 @@ private function stroke($map, $options=[]) {
 		$title = $options['title'] ?? 'Daily averages';
 		if($title) $graph->title->Set($title);
 				
-		\App\ThirdParty\jpgraph::stroke($graph, $cache_name);
+		\App\ThirdParty\jpgraph::stroke($graph, $cache_data);
 		die;
 	}
 	

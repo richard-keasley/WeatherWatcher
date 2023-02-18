@@ -23,7 +23,8 @@ private function stroke($map, $options=[]) {
 	$dt_end->add($oneday);
 	# d($dt_start, $dt_end); die;
 	
-	$cache_name = $this->check_cache($segments);
+	$cache_data = $this->check_cache($segments);
+	# d($cache_data); return;
 	
 	// load data
 	$model = new \App\Models\Readings;
@@ -110,7 +111,7 @@ private function stroke($map, $options=[]) {
 		
 		$graph->title->Set($title);
 				
-		\App\ThirdParty\jpgraph::stroke($graph, $cache_name);
+		\App\ThirdParty\jpgraph::stroke($graph, $cache_data);
 		die;
 	}
 	
@@ -128,8 +129,7 @@ public function getRain($start='', $end='') {
 		'colours' => [
 			'rain' => "#66F"
 		],
-		'fillcolor' => "#66F",
-		# 'type' => 'bar'
+		'fillcolor' => "#DDF"
 	];
 	$this->stroke($map, $options);		
 }

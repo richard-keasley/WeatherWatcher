@@ -5,8 +5,9 @@ class Averages extends Home {
 private function stroke($map, $options=[]) {
 	$segments = $this->getSegments();
 	$segments['dt_start'] = new \DateTime('today');
-	$cache_name = $this->check_cache($segments);
-	# d($segments, $cache_name); die;
+	
+	$cache_data = $this->check_cache($segments);
+	# d($segments, $cache_data); die;
 	
 	// load data
 	$model = new \App\Models\Dailies;	
@@ -129,7 +130,7 @@ private function stroke($map, $options=[]) {
 		$title = $options['title'] ?? 'Daily averages';
 		if($title) $graph->title->Set($title);
 				
-		\App\ThirdParty\jpgraph::stroke($graph, $cache_name);
+		\App\ThirdParty\jpgraph::stroke($graph, $cache_data);
 		die;
 	}
 	

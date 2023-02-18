@@ -47,14 +47,17 @@ static function plot($type, $ydata) {
 	};
 }
 
-static function stroke($jpgraph, $cache_name=null) {
-	// send image back to browser
+// send image back to browser
+static function stroke($jpgraph, $cache_data=[]) {
 	# d($jpgraph); return;
 	
-	header('content-type: image/png');
+	# if(ENVIRONMENT!='production') $cache_data = [];
+	$cache_time = $cache_data['time'] ?? 0 ; 
+	$cache_name = $cache_data['name'] ?? '' ; 
+	if(!$cache_time) $cache_name = '';
+	# d($cache_name, $cache_time); return;
 	
-	if(ENVIRONMENT!='production') $cache_name = null;
-	$cache_time = 86400; // one day
+	header('content-type: image/png');
 			
 	if($cache_name) {
 		header("Cache-Control: max-age={$cache_time}");
