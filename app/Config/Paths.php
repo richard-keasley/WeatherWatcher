@@ -1,5 +1,4 @@
-<?php
-
+<?php 
 namespace Config;
 
 /**
@@ -26,6 +25,7 @@ class Paths
      * @var string
      */
     public $systemDirectory = __DIR__ . '/../../ci/4.2.10/system';
+    # public $systemDirectory = __DIR__ . '/../../ci/4.3.2/system';
 
     /**
      * ---------------------------------------------------------------

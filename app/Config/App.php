@@ -1,5 +1,4 @@
-<?php
-
+<?php 
 namespace Config;
 
 use CodeIgniter\Config\BaseConfig;
@@ -24,6 +23,10 @@ class App extends BaseConfig
 	leave empty to keep all
 	*/
 	public $delete_readings = 'P40D';
+	
+	
+	
+	
 
     /**
      * --------------------------------------------------------------------------
@@ -43,6 +46,20 @@ class App extends BaseConfig
      * @var string
      */
     public $baseURL = 'https://weather.base-camp.uk/';
+	
+	/**
+     * Allowed Hostnames in the Site URL other than the hostname in the baseURL.
+     * If you want to accept multiple Hostnames, set this.
+     *
+     * E.g. When your site URL ($baseURL) is 'http://example.com/', and your site
+     *      also accepts 'http://media.example.com/' and
+     *      'http://accounts.example.com/':
+     *          ['media.example.com', 'accounts.example.com']
+     *
+     * @var string[]
+     * @phpstan-var list<string>
+     */
+    public array $allowedHostnames = [];
 
     /**
      * --------------------------------------------------------------------------
@@ -361,7 +378,7 @@ class App extends BaseConfig
      *
      * @var string|string[]
      */
-    public $proxyIPs = '';
+    public $proxyIPs = [];
 
     /**
      * --------------------------------------------------------------------------
