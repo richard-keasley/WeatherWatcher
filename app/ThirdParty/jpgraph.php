@@ -75,6 +75,8 @@ static function stroke($jpgraph, $cache_data=[]) {
 	
 	if($cache_name) {
 		$success = $cache->save($cache_name, $response, $cache_time);
+		$action = $success ? 'stored' : 'failed' ;
+		log_message('debug', "cache: {$action} {$cache_time} / {$cache_name}");
 	}
 	die;
 }

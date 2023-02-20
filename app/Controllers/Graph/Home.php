@@ -45,7 +45,7 @@ protected function check_cache($segments) {
 	}
 	$cache_data['name'] = implode('_', $segments);
 	
-	$time = $this->request->getGet('t') ?? 600; // 10 minutes cache
+	$time = $this->request->getGet('t') ?? 900; // 15 minutes cache
 	if($time) $cache_data['time'] = $time;
 
 	// don't cache
@@ -55,8 +55,9 @@ protected function check_cache($segments) {
 	$response = $cache->get($cache_data['name']);
 	# d($cache_data); echo $response ? 'cached' : 'not cached'; die;
 	if(!$response) return $cache_data; // nothing in cache
-	
+
 	// send cached image
+	log_message('debug', "cache: retrieved {$cache_data['name']}");
 	header('content-type: image/png');
 	echo $response;
 	die;
