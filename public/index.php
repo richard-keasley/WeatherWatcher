@@ -29,27 +29,10 @@ chdir(FCPATH);
 
 // Load our paths config file
 // This is the line that might need to be changed, depending on your folder structure.
-
-$test = 0; // disable once it's working
-
-$path = FCPATH . '../app/Config/Paths.php';
+require FCPATH . '../app/Config/Paths.php';
 // ^^^ Change this line if you move your application folder
 
-if($test) {
-	if(!realpath($path)) die("Config/Paths not found {$path}");
-}
-require $path;
-
 $paths = new Config\Paths();
-
-if($test) {
-	$vars = get_class_vars(get_class($paths));
-	foreach($vars as $key=>$path) {
-		$realpath = realpath($path);
-		if(!$realpath) die("Config/{$key} not found: {$path}");
-		echo "{$key}: {$realpath}<br>";
-	}
-}
 
 // Location of the framework bootstrap file.
 require rtrim($paths->systemDirectory, '\\/ ') . DIRECTORY_SEPARATOR . 'bootstrap.php';
