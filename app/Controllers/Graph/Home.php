@@ -49,7 +49,7 @@ protected function check_cache($segments) {
 	if($time) $cache_data['time'] = $time;
 
 	// don't cache
-	# if(ENVIRONMENT!=='production') return ''; 
+	if(ENVIRONMENT!=='production') return ''; 
 	
 	$cache = \Config\Services::cache();
 	$response = $cache->get($cache_data['name']);

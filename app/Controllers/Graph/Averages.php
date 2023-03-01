@@ -119,6 +119,9 @@ private function stroke($map, $options=[]) {
 			$graph->xaxis->SetLabelAngle(90);
 			$interval = 4; #intval(count($labels)/17.5) + 1;
 			$graph->xaxis->SetTextLabelInterval($interval);
+			
+			$graph->xgrid->SetColor('#dde', '#99F');
+			$graph->xgrid->Show(true);
 		}
 		$graph->xaxis->SetPos("min");
 		

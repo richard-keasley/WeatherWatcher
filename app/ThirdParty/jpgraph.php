@@ -12,7 +12,7 @@ const defaults = [
 
 static $path = '';
 	
-static function load($width=0, $height=0, $scale='textlin') {
+static function load($width=0, $height=0, $scale='linlin') {
 	try {
 		self::$path = sprintf('%s/jpgraph-%s/src/' , __DIR__, self::version);
 		
@@ -20,6 +20,7 @@ static function load($width=0, $height=0, $scale='textlin') {
 		if(!$height) $height = self::defaults['height'];
 		
 		self::include_file('jpgraph');
+		# self::include_file('jpgraph_date');
 		$graph = new \Graph($width, $height);
 		$graph->SetScale($scale);
 		$graph->SetMargin(60, 20, 40, 80);
@@ -49,7 +50,7 @@ static function plot($type, $ydata) {
 
 // send image back to browser
 static function stroke($jpgraph, $cache_data=[]) {
-	# d($jpgraph); return;
+	# d($jpgraph->xaxis->ticks_label); return;
 	
 	# if(ENVIRONMENT!='production') $cache_data = [];
 	$cache_time = $cache_data['time'] ?? 0 ; 
