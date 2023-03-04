@@ -81,7 +81,7 @@ private function stroke($map, $options=[]) {
 			}
 		}
 	}
-			
+
 	if($dataset_count) {
 		$graph->legend->SetPos(0.05, 0.01, 'left', 'top');
 	
@@ -102,7 +102,7 @@ private function stroke($map, $options=[]) {
 		
 		$title = $options['title'] ?? 'Daily averages';
 		if($title) $graph->title->Set($title);
-				
+		# d($graph); return;
 		\App\ThirdParty\jpgraph::stroke($graph, $cache_data);
 		die;
 	}

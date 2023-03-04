@@ -51,6 +51,7 @@ static function plot($type, $ydata) {
 // send image back to browser
 static function stroke($jpgraph, $cache_data=[]) {
 	# d($jpgraph->xaxis->ticks_label); return;
+	# d($jpgraph); return;
 	
 	# if(ENVIRONMENT!='production') $cache_data = [];
 	$cache_time = $cache_data['time'] ?? 0 ; 

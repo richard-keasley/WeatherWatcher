@@ -3,6 +3,7 @@
 class Api extends Home {
 
 public function __construct() {
+	parent::__construct();
 	$this->data['pathkey'] = 0;
 	$this->data['daily'] = null;
 	$this->data['query'] = [

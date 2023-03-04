@@ -14,8 +14,4 @@ foreach(glob("{$path}/*") as $file) {
 	printf('<li>%s</li>', anchor("test/{$label}", $label));
 }
 ?></ul>
-<?php 
-
-echo $this->include('widgets/moon');
-
-$this->endSection();
+<?php $this->endSection();
