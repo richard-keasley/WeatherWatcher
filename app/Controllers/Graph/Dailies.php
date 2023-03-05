@@ -47,7 +47,7 @@ private function stroke($map, $options=[]) {
 		$key_format = 'Y_W';
 	}
 	$data = \App\ThirdParty\jpgraph::periodise($data, $key_format, $label_format);
-	# d($span, $data); return;
+	# d($options, $data); return;
 	
 	// send image back to browser
 	$graph = \App\ThirdParty\jpgraph::load();
@@ -89,7 +89,9 @@ private function stroke($map, $options=[]) {
 			$graph->xaxis->SetTickLabels($labels);
 			$graph->xaxis->SetLabelAngle(90);
 			$interval = intval(count($labels)/17.5) + 1;
-			$graph->xaxis->SetTextLabelInterval($interval);
+			# d($interval); return;
+			# $interval = 4;
+			# $graph->xaxis->SetTextLabelInterval($interval);
 			$graph->xgrid->SetColor('#dde', '#99F');
 			$graph->xgrid->Show(true);
 		}
@@ -102,7 +104,6 @@ private function stroke($map, $options=[]) {
 		
 		$title = $options['title'] ?? 'Daily averages';
 		if($title) $graph->title->Set($title);
-		# d($graph); return;
 		\App\ThirdParty\jpgraph::stroke($graph, $cache_data);
 		die;
 	}
