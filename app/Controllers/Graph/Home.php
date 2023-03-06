@@ -7,7 +7,8 @@ protected function getSegments() {
 	/*
 	2: method
 	3: dt_start (optional)
-	4: dt_end (optionsl)
+	4: dt_end (optional)
+	5: display (optional)
 	*/
 		
 	$value = $segments[3] ?? '' ;
@@ -15,8 +16,9 @@ protected function getSegments() {
 	
 	$value = $segments[4] ?? '' ;
 	$dt_end = $this->get_datetime($value, 'value');
-	# d($dt_start, $dt_end);
-		
+
+	$display = $segments[5] ?? null ;
+			
 	if($dt_end && $dt_end<$dt_start) {
 		$swap = $dt_end;
 		$dt_end = $dt_start;
@@ -26,8 +28,9 @@ protected function getSegments() {
 	$segments = array_slice($segments, 0, 3);
 	if($dt_start) $segments['dt_start'] = $dt_start;
 	if($dt_end) $segments['dt_end'] = $dt_end;
+	$segments['display'] = $display;
 	
-	# d($segments);
+	#d($segments); die;
 	
 	return $segments;	
 }

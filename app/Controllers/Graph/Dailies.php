@@ -49,12 +49,20 @@ private function stroke($map, $options=[]) {
 	$data = \App\ThirdParty\jpgraph::periodise($data, $key_format, $label_format);
 	# d($options, $data); return;
 	
+	$display = $segments['display'] ?? $options['display'] ?? null;
+	# d($display); return;
+	$displays = ['line', 'bar', 'table'];
+	if(!in_array($display, $displays)) $display = $displays[0];
+	
+	if($display=='table') {
+		$this->data['data'] = $data;
+		return view('data', $this->data);
+	}
+	
 	// send image back to browser
+	$colours = $options['colours'] ?? null;
 	$graph = \App\ThirdParty\jpgraph::load();
 	$dataset_count = 0;
-	
-	$colours = $options['colours'] ?? null;
-	$type = $options['type'] ?? 'line';
 	$labels = null;
 	foreach($data as $dataname=>$dataset) {
 		if($dataname=='label') {
@@ -62,11 +70,11 @@ private function stroke($map, $options=[]) {
 		}
 		else {
 			$dataset_count++;
-			$plot = \App\ThirdParty\jpgraph::plot($type, $dataset);
+			$plot = \App\ThirdParty\jpgraph::plot($display, $dataset);
 			$graph->Add($plot);
 			$plot->SetLegend($dataname);
 			$colour = $colours[$dataname] ?? null;
-			switch($type) {
+			switch($display) {
 				case 'bar':
 				$plot->SetWidth(1);
 				if($colour) $plot->SetFillColor($colour);
@@ -90,8 +98,8 @@ private function stroke($map, $options=[]) {
 			$graph->xaxis->SetLabelAngle(90);
 			$interval = intval(count($labels)/17.5) + 1;
 			# d($interval); return;
-			# $interval = 4;
-			# $graph->xaxis->SetTextLabelInterval($interval);
+			$interval = 2;
+			$graph->xaxis->SetTextLabelInterval($interval);
 			$graph->xgrid->SetColor('#dde', '#99F');
 			$graph->xgrid->Show(true);
 		}
@@ -112,7 +120,7 @@ private function stroke($map, $options=[]) {
 	die;
 }
 
-public function getRain($start='', $end='') {
+public function getRain($start='', $end='', $display=null) {
 	$map = [
 		'rain_max' => 'rain'
 	];
@@ -122,12 +130,12 @@ public function getRain($start='', $end='') {
 		'colours' => [
 			'rain' => '#66F'
 		],
-		'type' => 'bar'
+		'display' => 'bar'
 	];
-	$this->stroke($map, $options);		
+	return $this->stroke($map, $options);		
 }
 
-public function getTemperature($start='', $end='') {
+public function getTemperature($start='', $end='', $display=null) {
 	$map = [
 		'temperature_max' => 'max',
 		'temperature_avg' => 'avg',
@@ -141,10 +149,10 @@ public function getTemperature($start='', $end='') {
 			'min' => '#11c'
 		]
 	];
-	$this->stroke($map, $options);
+	return $this->stroke($map, $options);
 }
 
-public function getSolar($start='', $end='') {
+public function getSolar($start='', $end='', $display=null) {
 
 	$map = [
 		'solar_max' => 'max',
@@ -158,10 +166,10 @@ public function getSolar($start='', $end='') {
 			'avg' => '#ccc'
 		]
 	];
-	$this->stroke($map, $options);
+	return $this->stroke($map, $options);
 }
 
-public function getWind($start='', $end='') {
+public function getWind($start='', $end='', $display=null) {
 	$map = [
 		'wind_max' => 'max',
 		'wind_avg' => 'avg'
@@ -174,10 +182,10 @@ public function getWind($start='', $end='') {
 			'avg' => '#ccc'
 		]
 	];
-	$this->stroke($map, $options);
+	return $this->stroke($map, $options);
 }
 
-public function getHumidity($start='', $end='') {
+public function getHumidity($start='', $end='', $display=null) {
 	$map = [
 		'humidity_max' => 'max',
 		'humidity_avg' => 'avg'
@@ -190,7 +198,7 @@ public function getHumidity($start='', $end='') {
 			'avg' => '#ccc'
 		]
 	];
-	$this->stroke($map, $options);
+	return $this->stroke($map, $options);
 }
 
 }
