@@ -3,26 +3,35 @@
 class Averages extends Home {
 
 private function stroke($map, $options=[]) {
-	$segments = $this->getSegments();
+	$segments = $this->getSegments(false);
 	$segments['dt_start'] = new \DateTime('today');
+	$segments['dt_end'] = '';
+	
+	// valid display
+	$displays = ['line', 'bar', 'table'];
+	$display = $segments['display'] ?? null;
+	if(!in_array($display, $displays)) $display = $options['display'] ?? null;
+	if(!in_array($display, $displays)) $display = $displays[0];
+	$segments['display'] = $display;
+	
+	# d($segments); return;
 	
 	$cache_data = $this->check_cache($segments);
-	# d($segments, $cache_data); die;
 	
 	// load data
 	$model = new \App\Models\Dailies;	
 	$raw_data = $model->orderBy('date')->findAll();
 	
 	// apply map
-	$data = ['label'=>[]];
+	$data = ['datetime'=>[]];
 	foreach($map as $source=>$dest) $data[$dest] = [];
 	foreach($raw_data as $daily) {
-		$data['label'][] = $daily->get_date();
+		$data['datetime'][] = $daily->get_date();
 		foreach($map as $source=>$dest) {
 			$data[$dest][] = $daily->$source;
 		}
 	}
-	# d($data); die;
+	# d($data); return;
 	
 	// get current data
 	$mapkey = array_key_first($map);
@@ -31,39 +40,33 @@ private function stroke($map, $options=[]) {
 	$end = $datetime->format('Y-m-d');
 	$year = new \DateInterval('P1Y');
 	$start = $datetime->sub($year)->format('Y-m-d');
-	$current = ['label'=>[], 'current'=>[]];
+	$current = ['datetime'=>[], 'current'=>[]];
 	$raw_data = $model->orderBy('date')->where('date >=', $start)->where('date <', $end)->findAll();
 	foreach($raw_data as $daily) {
-		$current['label'][] = $daily->get_date();
+		$current['datetime'][] = $daily->get_date();
 		$current['current'][] = $daily->$mapkey;
 	}
 			
 	// aggregate data
 	$key_format = 'W';
-	$label_format = 'W';
-	$data = \App\ThirdParty\jpgraph::periodise($data, $key_format, $label_format);
-	$current = \App\ThirdParty\jpgraph::periodise($current, $key_format, $label_format);
+	$data = \App\ThirdParty\jpgraph::periodise($data, $key_format);
+	$current = \App\ThirdParty\jpgraph::periodise($current, $key_format);
 	
 	// sort and join datasets, starting a year ago
 	$combined = [];
-	$wk_format = '%02u';
-	foreach($current['current'] as $key=>$value) {	
-		$wknum = sprintf($wk_format, $current['label'][$key]);
+	$dt = new \DateTime;
+	foreach($current['current'] as $key=>$value) {
+		$wknum = $dt->setTimestamp($current['datetime'][$key])->format($key_format);
+		$combined[$wknum]['datetime'] = $current['datetime'][$key];
 		$combined[$wknum]['current'] = $value;
+		
 	}
 	foreach($data as $dataname=>$dataset) {
-		if($dataname=='label') continue;
+		if($dataname=='datetime') continue;
 		foreach($dataset as $key=>$value) {
-			$wknum = sprintf($wk_format, $data['label'][$key]);
+			$wknum = $dt->setTimestamp($data['datetime'][$key])->format($key_format);
 			$combined[$wknum][$dataname] = $value;
 		}
-	}
-	// friendly labels
-	$dt_label = new \DateTime('1999-12-25'); 
-	$week = new \DateInterval('P7D');
-	for($key=1; $key<53; $key++) {
-		$wknum = sprintf($wk_format, $key);
-		$combined[$wknum]['label'] = $dt_label->add($week)->format('d M');
 	}
 	unset($combined['53']); // discard week 53, too much noise
 	# d($data, $current, $combined); return;
@@ -77,54 +80,53 @@ private function stroke($map, $options=[]) {
 	}
 	# d($data); return;
 	
+	// display data
+	if($display=='table') {
+		# d($data); return;
+		$this->data['data'] = $data;
+		return view('data', $this->data);
+	}
 
 	// send image back to browser
 	$graph = \App\ThirdParty\jpgraph::load();
 	$dataset_count = 0;
 	
+	$bar_width = $graph->img->plotwidth / count($data['datetime']) ;
 	$colours = $options['colours'] ?? null;
-	$type = $options['type'] ?? 'line';
-	$labels = null;
 	foreach($data as $dataname=>$dataset) {
-		if($dataname=='label') {
-			$labels = $dataset;
-		}
-		else {
-			$dataset_count++;
-			$plot = \App\ThirdParty\jpgraph::plot($type, $dataset);
-			$graph->Add($plot);
-			$plot->SetLegend($dataname);
-			$colour = $colours[$dataname] ?? null;
-			switch($type) {
-				case 'bar':
-				$plot->SetWidth(1);
-				if($colour) $plot->SetFillColor($colour);
-				$plot->SetColor('#666');
-				$plot->SetWeight(1);
-				break;
-				
-				case 'line':
-				default:
-				$plot->SetWeight(2);
-				if($colour) $plot->SetColor($colour);
-			}
+		if($dataname=='datetime') continue;
+		$dataset_count++;
+		$plot = \App\ThirdParty\jpgraph::plot($display, $dataset, $data['datetime']);
+		$graph->Add($plot);
+		$plot->SetLegend($dataname);
+		$colour = $colours[$dataname] ?? null;
+		switch($display) {
+			case 'bar':
+			$plot->SetWidth($bar_width);
+			if($colour) $plot->SetFillColor($colour);
+			$plot->SetColor('#666');
+			$plot->SetWeight(1);
+			break;
+			
+			case 'line':
+			default:
+			$plot->SetWeight(2);
+			if($colour) $plot->SetColor($colour);
 		}
 	}
 			
 	if($dataset_count) {
 		$graph->legend->SetPos(0.05, 0.01, 'left', 'top');
 	
-		if($labels) {
-			$graph->xaxis->SetTickLabels($labels);
-			$graph->xaxis->SetLabelAngle(90);
-			$interval = 4; #intval(count($labels)/17.5) + 1;
-			$graph->xaxis->SetTextLabelInterval($interval);
-			
-			$graph->xgrid->SetColor('#dde', '#99F');
-			$graph->xgrid->Show(true);
-		}
+		$graph->xaxis->SetLabelAngle(90);
+		$interval = 4; #intval(count($labels)/17.5) + 1;
+		$graph->xaxis->SetTextLabelInterval($interval);
+		$graph->xaxis->scale->SetDateFormat('d-M');
 		$graph->xaxis->SetPos("min");
-		
+
+		$graph->xgrid->SetColor('#dde', '#99F');
+		$graph->xgrid->Show(true);
+	
 		$ytitle = $options['ytitle'] ?? null;
 		if($ytitle) {
 			$graph->yaxis->title->Set($ytitle);
@@ -141,7 +143,7 @@ private function stroke($map, $options=[]) {
 	die;
 }
 
-public function getRain() {
+public function getRain($display=null) {
 	$map = [
 		'rain_max' => 'rain'
 	];
@@ -153,10 +155,10 @@ public function getRain() {
 			'current' => '#090'
 		]
 	];
-	$this->stroke($map, $options);		
+	return $this->stroke($map, $options);		
 }
 
-public function getTemperature() {
+public function getTemperature($display=null) {
 	$map = [
 		'temperature_avg' => 'avg',
 		'temperature_max' => 'max',
@@ -171,10 +173,10 @@ public function getTemperature() {
 			'current' => '#090'
 		]
 	];
-	$this->stroke($map, $options);
+	return $this->stroke($map, $options);
 }
 
-public function getSolar() {
+public function getSolar($display=null) {
 	$map = [
 		'solar_avg' => 'avg'
 	];
@@ -187,10 +189,10 @@ public function getSolar() {
 			'current' => '#090'
 		]
 	];
-	$this->stroke($map, $options);
+	return $this->stroke($map, $options);
 }
 
-public function getWind() {
+public function getWind($display=null) {
 	$map = [
 		'wind_avg' => 'avg'
 	];
@@ -202,10 +204,10 @@ public function getWind() {
 			'current' => '#090'
 		]
 	];
-	$this->stroke($map, $options);
+	return $this->stroke($map, $options);
 }
 
-public function getHumidity() {
+public function getHumidity($display=null) {
 	$map = [
 		'humidity_avg' => 'avg'
 	];
@@ -218,7 +220,7 @@ public function getHumidity() {
 			'current' => '#090'
 		]
 	];
-	$this->stroke($map, $options);
+	return $this->stroke($map, $options);
 }
 
 }

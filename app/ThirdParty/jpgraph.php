@@ -12,7 +12,7 @@ const defaults = [
 
 static $path = '';
 	
-static function load($width=0, $height=0, $scale='linlin') {
+static function load($width=0, $height=0, $scale='datlin') {
 	try {
 		self::$path = sprintf('%s/jpgraph-%s/src/' , __DIR__, self::version);
 		
@@ -20,7 +20,7 @@ static function load($width=0, $height=0, $scale='linlin') {
 		if(!$height) $height = self::defaults['height'];
 		
 		self::include_file('jpgraph');
-		# self::include_file('jpgraph_date');
+		self::include_file('jpgraph_date');
 		$graph = new \Graph($width, $height);
 		$graph->SetScale($scale);
 		$graph->SetMargin(60, 20, 40, 80);
@@ -36,15 +36,15 @@ static function include_file($filename) {
 	require_once self::$path . $filename . '.php';
 }
 
-static function plot($type, $ydata) {
+static function plot($type, $ydata, $times) {
 	$include = match($type) {
 		default => "jpgraph_{$type}"
 	};
 	self::include_file($include);
 	
 	return match($type) {
-		'bar' => new \BarPlot($ydata),
-		default => new \LinePlot($ydata)
+		'bar' => new \BarPlot($ydata, $times),
+		default => new \LinePlot($ydata, $times)
 	};
 }
 
@@ -53,14 +53,14 @@ static function stroke($jpgraph, $cache_data=[]) {
 	# d($jpgraph->xaxis->ticks_label); return;
 	# d($jpgraph); return;
 	
-	# if(ENVIRONMENT!='production') $cache_data = [];
+	if(ENVIRONMENT!='production') $cache_data = [];
 	$cache_time = $cache_data['time'] ?? 0 ; 
 	$cache_name = $cache_data['name'] ?? '' ; 
 	if(!$cache_time) $cache_name = '';
 	# d($cache_name, $cache_time); return;
 	
 	header('content-type: image/png');
-			
+				
 	if($cache_name) {
 		header("Cache-Control: max-age={$cache_time}");
 		$cache = \Config\Services::cache();
@@ -96,22 +96,21 @@ static function blank($width=0, $height=0) {
 	die;
 }
 
-static function periodise($data, $key_format='Ymd', $label_format='d/m/y') {
+static function periodise($data, $key_format='Ymd') {
 	/*
 	ensures each item of dataset covers the same amount of time
 	aggregates datasets so there's not too many for graph
-	ensure 'label' dataset items are datetime
+	ensure 'datetime' dataset items are datetime
 	key_format: key for each aggregated data item
-	label_format: how the label is formatted
 	*/
 
 	// setup category keys
-	$agg_keys = []; $agg_labels = [];
-	foreach($data['label'] as $data_key=>$datetime) {
+	$agg_keys = []; $timestamps = [];
+	foreach($data['datetime'] as $data_key=>$datetime) {
 		$agg_key = $datetime->format($key_format);
 		$agg_keys[$data_key] = $agg_key;
-		if(!isset($agg_labels[$agg_key])) {
-			$agg_labels[$agg_key] = $datetime->format($label_format);
+		if(!isset($timestamps[$agg_key])) {
+			$timestamps[$agg_key] = $datetime->format('U');
 		}
 	}
 	# d($agg_keys); die;
@@ -139,7 +138,7 @@ static function periodise($data, $key_format='Ymd', $label_format='d/m/y') {
 			if($buffer) {
 				$has_data = true;
 				$value = match($dataname) {
-					'label' => $agg_labels[$agg_key],
+					'datetime' => $timestamps[$agg_key],
 					'min' => min($buffer),
 					'max' => max($buffer),
 					default => array_sum($buffer) / count($buffer)

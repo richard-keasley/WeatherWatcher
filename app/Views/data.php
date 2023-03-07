@@ -5,10 +5,14 @@ $this->section('header'); ?>
 <?php $this->endSection();
 
 $this->section('main'); 
-$tbody = []; $thead = [];
+$tbody = [];
+$dt = new \DateTime;
 foreach($data as $dataname=>$dataset) {
 	$thead[] = $dataname;
 	foreach($dataset as $rowkey=>$value) {
+		if($dataname=='datetime') {
+			$value = $dt->setTimestamp($value)->format('Y-m-d H:i');
+		}
 		$tbody[$rowkey][$dataname] = $value;
 	}
 }
@@ -16,5 +20,8 @@ foreach($data as $dataname=>$dataset) {
 $table = \App\Views\Htm\table::load();
 $table->setHeading($thead);
 echo $table->generate($tbody);
+
+# d($data);
+		
 
 $this->endSection();

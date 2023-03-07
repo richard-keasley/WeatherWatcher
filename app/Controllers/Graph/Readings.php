@@ -5,9 +5,10 @@ class Readings extends Home {
 private function stroke($map, $options=[]) {
 	$segments = $this->getSegments();
 	
+	// valid dates
 	$dt_start = $segments['dt_start'] ?? new \DateTime('today');
 	$dt_end = $segments['dt_end'] ?? null;
-	
+		
 	$title = $options['title'] ?? '' ;
 	if(!$title) {
 		$title = 'Station readings: ';
@@ -23,6 +24,15 @@ private function stroke($map, $options=[]) {
 	$dt_end->add($oneday);
 	# d($dt_start, $dt_end); die;
 	
+	// valid display
+	$displays = ['line', 'bar', 'table'];
+	$display = $segments['display'] ?? null;
+	if(!in_array($display, $displays)) $display = $options['display'] ?? null;
+	if(!in_array($display, $displays)) $display = $displays[0];
+	$segments['display'] = $display;
+	
+	# d($segments); return;
+	
 	$cache_data = $this->check_cache($segments);
 	# d($cache_data); return;
 	
@@ -35,11 +45,11 @@ private function stroke($map, $options=[]) {
 	# d($raw_data); return; 
 	
 	// apply map
-	$data = ['label'=>[]];
+	$data = ['datetime'=>[]];
 	foreach($map as $source=>$dest) $data[$dest] = [];
 	foreach($raw_data as $entity) {
 		$datetime = new \DateTime($entity->datetime);
-		$data['label'][] = $entity->get_datetime();
+		$data['datetime'][] = $entity->get_datetime();
 		$readings = $entity->get_readings();
 		foreach($map as $source=>$dest) {
 			$data[$dest][] = $readings[$source];
@@ -48,60 +58,59 @@ private function stroke($map, $options=[]) {
 	# d($data); die;
 		
 	// aggregate data
-	$data = \App\ThirdParty\jpgraph::periodise($data, 'YmdH', 'H:00');
-	# d($data); die;
+	$data = \App\ThirdParty\jpgraph::periodise($data, 'YmdH');
+	# d($data); return;
 		
 	$colours = $options['colours'] ?? null;
-	$type = $options['type'] ?? 'line';
 	$fillcolor = $options['fillcolor'] ?? null;
 	$y2 = $options['y2'] ?? '#none#';
-		
+	
+	// display data
+	if($display=='table') {
+		$this->data['data'] = $data;
+		return view('data', $this->data);
+	}
+	
 	// send image back to browser
 	$graph = \App\ThirdParty\jpgraph::load();
 	$dataset_count = 0;
-	$labels = null;
+	$bar_width = $graph->img->plotwidth / count($data['datetime']) ;
 	foreach($data as $dataname=>$dataset) {
-		if($dataname=='label') {
-			$labels = $dataset;
+		if($dataname=='datetime') continue;
+		$dataset_count++;
+		$plot = \App\ThirdParty\jpgraph::plot($display, $dataset, $data['datetime']);
+		if($dataname===$y2) {
+			$graph->SetY2Scale('lin');
+			$graph->AddY2($plot);
 		}
 		else {
-			$dataset_count++;
-			$plot = \App\ThirdParty\jpgraph::plot($type, $dataset);
-			if($dataname===$y2) {
-				$graph->SetY2Scale('lin');
-				$graph->AddY2($plot);
-			}
-			else {
-				$graph->Add($plot);
-			}
-			$plot->SetLegend($dataname);
-			$colour = $colours[$dataname] ?? null;
-			switch($type) {
-				case 'bar':
-				$plot->SetWidth(1);
-				if($colour) $plot->SetFillColor($colour);
-				$plot->SetColor('#666');
-				$plot->SetWeight(1);
-				break;
-				
-				case 'line':
-				default:
-				$plot->SetWeight(2);
-				if($colour) $plot->SetColor($colour);
-				if($fillcolor) $plot->Setfillcolor($fillcolor);				
-			}
+			$graph->Add($plot);
+		}
+		$plot->SetLegend($dataname);
+		$colour = $colours[$dataname] ?? null;
+		switch($display) {
+			case 'bar':
+			$plot->SetWidth($bar_width);
+			if($colour) $plot->SetFillColor($colour);
+			$plot->SetColor('#666');
+			$plot->SetWeight(1);
+			$graph->xaxis->scale->SetTimeAlign( HOURADJ_1 );
+			break;
+			
+			case 'line':
+			default:
+			$plot->SetWeight(2);
+			if($colour) $plot->SetColor($colour);
+			if($fillcolor) $plot->Setfillcolor($fillcolor);				
 		}
 	}
 			
 	if($dataset_count) {
 		$graph->legend->SetPos(0.05, 0.01, 'left', 'top');
-	
-		if($labels) {
-			$graph->xaxis->SetTickLabels($labels);
-			$graph->xaxis->SetLabelAngle(90);
-			$interval = intval(count($labels)/25) + 1;
-			$graph->xaxis->SetTextLabelInterval($interval);
-		}
+		$graph->xaxis->SetTickLabels($data['datetime']);
+		$graph->xaxis->SetLabelAngle(90);
+		$graph->xaxis->scale->ticks->Set(3600);
+		$graph->xaxis->scale->SetDateFormat('j H:i');
 		$graph->xaxis->SetPos("min");
 		
 		$ytitle = $options['ytitle'] ?? null;
@@ -110,7 +119,7 @@ private function stroke($map, $options=[]) {
 		}
 		
 		$graph->title->Set($title);
-				
+		#d($graph->yaxis); return;		
 		\App\ThirdParty\jpgraph::stroke($graph, $cache_data);
 		die;
 	}
@@ -119,7 +128,7 @@ private function stroke($map, $options=[]) {
 	die;
 }
 
-public function getRain($start='', $end='') {
+public function getRain($start='', $end='', $display=null) {
 	$map = [
 		'rain_day' => 'rain'
 	];
@@ -131,10 +140,10 @@ public function getRain($start='', $end='') {
 		],
 		'fillcolor' => "#DDF"
 	];
-	$this->stroke($map, $options);		
+	return $this->stroke($map, $options);		
 }
 
-public function getTemperature($start='', $end='') {
+public function getTemperature($start='', $end='', $display=null) {
 	$map = [
 		'temperature_out' => 'temperature'
 	];
@@ -144,10 +153,10 @@ public function getTemperature($start='', $end='') {
 			'temperature' => '#c11'
 		]
 	];
-	$this->stroke($map, $options);
+	return $this->stroke($map, $options);
 }
 
-public function getSolar($start='', $end='') {
+public function getSolar($start='', $end='', $display=null) {
 	// load data
 	$map = [
 		'solar_radiation' => 'solar'
@@ -159,10 +168,10 @@ public function getSolar($start='', $end='') {
 			'solar' => '#c11'
 		]
 	];
-	$this->stroke($map, $options);
+	return $this->stroke($map, $options);
 }
 
-public function getWind($start='', $end='') {
+public function getWind($start='', $end='', $display=null) {
 	$map = [
 		'wind_speed' => 'speed',
 		'wind_gust' => 'gust'
@@ -171,14 +180,14 @@ public function getWind($start='', $end='') {
 	$options = [
 		'ytitle' => 'Wind [mph]',
 		'colours' => [
-			'speed' => '#ccc',
-			'gust' => '#FAA'
+			'speed' => '#666',
+			'gust' => '#C66'
 		]
 	];
-	$this->stroke($map, $options);
+	return $this->stroke($map, $options);
 }
 
-public function getHumidity($start='', $end='') {
+public function getHumidity($start='', $end='', $display=null) {
 	$map = [
 		'humidity_out' => 'humidity'
 	];
@@ -189,10 +198,10 @@ public function getHumidity($start='', $end='') {
 			'humidity' => '#339'
 		]
 	];
-	$this->stroke($map, $options);
+	return $this->stroke($map, $options);
 }
 
-public function getIndoors($start='', $end='') {
+public function getIndoors($start='', $end='', $display=null) {
 	$map = [
 		'temperature_in' => 'temperature',
 		'humidity_in' => 'humidity'
@@ -205,7 +214,7 @@ public function getIndoors($start='', $end='') {
 			'humidity' => '#444'
 		]
 	];
-	$this->stroke($map, $options);
+	return $this->stroke($map, $options);
 }
 
 }

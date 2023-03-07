@@ -8,7 +8,7 @@ protected function getSegments() {
 	2: method
 	3: dt_start (optional)
 	4: dt_end (optional)
-	5: display (optional)
+	end: display (optional) 
 	*/
 		
 	$value = $segments[3] ?? '' ;
@@ -16,8 +16,8 @@ protected function getSegments() {
 	
 	$value = $segments[4] ?? '' ;
 	$dt_end = $this->get_datetime($value, 'value');
-
-	$display = $segments[5] ?? null ;
+	
+	$display = end($segments) ?? null ;
 			
 	if($dt_end && $dt_end<$dt_start) {
 		$swap = $dt_end;
@@ -42,9 +42,8 @@ protected function check_cache($segments) {
 	// get cache name
 	$arr = ['dt_start', 'dt_end'];
 	foreach($arr as $key) {
-		if(isset($segments[$key])) {
-			$segments[$key] = $segments[$key]->format('YmdHi');
-		}
+		$val = $segments[$key] ?? null;
+		$segments[$key] = $val ? $val->format('YmdHi') : '' ;
 	}
 	$cache_data['name'] = implode('_', $segments);
 	
