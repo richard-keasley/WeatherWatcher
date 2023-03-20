@@ -2,9 +2,8 @@
 
 class Dailies extends Home {
 
-private function stroke($map, $options=[]) {
-	// compare to App\Controllers\Dailies::index
-	$segments = $this->getSegments();
+private function stroke($map, $options) {
+	$segments = $this->getSegments($options);
 		
 	// valid dates
 	$dt_start = $segments['dt_start'] ?? new \DateTime();
@@ -19,15 +18,7 @@ private function stroke($map, $options=[]) {
 	$segments['dt_start'] = $dt_start;
 	$segments['dt_end'] = $dt_end;
 	
-	// valid display
-	$displays = ['line', 'bar', 'table'];
-	$display = $segments['display'] ?? null;
-	if(!in_array($display, $displays)) $display = $options['display'] ?? null;
-	if(!in_array($display, $displays)) $display = $displays[0];
-	$segments['display'] = $display;
-	
 	# d($segments); return;
-
 	$cache_data = $this->check_cache($segments);
 		
 	// load data
@@ -55,16 +46,17 @@ private function stroke($map, $options=[]) {
 	# d($data); return;
 	
 	// display data
+	$display = $segments['display'];
 	if($display=='table') {
 		$this->data['data'] = $data;
 		return view('data', $this->data);
 	}
 	
 	// send image back to browser
-	$colours = $options['colours'] ?? null;
 	$graph = \App\ThirdParty\jpgraph::load();
-	
-	$bar_width = $graph->img->plotwidth / count($data['datetime']) ;
+	$colours = $options['colours'] ?? null;
+	$data_count = count($data['datetime']);
+	$bar_width = $data_count ? $graph->img->plotwidth / $data_count : 1;
 	$dataset_count = 0;
 	foreach($data as $dataname=>$dataset) {
 		if($dataname=='datetime') continue;

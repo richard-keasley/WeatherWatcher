@@ -3,19 +3,13 @@
 class Averages extends Home {
 
 private function stroke($map, $options=[]) {
-	$segments = $this->getSegments(false);
+	$segments = $this->getSegments($options);
+	
+	// valid dates (no options allowed)
 	$segments['dt_start'] = new \DateTime('today');
 	$segments['dt_end'] = '';
 	
-	// valid display
-	$displays = ['line', 'bar', 'table'];
-	$display = $segments['display'] ?? null;
-	if(!in_array($display, $displays)) $display = $options['display'] ?? null;
-	if(!in_array($display, $displays)) $display = $displays[0];
-	$segments['display'] = $display;
-	
 	# d($segments); return;
-	
 	$cache_data = $this->check_cache($segments);
 	
 	// load data
@@ -81,18 +75,18 @@ private function stroke($map, $options=[]) {
 	# d($data); return;
 	
 	// display data
+	$display = $segments['display'];
 	if($display=='table') {
-		# d($data); return;
 		$this->data['data'] = $data;
 		return view('data', $this->data);
 	}
 
 	// send image back to browser
 	$graph = \App\ThirdParty\jpgraph::load();
-	$dataset_count = 0;
-	
-	$bar_width = $graph->img->plotwidth / count($data['datetime']) ;
 	$colours = $options['colours'] ?? null;
+	$data_count = count($data['datetime']);
+	$bar_width = $data_count ? $graph->img->plotwidth / $data_count : 1;
+	$dataset_count = 0;
 	foreach($data as $dataname=>$dataset) {
 		if($dataname=='datetime') continue;
 		$dataset_count++;

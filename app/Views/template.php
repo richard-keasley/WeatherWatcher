@@ -51,7 +51,13 @@ foreach($links as $link) echo link_tag($link);
 <title><?php echo $title;?></title>
 </head>
 <body>
-<header class="flex">
+<?php
+$attrs = ['class' => "flex"];
+if(ENVIRONMENT!='production') { 
+	$attrs['style'] = 'background: repeating-linear-gradient(45deg, #B22900, #d7673b 3em, #B22900 6em);';
+}
+?>
+<header <?php echo stringify_attributes($attrs);?>>
 <div><?php
 $img = [
 	'src' => 'app/header.png',
@@ -61,7 +67,14 @@ echo anchor('/', img($img));
 ?></div>
 <div><?php $this->renderSection('header');?></div>
 </header>
-<main>
+
+<?php
+$attrs = [];
+if(ENVIRONMENT!='production') { 
+	$attrs['style'] = 'background: repeating-linear-gradient(135deg, #fafafa, #fbf6ef 3em, #fafafa 6em);';
+}
+?>
+<main <?php echo stringify_attributes($attrs);?>>
 <?php if(!empty($this->sections['top'])) { ?>
 	<section class="top">
 	<?php $this->renderSection('top');?>
@@ -76,7 +89,14 @@ echo anchor('/', img($img));
 	</section>
 <?php } ?>
 </main>
-<footer>
+
+<?php
+$attrs = [];
+if(ENVIRONMENT!='production') { 
+	$attrs['style'] = 'background: repeating-linear-gradient(45deg, #B22900, #d7673b 3em, #B22900 6em);';
+}
+?>
+<footer <?php echo stringify_attributes($attrs);?>>
 <?php $this->renderSection('footer'); ?>
 <ul class="nav"><?php
 $img = [

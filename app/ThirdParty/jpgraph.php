@@ -53,7 +53,6 @@ static function stroke($jpgraph, $cache_data=[]) {
 	# d($jpgraph->xaxis->ticks_label); return;
 	# d($jpgraph); return;
 	
-	if(ENVIRONMENT!='production') $cache_data = [];
 	$cache_time = $cache_data['time'] ?? 0 ; 
 	$cache_name = $cache_data['name'] ?? '' ; 
 	if(!$cache_time) $cache_name = '';
@@ -116,7 +115,7 @@ static function periodise($data, $key_format='Ymd') {
 	# d($agg_keys); die;
 	
 	// aggregate data 	
-	$aggregate = [];
+	$aggregate = ['datetime'=>[]];
 	foreach($data as $dataname=>$dataset) {
 		$agg_series = [];
 		foreach($dataset as $data_key=>$data_value) {

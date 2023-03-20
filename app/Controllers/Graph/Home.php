@@ -2,7 +2,7 @@
 
 class Home extends \App\Controllers\BaseController {
 	
-protected function getSegments() {
+protected function getSegments($options) {
 	$segments = $this->request->uri->getSegments();
 	/*
 	2: method
@@ -16,15 +16,19 @@ protected function getSegments() {
 	
 	$value = $segments[4] ?? '' ;
 	$dt_end = $this->get_datetime($value, 'value');
-	
-	$display = end($segments) ?? null ;
-			
+				
 	if($dt_end && $dt_end<$dt_start) {
 		$swap = $dt_end;
 		$dt_end = $dt_start;
 		$dt_start = $swap;
 	}
 	
+	// valid display
+	$displays = ['line', 'bar', 'table'];
+	$display = end($segments) ?? '' ;
+	if(!in_array($display, $displays)) $display = $options['display'] ?? '';
+	if(!in_array($display, $displays)) $display = $displays[0];
+		
 	$segments = array_slice($segments, 0, 3);
 	if($dt_start) $segments['dt_start'] = $dt_start;
 	if($dt_end) $segments['dt_end'] = $dt_end;
@@ -51,7 +55,7 @@ protected function check_cache($segments) {
 	if($time) $cache_data['time'] = $time;
 
 	// don't cache
-	if(ENVIRONMENT!=='production') return ''; 
+	# if(ENVIRONMENT!=='production') return ''; 
 	
 	$cache = \Config\Services::cache();
 	$response = $cache->get($cache_data['name']);

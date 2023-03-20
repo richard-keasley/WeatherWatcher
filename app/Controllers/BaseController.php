@@ -52,8 +52,50 @@ public function initController(RequestInterface $request, ResponseInterface $res
 	$this->data['api'] = new \App\Libraries\Apis\Ecowitt;
 	$this->data['listener'] = new \App\Libraries\Listeners\Ecowitt;
 	$this->data['readings'] = new \App\Models\Readings;
+		
+	// garbage collection
+	$gc_file = WRITEPATH . 'gc_last';
+	$gc_period = config('App')->gc_period;
+	if(file_exists($gc_file)) {
+		if(filemtime($gc_file) < time() - $gc_period) {
+			$this->garbage_collection();
+			touch($gc_file);
+		}
+	}
+	else touch($gc_file);
+}
+
+protected function garbage_collection() {
+	// delete temp files
+	$pattern = WRITEPATH . '*';
+	$files = new \CodeIgniter\Files\FileCollection();
+	foreach(glob($pattern, GLOB_ONLYDIR) as $directory) {
+		$files->addDirectory($directory);
+	}
+	$del_before = time() - config('cache')->ttl;
+	$count = 0;
+	foreach($files as $file) {
+		$basename = $file->getBaseName();
+		if(strpos($basename, '.')===0) continue; // hidden
+		if(strpos($basename, 'index.')===0) continue; // index
+		if($file->getMtime() > $del_before) continue; // too young
+		unlink($file->getRealPath());	
+		$count++;
+	}
+	# d('garbage_collection', $del_before, $count);
+	# d($files);	
 	
-	// update dailies every page load
+	// clear old entries from readings
+	$delete_readings = config('App')->delete_readings;
+	if($delete_readings) {
+		$datetime = new \DateTime();
+		$interval = new \DateInterval($delete_readings);
+		$where = $datetime->sub($interval)->format('Y-m-d H:i:s');
+		$this->data['readings']->where('datetime <', $where)->delete();
+		# d($where);
+	}
+	
+	// update dailies
 	$cfg_daily = config('App')->update_daily;
 	if($cfg_daily) {
 		$dt_interval = new \DateInterval('P1D');
@@ -68,15 +110,7 @@ public function initController(RequestInterface $request, ResponseInterface $res
 			$dt_request->add($dt_interval);
 		}
 	}
-	
-	// clear old readings every page load
-	$delete_readings = config('App')->delete_readings;
-	if($delete_readings) {
-		$datetime = new \DateTime();
-		$interval = new \DateInterval($delete_readings);
-		$where = $datetime->sub($interval)->format('Y-m-d H:i:s');
-		$this->data['readings']->where('datetime <', $where)->delete();
-	}
+	return $count;
 }
 	
 protected function get_datetime($fldname, $method='get') {

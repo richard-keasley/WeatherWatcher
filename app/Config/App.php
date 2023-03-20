@@ -26,8 +26,15 @@ class App extends BaseConfig
 	*/
 	public $delete_readings = 'P40D';
 	
-
-
+	/*
+	Garbage collection period (seconds)
+	used for  
+	- updating dailies
+	- deleting readings
+	- deleting cache
+	*/
+	public $gc_period = 900; // 15 minutes
+	
 	
     /**
      * --------------------------------------------------------------------------

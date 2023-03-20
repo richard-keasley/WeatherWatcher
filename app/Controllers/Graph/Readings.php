@@ -2,8 +2,8 @@
 
 class Readings extends Home {
 
-private function stroke($map, $options=[]) {
-	$segments = $this->getSegments();
+private function stroke($map, $options) {
+	$segments = $this->getSegments($options);
 	
 	// valid dates
 	$dt_start = $segments['dt_start'] ?? new \DateTime('today');
@@ -22,17 +22,11 @@ private function stroke($map, $options=[]) {
 		
 	$oneday = new \DateInterval('PT24H');
 	$dt_end->add($oneday);
-	# d($dt_start, $dt_end); die;
 	
-	// valid display
-	$displays = ['line', 'bar', 'table'];
-	$display = $segments['display'] ?? null;
-	if(!in_array($display, $displays)) $display = $options['display'] ?? null;
-	if(!in_array($display, $displays)) $display = $displays[0];
-	$segments['display'] = $display;
+	$segments['dt_start'] = $dt_start;
+	$segments['dt_end'] = $dt_end;
 	
 	# d($segments); return;
-	
 	$cache_data = $this->check_cache($segments);
 	# d($cache_data); return;
 	
@@ -41,8 +35,10 @@ private function stroke($map, $options=[]) {
 	$raw_data = $model
 		->where('datetime >=', $dt_start->format('Y-m-d H:i:s'))
 		->where('datetime <', $dt_end->format('Y-m-d H:i:s'))
+		->orderBy('datetime')
 		->findAll();
-	# d($raw_data); return; 
+	$dt_period = $dt_end->format('U') - $dt_start->format('U');
+	# d($dt_period, $raw_data); return; 
 	
 	// apply map
 	$data = ['datetime'=>[]];
@@ -55,7 +51,7 @@ private function stroke($map, $options=[]) {
 			$data[$dest][] = $readings[$source];
 		}
 	}
-	# d($data); die;
+	# d($data); return;
 		
 	// aggregate data
 	$data = \App\ThirdParty\jpgraph::periodise($data, 'YmdH');
@@ -66,6 +62,7 @@ private function stroke($map, $options=[]) {
 	$y2 = $options['y2'] ?? '#none#';
 	
 	// display data
+	$display = $segments['display'];
 	if($display=='table') {
 		$this->data['data'] = $data;
 		return view('data', $this->data);
@@ -73,8 +70,10 @@ private function stroke($map, $options=[]) {
 	
 	// send image back to browser
 	$graph = \App\ThirdParty\jpgraph::load();
+	$colours = $options['colours'] ?? null;
+	$data_count = count($data['datetime']);
+	$bar_width = $data_count ? $graph->img->plotwidth / $data_count : 1;
 	$dataset_count = 0;
-	$bar_width = $graph->img->plotwidth / count($data['datetime']) ;
 	foreach($data as $dataname=>$dataset) {
 		if($dataname=='datetime') continue;
 		$dataset_count++;
@@ -94,7 +93,7 @@ private function stroke($map, $options=[]) {
 			if($colour) $plot->SetFillColor($colour);
 			$plot->SetColor('#666');
 			$plot->SetWeight(1);
-			$graph->xaxis->scale->SetTimeAlign( HOURADJ_1 );
+			$graph->xaxis->scale->SetTimeAlign(HOURADJ_1);
 			break;
 			
 			case 'line':
@@ -106,10 +105,16 @@ private function stroke($map, $options=[]) {
 	}
 			
 	if($dataset_count) {
+		$tick_set = 3600;
+		if($dt_period>86400) $tick_set = 7200;
+		if($dt_period>172400) $tick_set = 21600;
+		if($dt_period>689600) $tick_set = 86400;
+		# d($dt_period, $tick_set); return;
+		
 		$graph->legend->SetPos(0.05, 0.01, 'left', 'top');
 		$graph->xaxis->SetTickLabels($data['datetime']);
 		$graph->xaxis->SetLabelAngle(90);
-		$graph->xaxis->scale->ticks->Set(3600);
+		$graph->xaxis->scale->ticks->Set($tick_set);
 		$graph->xaxis->scale->SetDateFormat('j H:i');
 		$graph->xaxis->SetPos("min");
 		
