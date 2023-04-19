@@ -49,6 +49,12 @@ $links = [
 foreach($links as $link) echo link_tag($link);
 ?>
 <title><?php echo $title;?></title>
+<style>
+.table tfoot td {
+	background: var(--theme-bg-light);
+}
+
+</style>
 </head>
 <body>
 <?php
