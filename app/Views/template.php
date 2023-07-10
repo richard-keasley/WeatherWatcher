@@ -117,6 +117,7 @@ $links = [
 	['dailies', 'dailies'],
 	['about', 'about']
 ];
+if(ENVIRONMENT!='production') $links[] =  ['test', 'test'];
 
 foreach($links as $link) {
 	printf('<li>%s</li>', anchor($link[0], $link[1]));

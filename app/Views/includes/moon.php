@@ -4,18 +4,6 @@ $moonphase = \App\ThirdParty\moonphase::load($datetime);
 ?>
 <div class="float-start mw-33"><?php 
 echo \App\ThirdParty\moonphase::img($moonphase); 
-/*
-$datetime = new \datetime('2023-02-19');
-$interval = new \DateInterval('PT2H');
-$count = 0;
-do {
-	$datetime->add($interval);
-	$test = \App\ThirdParty\moonphase::load($datetime);
-	echo $datetime->format('Y-m-d H:i ');
-	echo \App\ThirdParty\moonphase::img($test, 'test');
-	$count++;
-} while ($count<40);
-*/
 ?></div>
 <?php
 
