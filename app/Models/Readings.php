@@ -55,16 +55,20 @@ function get_daily($datetime) {
 	
 	if($daily['count']) {
 		foreach($map as $dest=>$info) {
-			$column = array_column($day_data, $info[0]);
-			// not needed once old dailies are deleted
-			if(!$column) $column = array_column($day_data, $info[0] . '.value');
-			if($column) {
-				$sum = array_sum($column);
+			// get this dataset
+			$arr = array_column($day_data, $info[0]);	
+			if($arr) {
+				// discard null readings
+				$data = [];
+				foreach($arr as $val) {
+					if(!is_null($val)) $data[] = $val;
+				}
+				// aggregate values			
 				foreach($info[1] as $param) {
 					$daily["{$dest}_{$param}"] = match($param) {
-						'min' => min($column),
-						'avg' => $sum / $daily['count'],
-						'max' => max($column)
+						'min' => min($data),
+						'avg' => array_sum($data) / count($data),
+						'max' => max($data)
 					};
 				}
 			}
