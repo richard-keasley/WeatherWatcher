@@ -16,8 +16,6 @@ $daily = $readings->get_daily($datetime);
 include($view);
 # $dailies->save($daily);
 
-
-
 $this->endSection();
 
 
