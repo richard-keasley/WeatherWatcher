@@ -6,23 +6,38 @@ class Upload extends BaseController {
 public function postIndex() {
 	$listener = $this->data['listener'];
 	$readings = $this->data['readings'];
-
-	// version 1
-	/*
-	$success = $this->data['listener']->read_array($this->request->getPost());
-	if($success) return 'OK';
-	$this->response->setStatusCode(400);
-	return 'fail';
-	// */
-	
-	// version 2
+	$logfile = WRITEPATH . 'upload.txt';
+	$logtext = [date('Y-m-d H:i:s')];
+		
 	$listener->inputs = $this->request->getPost();
+	$logtext[] = print_r($listener->inputs, 1);
+	
 	$sucess = $listener->check_keys();
-	if($sucess) $sucess = $listener->process();
-	if($sucess) $sucess = $readings->add_reading($sucess);
+	if($sucess) {
+		$logtext[] = "check_keys OK";
+		$sucess = $listener->process();
+	}
+	
+	if($sucess) {
+		$logtext[] = "process OK";
+		$sucess = $readings->add_reading($sucess);
+	}
+	
+	if($sucess) {
+		$logtext[] = "add_reading OK";
+	}
+	
+	if(ENVIRONMENT=='development') {
+		file_put_contents($logfile, implode("\n\n", $logtext));
+	}
+	
 	if($sucess) return 'OK';
 	$this->response->setStatusCode(400);
 	return 'fail';
+}
+
+function _getIndex() {
+	return $this->postIndex();
 }
 
 }

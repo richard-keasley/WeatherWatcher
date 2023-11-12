@@ -1,17 +1,22 @@
 <?php $this->extend('template');
-
-$this->section('main'); 
-
 $readings = new \App\Models\Readings;
 $dailies = new \App\Models\Dailies;
 $view = realpath(__DIR__ . '/../dailies/daily.php');
 
-$datetime = new \datetime('2023-10-12');
+$this->section('main'); 
+printf('<p>Dailies for %s</p>', $datetime->format('d M Y'));
+?>
+<p>Enter test date as yyyy-mm-dd 
+(e.g. <em>/test/readings/2023-11-09</em>)</p>
+<?php
+
 // current 
+echo '<h3>dailies</h3>';
 $daily = $dailies->find($datetime->format('Y-m-d'));
 include($view);
 
 // from readings
+echo '<h3>readings</h3>';
 $daily = $readings->get_daily($datetime);
 include($view);
 # $dailies->save($daily);
