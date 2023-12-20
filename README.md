@@ -4,6 +4,6 @@ built using CodeIgniter
 
 ### dependancies 
 look in /ThirdParty
-- jpgraph
-- moonphase
-- suninfo
+- [jpgraph](https://jpgraph.net/)
+- [moonphase](https://github.com/BitAndBlack/php-moon-phase)
+- [suninfo](https://github.com/richard-keasley/suninfo)
