@@ -3,7 +3,7 @@
 class moonphase {
 
 const version = '3.0.0';
-const date = '2022-07-08';
+const date = '2023-07-08';
 	
 static function load($datetime=null) {
 	try { 
