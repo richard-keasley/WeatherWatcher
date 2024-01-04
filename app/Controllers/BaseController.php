@@ -101,9 +101,9 @@ protected function garbage_collection() {
 		$dt_interval = new \DateInterval('P1D');
 		$dailies = new \App\Models\Dailies;
 		$dt_request = $dailies->dt_last()->add($dt_interval);
-		$dt_last = new \DateTime();
-		$dt_last->setTime(0, 0);
-		while($dt_request<$dt_last) {
+		$dt_last = new \DateTime(); // now
+		$dt_last->setTime(0, 0); // midnight today
+		while($dt_request<$dt_last) { // before today
 			$daily = $this->data[$cfg_daily]->get_daily($dt_request);
 			# d($dt_request, $daily);
 			if($daily->count) $dailies->insert($daily);

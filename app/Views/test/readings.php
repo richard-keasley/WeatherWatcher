@@ -1,26 +1,39 @@
 <?php $this->extend('template');
-$readings = new \App\Models\Readings;
-$dailies = new \App\Models\Dailies;
+
 $view = realpath(__DIR__ . '/../dailies/daily.php');
 
-$this->section('main'); 
-printf('<p>Dailies for %s</p>', $datetime->format('d M Y'));
-?>
-<p>Enter test date as yyyy-mm-dd 
-(e.g. <em>/test/readings/2023-11-09</em>)</p>
-<?php
+$this->section('main'); ?>
 
+<p>Dailies for <?php echo $datetime->format('d M Y');?>.</p>
+
+<p>Enter test date as yyyy-mm-dd (e.g. <em>/test/readings/2023-11-09</em>).</p>
+
+<div class="flex">
+
+<div>
+<h3>dailies</h3><?php
 // current 
-echo '<h3>dailies</h3>';
-$daily = $dailies->find($datetime->format('Y-m-d'));
+$daily = $dailies; 
 include($view);
+d($dailies);
+?></div>
 
+<div>
+<h3>readings</h3><?php
 // from readings
-echo '<h3>readings</h3>';
-$daily = $readings->get_daily($datetime);
+$daily = $readings;
 include($view);
-# $dailies->save($daily);
+d($readings);
 
+echo form_open();
+echo '<button type="submit" name="update" value="readings">update</button>';
+echo form_close();
+
+?></div>
+
+</div>
+
+<?php
 $this->endSection();
 
 
