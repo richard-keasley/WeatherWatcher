@@ -263,6 +263,14 @@ button {
 	padding: 0;
 }
 
+button input[type=date] {
+	border: 0;
+	background: transparent;
+	padding: 0.2em 1em;
+	line-height: 1.6em;
+	font-family: sans-serif;
+}
+
 .navbar a {
 	text-decoration: none;
 	display: block;

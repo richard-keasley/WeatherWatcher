@@ -1,14 +1,12 @@
 <?php $this->extend('template');
 
-$interval = new \DateInterval('P1M');
 $datetime = new \DateTime($start);
 $title = $datetime->format('F Y');
-$datetime->sub($interval);
-$nav_prev = $datetime->format('Y-m-01');
+$interval = new \DateInterval('P1M');
 
+$nav_prev = $datetime->sub($interval)->format('Y-m-01');
 $datetime = new \DateTime($start);
-$datetime->add($interval);
-$nav_next = $datetime->format('Y-m-01');
+$nav_next = $datetime->add($interval)->format('Y-m-01');
 
 $this->section('header'); ?>
 <h1>Daily: month <?php echo $title;?></h1>
@@ -16,14 +14,29 @@ $this->section('header'); ?>
 
 $this->section('top'); ?>
 <div class="navbar"><?php
+
+$input = [
+	'type' => "date",
+	'value' => $start,
+	'onchange' => "getdate(this.value)"
+];
+
 $anchors = [
 	anchor("dailies/month/{$nav_prev}", '&lt;'),
-	anchor("dailies/month/{$nav_next}", '&gt;')
+	anchor("dailies/month/{$nav_next}", '&gt;'),
+	form_input($input)
 ];
 foreach($anchors as $anchor) {
 	printf('<button>%s</button>', $anchor);
 }
-?></div>
+?>
+<script>
+function getdate(value) {
+	var href = '<?php echo base_url('dailies/month'); ?>/' + value;
+	window.location.href = href;
+}
+</script>
+</div>
 <?php $this->endSection();
 
 $this->section('main');
