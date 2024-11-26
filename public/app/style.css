@@ -188,8 +188,6 @@ table td.null {
 	color: var(--theme-border-light);
 }
 
-
-
 section {
 	overflow: hidden;
 }
@@ -199,6 +197,10 @@ section {
 	gap: 1em;
 	flex-wrap: wrap;
 	align-items: start;
+}
+
+p.flex label {
+	min-width:5em;
 }
 
 .border {

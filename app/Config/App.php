@@ -10,6 +10,8 @@ class App extends BaseConfig
 	public $latitude = 0.0;
 	public $longitude = 0.0;
 	public $bbc = 0; // look up for BBC weather forecast
+	public $usr = '';
+	public $pwd = '';
 	
 	/**
 	dailies are updated from this source
@@ -157,6 +159,7 @@ class App extends BaseConfig
      * made via a secure connection (HTTPS). If the incoming request is not
      * secure, the user will be redirected to a secure version of the page
      * and the HTTP Strict Transport Security header will be set.
+	Weather station does not support secure requests 
      */
     public bool $forceGlobalSecureRequests = false;
 

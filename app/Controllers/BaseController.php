@@ -52,6 +52,8 @@ public function initController(RequestInterface $request, ResponseInterface $res
 	$this->data['api'] = new \App\Libraries\Apis\Ecowitt;
 	$this->data['listener'] = new \App\Libraries\Listeners\Ecowitt;
 	$this->data['readings'] = new \App\Models\Readings;
+
+	$this->auth();
 		
 	// garbage collection
 	$gc_file = WRITEPATH . 'gc_last';
@@ -63,6 +65,30 @@ public function initController(RequestInterface $request, ResponseInterface $res
 		}
 	}
 	else touch($gc_file);
+}
+
+protected function auth() {	
+	$segments = $this->request->uri->getSegments();
+	$zone = $segments[0] ?? '' ;
+	
+	// allowed for everyone
+	$allowed = ['upload', 'auth'];
+	if(in_array($zone, $allowed)) return;
+
+	// logged in user
+	if(session('usr')===config('App')->usr) return;
+	
+	// image 
+	switch($zone) {
+		case 'graph':
+		\App\ThirdParty\jpgraph::blank();
+		break;
+		
+		default:
+		$url = base_url('auth');
+		header("Location: {$url}");
+	}
+	die;
 }
 
 protected function garbage_collection() {
