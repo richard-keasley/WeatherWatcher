@@ -11,7 +11,10 @@ $this->section('main'); ?>
 foreach($links as $link) echo "<li>{$link}</li>";
 ?></ul>
 
-<?php $this->endSection();
+<?php 
+d(config('App'));
+
+$this->endSection();
 
 $this->section('bottom');
 echo phpinfo();

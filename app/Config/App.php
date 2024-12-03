@@ -14,18 +14,18 @@ class App extends BaseConfig
 	public $pwd = '';
 	
 	/**
-	dailies are updated from this source
+	dailies updated from this source
 	leave empty for no updates
-	choices: api, readings
-	look in \App\Controllers\BaseController
+	choices: [empty], ecowitt, readings
+	look in \App\Filters\Garbage
 	**/
-	public $update_daily = 'api';
+	public $update_daily = '';
 	
 	/*
 	DateInterval string to delete old readings
 	leave empty to keep all
 	*/
-	public $delete_readings = 'P40D';
+	public $delete_readings = '';
 	
 	/*
 	Garbage collection period (seconds)
