@@ -12,14 +12,14 @@ public function postIndex() {
 	$this->data['usr'] = $this->request->getPost('usr');
 	$this->data['pwd'] = $this->request->getPost('pwd');
 	
-	$config = config('App');
+	$app = config('App');
 	$success = 
-		$config->usr == $this->data['usr'] &&
-		$config->pwd == $this->data['pwd'] ;
+		$app->usr == $this->data['usr'] &&
+		$app->pwd == $this->data['pwd'] ;
 
 	if($success) {
 		$session = session();
-		$session->set(['usr'=>$this->data['usr']]);
+		$session->set(['usr'=>$app->usr]);
 		return redirect()->to('/');
 	}
 	return view('auth', $this->data);

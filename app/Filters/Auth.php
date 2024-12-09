@@ -11,14 +11,26 @@ public function before($request, $arguments = null) {
 	$allowed = ['upload', 'auth'];
 	if(in_array($zone, $allowed)) return;
 
-	// logged in user
-	if(session('usr')===config('App')->usr) return;
+	helper('cookie');
+	$app = config('App');
 	
+	// user stored in either session or cookie
+	$tests = [
+		session('usr'),
+		get_cookie('usr'),
+	];
+	foreach($tests as $usr) {
+		if($usr===$app->usr) {
+			set_cookie('usr', $app->usr, config('Cookie')->expires);
+			return;
+		}
+	}
+			
 	// image 
 	switch($zone) {
 		case 'graph':
 		\App\ThirdParty\jpgraph::blank(5, 5);
-		break;
+		die;
 		
 		default:
 		return redirect()->to(site_url('auth'));

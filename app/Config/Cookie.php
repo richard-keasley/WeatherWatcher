@@ -27,7 +27,7 @@ class Cookie extends BaseConfig
      *
      * @var DateTimeInterface|int|string
      */
-    public $expires = 0;
+    public $expires = 604800; // 7 days
 
     /**
      * --------------------------------------------------------------------------
