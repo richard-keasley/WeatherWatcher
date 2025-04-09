@@ -2,6 +2,7 @@
 
 class graph implements \stringable {
 
+public $controller = null;
 public $dataname = null;
 public $start = null;
 public $end = null;

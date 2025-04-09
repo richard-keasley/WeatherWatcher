@@ -19,12 +19,13 @@ else {
 			'wind' => 'speed',
 			default => ''
 		};
+		
+		# d($key, $rsec, $rkey);
 		$format = \App\Entities\Reading::format($rsec, $rkey);
-		
-		#d($rsec, $rkey, $format);
-		
+		$value = sprintf($format, $value);	
+					
 		$label = humanize($key);
-		$value = sprintf($format, $value);
+		
 		$tbody[] = [$label, $value];
 	}
 	

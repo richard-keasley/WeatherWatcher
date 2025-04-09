@@ -2,7 +2,7 @@
 Home website listening to personal weather station
 built using CodeIgniter
 
-### dependancies 
+### dependencies
 look in /App/ThirdParty
 - [jpgraph](https://jpgraph.net/)
 - [moonphase](https://github.com/BitAndBlack/php-moon-phase)

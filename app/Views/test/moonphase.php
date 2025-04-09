@@ -8,19 +8,27 @@ $this->section('main'); ?>
 
 <div class="flex"><?php 
 
+$max = 30; // number of steps 
+$month = 708; // 708 hours (29.5 days) in a lunar month
+
+$last = new \DateInterval("PT{$month}H"); // 1 lunar month (29.5 days)
+$last = (new \datetime())->add($last);
+
+$step = ceil($month/$max); 
+$step = new \DateInterval("PT{$step}H"); 
+
 $datetime = new \datetime();
-$interval = new \DateInterval('PT2H');
-$count = 0;
 do { 
-	$datetime->add($interval);
 	$moonphase = \App\ThirdParty\moonphase::load($datetime);
+
 	echo '<div>' . 
 		$datetime->format('d-M H:i') .
 		'<br>' . 
 		\App\ThirdParty\moonphase::img($moonphase) . 
 		'</div>';
-	$count++;
-} while ($count<40);
+	
+	$datetime->add($step);
+} while ($datetime<$last);
 
 ?></div>
 

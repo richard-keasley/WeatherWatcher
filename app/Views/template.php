@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Weather in Portslade village">
+<meta name="robots" content="noindex, nofollow"> 
 <meta name="theme-color" content="#B22900">
 <meta name="msapplication-TileColor" content="#FAFAFA">
 <meta name="msapplication-config" content="<?php echo base_url('app/browserconfig.xml');?>">
@@ -71,7 +72,7 @@ $img = [
 ];
 echo anchor('/', img($img));
 ?></div>
-<div><?php $this->renderSection('header');?></div>
+<div><?php echo $this->renderSection('header');?></div>
 </header>
 
 <?php
@@ -83,15 +84,15 @@ if(ENVIRONMENT!='production') {
 <main <?php echo stringify_attributes($attrs);?>>
 <?php if(!empty($this->sections['top'])) { ?>
 	<section class="top">
-	<?php $this->renderSection('top');?>
+	<?php echo $this->renderSection('top');?>
 	</section>
 <?php } ?>
 <section class="main">
-<?php $this->renderSection('main');?>
+<?php echo $this->renderSection('main');?>
 </section>
 <?php if(!empty($this->sections['bottom'])) { ?>
 	<section class="bottom">
-	<?php $this->renderSection('bottom');?>
+	<?php echo $this->renderSection('bottom');?>
 	</section>
 <?php } ?>
 </main>
@@ -103,7 +104,7 @@ if(ENVIRONMENT!='production') {
 }
 ?>
 <footer <?php echo stringify_attributes($attrs);?>>
-<?php $this->renderSection('footer'); ?>
+<?php echo $this->renderSection('footer'); ?>
 <ul class="nav"><?php
 $img = [
 	'src' => 'app/header.png',
@@ -132,6 +133,6 @@ foreach($links as $link) {
 <?php } ?>
 
 </footer>
-<?php $this->renderSection('bottom');?>
+<?php echo $this->renderSection('bottom');?>
 </body>
 </html>

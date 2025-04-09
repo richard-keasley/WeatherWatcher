@@ -14,5 +14,6 @@ $table = \App\Views\Htm\table::load('list');
 $table->autoHeading = false;
 echo $table->generate($tbody);
 
+# d($reading);
 ?>
 </section>

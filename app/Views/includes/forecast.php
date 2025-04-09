@@ -23,7 +23,7 @@ try {
 	$attrs = [
 		'title' => $image->title ?? '',
 	];
-	$img_link = anchor($image->link, img($img), $attrs);
+	$img_link = anchor((string) $image->link, img($img), $attrs);
 	
 	printf('<p>%s%s (%s)</p>', $img_link, $channel->description, $channel->pubDate);
 		

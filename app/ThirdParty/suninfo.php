@@ -2,8 +2,8 @@
 
 class suninfo {
 	
-const version = '1.0';
-const date = '2023-01-06';
+const version = '1.1';
+const date = '2025-04-09';
 
 static function load($timestamp=null, $latitude=0, $longitude=0) {
 	try { 

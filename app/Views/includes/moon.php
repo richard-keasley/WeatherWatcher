@@ -22,7 +22,7 @@ foreach($timestamps as $key=>$timestamp) {
 	if($timestamp>=$now && count($tbody)<2) {
 		$arr = explode('_', $key);
 		$label = "Next {$arr[1]} moon";
-		$datetime->setTimestamp($timestamp);
+		$datetime->setTimestamp((int) $timestamp);
 		$tbody[] = [$label, $datetime->format('j M Y H:i')];
 	}
 }

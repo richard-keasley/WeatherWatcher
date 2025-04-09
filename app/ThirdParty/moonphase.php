@@ -2,19 +2,23 @@
 
 class moonphase {
 
-const version = '3.0.0';
-const date = '2023-07-08';
+const version = '3.2.0';
+const date = '2025-02-25';
+
+public $moonphase = null;
+public $datetime = null;
 	
 static function load($datetime=null) {
 	try { 
 		$include = sprintf('%s/php-moon-phase-%s/src/MoonPhase.php' , __DIR__, self::version);
 		require_once $include;
-		return new \Solaris\MoonPhase($datetime);
+		
+		return new \Solaris\MoonPhase($datetime); 
 	}
 	catch(\Exception $e ) {
 		echo new \App\Views\Htm\alert($e->getMessage());
 	}
-	die;
+	# die;
 }
 
 static function img($moonphase, $test=false) {

@@ -23,8 +23,10 @@ class Paths
      * This must contain the name of your "system" folder. Include
      * the path if the folder is not in the same directory as this file.
      */
-	public string $systemDirectory = __DIR__ . '/../../ci/4.4.4/system';
 
+	public string $systemDirectory = 
+	#  '/home/basecamp/weather.base-camp.uk/ci/4.4.6/system';
+	'/home/basecamp/weather.base-camp.uk/ci/4.6.0/system';
 
     /**
      * ---------------------------------------------------------------

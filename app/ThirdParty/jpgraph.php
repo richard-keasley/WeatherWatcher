@@ -2,8 +2,8 @@
 
 class jpgraph {
 
-const version = '4.4.1';
-const date = '2022-05-12';
+const version = '4.4.2';
+const date = '2023-08-07';
 
 const defaults = [
 	'width' => 1280,
