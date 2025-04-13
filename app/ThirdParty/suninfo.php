@@ -7,7 +7,7 @@ const date = '2025-04-09';
 
 static function load($timestamp='', $latitude=0, $longitude=0) {
 	try { 
-		$include = sprintf('%s/suninfo-%s/suninfo.php' , __DIR__, self::version);
+		include sprintf('%s/suninfo-%s/suninfo.php' , __DIR__, self::version);
 		return new \basecamp\suninfo($timestamp, $latitude, $longitude);
 	}
 	catch(\Exception $e ) {
