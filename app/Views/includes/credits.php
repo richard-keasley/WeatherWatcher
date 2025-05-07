@@ -17,7 +17,8 @@ foreach($ul as $li) {
 ?></ul>
 </div>
 
-<div>
+<?php if(ENVIRONMENT=='development') { ?>
+<section>
 <h4>Third-party classes</h4>
 <?php
 $tbody = [['class', 'version', 'date']];
@@ -37,6 +38,7 @@ foreach($files as $file) {
 $table = \App\Views\Htm\table::load('bordered');
 echo $table->generate($tbody);
 ?>
-</div>
+</section>
+<?php } ?>
 
 </section>
