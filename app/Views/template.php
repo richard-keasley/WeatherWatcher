@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Weather in Portslade village">
 <meta name="robots" content="noindex, nofollow"> 
-<meta name="theme-color" content="#B22900">
+<meta name="theme-color" content="#b22900">
 <meta name="msapplication-TileColor" content="#FAFAFA">
 <meta name="msapplication-config" content="<?php echo base_url('app/browserconfig.xml');?>">
 <?php
@@ -34,7 +34,7 @@ $links = [
 ],
 [
 	'rel' => "manifest",
-	'href' => "app/site.webmanifest",
+	'href' => "app/manifest.json",
 ],
 [
 	'rel' => "mask-icon",
@@ -48,19 +48,37 @@ $links = [
 ]
 ];
 foreach($links as $link) echo link_tag($link);
+
+if($serviceworker ?? false) { ?><script>
+if('serviceWorker' in navigator) {
+	// console.log("register service worker");
+	navigator.serviceWorker.register('<?php echo base_url('sw.js');?>')
+	.then(function(reg) {
+		// console.log('Registration succeeded');
+	})
+	.catch(function(error) {
+		// console.warn('Registration failed - ' + error);
+	});
+} 
+else {
+	// console.log("serviceWorker not available");
+}
+</script><?php }
+
 ?>
 <title><?php echo $title;?></title>
 <style>
 .table tfoot td {
 	background: var(--theme-bg-light);
 }
-
 </style>
 </head>
 <body>
 <?php
+$debug = ENVIRONMENT != 'production';
+
 $attrs = ['class' => "flex"];
-if(ENVIRONMENT!='production') { 
+if($debug) { 
 	$attrs['style'] = 'background: repeating-linear-gradient(45deg, #B22900, #d7673b 3em, #B22900 6em);';
 }
 ?>
@@ -77,7 +95,7 @@ echo anchor('/', img($img));
 
 <?php
 $attrs = [];
-if(ENVIRONMENT!='production') { 
+if($debug) { 
 	$attrs['style'] = 'background: repeating-linear-gradient(135deg, #fafafa, #fbf6ef 3em, #fafafa 6em);';
 }
 ?>
@@ -91,15 +109,15 @@ if(ENVIRONMENT!='production') {
 <?php echo $this->renderSection('main');?>
 </section>
 <?php if(!empty($this->sections['bottom'])) { ?>
-	<section class="bottom">
-	<?php echo $this->renderSection('bottom');?>
-	</section>
+	<section class="bottom"><?php
+	echo $this->renderSection('bottom');
+	?></section>
 <?php } ?>
 </main>
 
 <?php
 $attrs = [];
-if(ENVIRONMENT!='production') { 
+if($debug) { 
 	$attrs['style'] = 'background: repeating-linear-gradient(45deg, #B22900, #d7673b 3em, #B22900 6em);';
 }
 ?>
@@ -118,14 +136,14 @@ $links = [
 	['dailies', 'dailies'],
 	['about', 'about']
 ];
-if(ENVIRONMENT!='production') $links[] =  ['test', 'test'];
+if($debug) $links[] =  ['test', 'test'];
 
 foreach($links as $link) {
 	printf('<li>%s</li>', anchor($link[0], $link[1]));
 }
 ?></ul>
 
-<?php if(ENVIRONMENT!='production') { ?>
+<?php if($debug) { ?>
 <div class="flex">
 <p>Page rendered in {elapsed_time} seconds</p>
 <p>Environment: <?= ENVIRONMENT ?></p>
@@ -133,6 +151,5 @@ foreach($links as $link) {
 <?php } ?>
 
 </footer>
-<?php echo $this->renderSection('bottom');?>
 </body>
 </html>

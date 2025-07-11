@@ -38,7 +38,8 @@ protected $helpers = ['form', 'inflector', 'html'];
 
 protected $data = [
 	'title' => 'base-camp weather',
-	'message' => ''
+	'message' => '',
+	'serviceworker' => true,
 ];
 
 /**

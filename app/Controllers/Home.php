@@ -12,4 +12,12 @@ public function index() {
 	return view('index', $this->data);
 }
 
+public function getJs($filename='') {
+	$this->response->setHeader('Content-Type', 'application/javascript');
+	ob_start();
+	$filename = realpath(config('Paths')->viewDirectory . "/js/{$filename}.js");
+	if($filename) include $filename;
+	return ob_get_clean();
+}
+
 }
