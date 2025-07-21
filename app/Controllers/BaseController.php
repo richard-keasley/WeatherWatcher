@@ -52,7 +52,7 @@ public function initController(RequestInterface $request, ResponseInterface $res
 	// Preload any models, libraries, etc, here.
 	$this->data['api'] = new \App\Libraries\Apis\Ecowitt;
 	$this->data['listener'] = new \App\Libraries\Listeners\Ecowitt;
-	$this->data['readings'] = new \App\Models\Readings;
+	$this->data['readings'] = model('Readings');	
 }
 	
 protected function get_datetime($fldname, $method='get') {

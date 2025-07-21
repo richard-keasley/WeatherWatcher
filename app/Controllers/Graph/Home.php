@@ -50,23 +50,50 @@ protected function check_cache($segments) {
 		$segments[$key] = $val ? $val->format('YmdHi') : '' ;
 	}
 	$cache_data['name'] = implode('_', $segments);
+		
+	$cache_time = $this->request->getGet('t') ?? 900; // 15 minutes cache
+	if($cache_time) $cache_data['time'] = $cache_time;
 	
-	$time = $this->request->getGet('t') ?? 900; // 15 minutes cache
-	if($time) $cache_data['time'] = $time;
-
-	// don't cache
-	# if(ENVIRONMENT!=='production') return ''; 
+	// disable cache
+	# return $cache_data; 
+		
+	$cache_opts = [
+		'max-age'  => $cache_time,
+		's-maxage' => $cache_time,
+		'etag'     => $cache_data['name'],
+	];
 	
+	// image cached by client?
+	$request_tag = $this->request->getHeaderLine('if-none-match');
+	if($request_tag===$cache_data['name']) {
+		$this->response
+			->setBody('')
+			->setCache($cache_opts)
+			->setHeader('content-type', 'image/png')
+			->setHeader('X-Robots-Tag', ['noindex', 'nofollow'])
+			->setStatusCode(304)
+			->send();
+		die;	
+	}
+	 
+	// image cached by server?
 	$cache = \Config\Services::cache();
 	$response = $cache->get($cache_data['name']);
-	# d($cache_data); echo $response ? 'cached' : 'not cached'; die;
-	if(!$response) return $cache_data; // nothing in cache
-
-	// send cached image
-	log_message('debug', "cache: retrieved {$cache_data['name']}");
-	header('content-type: image/png');
-	echo $response;
-	die;
+	# print_r($cache_data); echo $response ? 'cached' : 'not cached'; die;
+	if($response) {
+		// send cached image from server
+		log_message('debug', "cache: retrieved {$cache_data['name']}");
+		$this->response
+			->setBody($response)
+			->setCache($cache_opts)
+			->setHeader('content-type', 'image/png')
+			->setHeader('X-Robots-Tag', ['noindex', 'nofollow'])
+			->send();
+		die;
+	}	
+	
+	// nothing in cache
+	return $cache_data; 
 }
 
 public function getIndex() {

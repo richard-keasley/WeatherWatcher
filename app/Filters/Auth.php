@@ -34,7 +34,11 @@ public function before($request, $arguments = null) {
 }
 
 public function after($request, $response, $arguments = null) {
-
+	// not strictly auth related
+	// discourage search engines
+	$response->setHeader('X-Robots-Tag', ['noindex', 'nofollow']);
+	# var_dump($response->getHeaders()); die;
+	return $response;
 }
 	
 }

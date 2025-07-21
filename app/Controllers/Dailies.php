@@ -3,32 +3,28 @@
 class Dailies extends \App\Controllers\BaseController {
 	
 function getIndex() {
-	$model = new \App\Models\Dailies;
-	$this->data['daily'] = $model->orderBy('date', 'desc')->first();
+	$this->data['daily'] = model('Dailies')->orderBy('date', 'desc')->first();
 	$this->data['start'] = $this->data['daily']->date;
 	$this->data['end'] = $this->data['start'];
 	return view('dailies/day', $this->data);
 }
 
 function getDay($datetime=null) {
-	$model = new \App\Models\Dailies;
 	$datetime = $this->get_datetime($datetime, 'value');
 	if(!$datetime) $datetime = new \DateTime('yesterday');
 	$this->data['start'] = $datetime->format('Y-m-d');
 	$this->data['end'] = $this->data['start'];
-	$this->data['daily'] = $model->find($this->data['start']);
+	$this->data['daily'] = model('Dailies')->find($this->data['start']);
 	return view('dailies/day', $this->data);	
 }	
 
 function getMonth($datetime=null) {
-	$model = new \App\Models\Dailies;
 	$datetime = $this->get_datetime($datetime, 'value');
 	if(!$datetime) $datetime = new \DateTime('yesterday');
 	$this->data['start'] = $datetime->format('Y-m-01');
 	$this->data['end'] = $datetime->format('Y-m-t');
 
-	$model = new \App\Models\Dailies;
-	$this->data['dailies'] = $model
+	$this->data['dailies'] = model('Dailies')
 		->where('date >=', $this->data['start'])
 		->where('date <=', $this->data['end'])
 		->findAll();
@@ -37,7 +33,6 @@ function getMonth($datetime=null) {
 }
 
 function getWeek($datetime=null) {
-	$model = new \App\Models\Dailies;
 	$datetime = $this->get_datetime($datetime, 'value');
 	if(!$datetime) $datetime = new \DateTime('Monday');
 	
@@ -53,8 +48,7 @@ function getWeek($datetime=null) {
 	$datetime->add($interval);
 	$this->data['end'] = $datetime->format('Y-m-d');
 
-	$model = new \App\Models\Dailies;
-	$this->data['dailies'] = $model
+	$this->data['dailies'] = model('Dailies')
 		->where('date >=', $this->data['start'])
 		->where('date <=', $this->data['end'])
 		->findAll();
@@ -63,7 +57,6 @@ function getWeek($datetime=null) {
 }
 
 function getYear($datetime=null) {
-	$model = new \App\Models\Dailies;
 	$datetime = $this->get_datetime($datetime, 'value');
 	if(!$datetime) $datetime = new \DateTime();
 	
@@ -71,8 +64,7 @@ function getYear($datetime=null) {
 	$this->data['start'] = "{$year}-01-01";
 	$this->data['end'] = "{$year}-12-31";
 	
-	$model = new \App\Models\Dailies;
-	$this->data['dailies'] = $model
+	$this->data['dailies'] = model('Dailies')
 		->where('date >=', $this->data['start'])
 		->where('date <=', $this->data['end'])
 		->findAll();
@@ -92,9 +84,8 @@ function getCustom($start='', $end='') {
 		$dt_start = $swap;
 	}	
 	
-	$model = new \App\Models\Dailies;
-	$dt_first = $model->dt_first();
-	$dt_last = $model->dt_last();
+	$dt_first = model('Dailies')->dt_first();
+	$dt_last = model('Dailies')->dt_last();
 	if($dt_start<$dt_first) $dt_start = $dt_first;
 	if($dt_start>$dt_last) $dt_start = $dt_last;
 
@@ -113,7 +104,7 @@ function getCustom($start='', $end='') {
 	$this->data['start'] = $dt_start->format('Y-m-d');
 	$this->data['end'] = $dt_end->format('Y-m-d');
 	
-	$this->data['dailies'] = $model
+	$this->data['dailies'] = model('Dailies')
 		->where('date >=', $this->data['start'])
 		->where('date <=', $this->data['end'])
 		->findAll();

@@ -85,6 +85,7 @@ class Filters extends BaseFilters
         'after' => [
             // 'honeypot',
             // 'secureheaders',
+			'auth',
 			'garbage',
         ],
     ];

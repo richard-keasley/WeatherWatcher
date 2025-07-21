@@ -52,56 +52,76 @@ static function plot($type, $ydata, $times) {
 static function stroke($jpgraph, $cache_data=[]) {
 	# d($jpgraph->xaxis->ticks_label); return;
 	# d($jpgraph); return;
+	ob_start();
+	$jpgraph->stroke();
+	$imgdata = ob_get_clean();
 	
+	$response = \Config\Services::response();
+
 	$cache_time = $cache_data['time'] ?? 0 ; 
 	$cache_name = $cache_data['name'] ?? '' ; 
 	if(!$cache_time) $cache_name = '';
 	# d($cache_name, $cache_time); return;
 	
-	header('content-type: image/png');
-				
 	if($cache_name) {
-		header("Cache-Control: max-age={$cache_time}");
 		$cache = \Config\Services::cache();
-		$response = $cache->get($cache_name);
-		if($response) {
-			echo $response; 
-			die;
-		}
-	}
+		$cache_opts = [
+			'max-age'  => $cache_time,
+			's-maxage' => $cache_time,
+			'etag'     => $cache_name,
+		];
+		$response->setCache($cache_opts);
 		
-	ob_start();
-	$jpgraph->stroke();
-	$response = ob_get_flush();
-	
-	if($cache_name) {
-		$success = $cache->save($cache_name, $response, $cache_time);
+		$success = $cache->save($cache_name, $imgdata, $cache_time);
 		$action = $success ? 'stored' : 'failed' ;
 		log_message('debug', "cache: {$action} {$cache_time} / {$cache_name}");
 	}
+	
+	$response
+		->setHeader('X-Robots-Tag', ['noindex', 'nofollow'])
+		->setHeader('content-type', 'image/png')
+		->setBody($imgdata)
+		->send();
 	die;
 }
 
 static function blank($width=0, $height=0) {
 	//  send empty image back to browser
+	ob_start();
 	if(!$width) $width = self::defaults['width'];
 	if(!$height) $height = self::defaults['height'];
 	$im = imagecreatetruecolor($width, $height);
 	$colour = imagecolorallocate($im, 255, 255, 255);
 	imagefill($im, 0, 0, $colour);
-	header('Content-Type: image/png');
 	imagepng($im);
 	imagedestroy($im);	
+	$imgdata = ob_get_clean();
+	
+	$cache_time = 900 ; // 15 minuts 
+	$cache_name = "graph_blank_{$width}_{$height}";;
+	$cache_opts = [
+		'max-age'  => $cache_time,
+		's-maxage' => $cache_time,
+		'etag'     => $cache_name,
+	];
+	
+	$response = \Config\Services::response();
+	$response
+		->setHeader('X-Robots-Tag', ['noindex', 'nofollow'])
+		->setHeader('content-type', 'image/png')
+		->setCache($cache_opts)
+		->setBody($imgdata)
+		->send();
 	die;
 }
 
 static function periodise($data, $key_format='Ymd') {
-	/*
-	ensures each item of dataset covers the same amount of time
-	aggregates datasets so there's not too many for graph
-	ensure 'datetime' dataset items are datetime
-	key_format: key for each aggregated data item
-	*/
+/**
+* ensures each item of dataset covers the same amount of time
+* aggregates datasets so there's not too many for graph
+* ensure 'datetime' dataset items are datetime
+* key_format: key for each aggregated data item
+*/
 
 	// setup category keys
 	$agg_keys = []; $timestamps = [];
