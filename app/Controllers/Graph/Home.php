@@ -41,7 +41,6 @@ protected function getSegments($options) {
 
 // check for cached image
 protected function check_cache($segments) {
-	$cache_data = [];
 	
 	// get cache name
 	$arr = ['dt_start', 'dt_end'];
@@ -49,55 +48,66 @@ protected function check_cache($segments) {
 		$val = $segments[$key] ?? null;
 		$segments[$key] = $val ? $val->format('YmdHi') : '' ;
 	}
-	$cache_data['name'] = implode('_', $segments);
 		
 	$cache_time = $this->request->getGet('t') ?? 900; // 15 minutes cache
-	if($cache_time) $cache_data['time'] = $cache_time;
+	
+	$cache_data = [
+		'name' => implode('_', $segments),
+		'time' => (int) $cache_time,
+		'status' => 0,
+	];
 	
 	// disable cache
 	# return $cache_data; 
 		
-	$cache_opts = [
-		'max-age'  => $cache_time,
-		's-maxage' => $cache_time,
-		'etag'     => $cache_data['name'],
-	];
-	
 	// image cached by client?
 	$request_tag = $this->request->getHeaderLine('if-none-match');
 	if($request_tag===$cache_data['name']) {
-		$this->response
-			->setBody('')
-			->setCache($cache_opts)
-			->setHeader('content-type', 'image/png')
-			->setHeader('X-Robots-Tag', ['noindex', 'nofollow'])
-			->setStatusCode(304)
-			->send();
-		die;	
+		$cache_data['status'] = 304;
+		$this->response->setBody('');
+		return $cache_data;
 	}
 	 
 	// image cached by server?
 	$cache = \Config\Services::cache();
-	$response = $cache->get($cache_data['name']);
-	# print_r($cache_data); echo $response ? 'cached' : 'not cached'; die;
-	if($response) {
-		// send cached image from server
-		log_message('debug', "cache: retrieved {$cache_data['name']}");
-		$this->response
-			->setBody($response)
-			->setCache($cache_opts)
-			->setHeader('content-type', 'image/png')
-			->setHeader('X-Robots-Tag', ['noindex', 'nofollow'])
-			->send();
-		die;
+	$imgdata = $cache->get($cache_data['name']);
+	if($imgdata) {
+		$cache_data['status'] = 200;
+		$this->response->setBody($imgdata);
+		return $cache_data;
 	}	
 	
 	// nothing in cache
 	return $cache_data; 
 }
 
+// send cached image back to browser
+protected function send_cached($cache_data) {
+	$cache_opts = [
+		'max-age'  => $cache_data['time'],
+		's-maxage' => $cache_data['time'],
+		'etag'     => $cache_data['name'],
+	];
+	
+	if(0) {
+		echo '<pre>'; 
+		print_r($cache_data);
+		print_r($cache_opts);
+		# var_dump($this->response);
+		return;
+	}
+	log_message('debug', "cache sent {$cache_data['name']} / {$cache_data['status']}");
+	
+	$this->response
+		->setCache($cache_opts)
+		->setStatusCode($cache_data['status'])
+		# ->setBody($cache_data['body'])
+		->setHeader('content-type', 'image/png');
+	return $this->response;
+}
+
 public function getIndex() {
-	\App\ThirdParty\jpgraph::blank();
+	return \App\ThirdParty\jpgraph::blank();
 }
 
 }

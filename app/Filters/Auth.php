@@ -23,21 +23,16 @@ public function before($request, $arguments = null) {
 	// image 
 	$segments = $request->getUri()->getSegments();
 	$zone = $segments[0] ?? '' ;
-	switch($zone) {
-		case 'graph':
-		\App\ThirdParty\jpgraph::blank(5, 5);
-		die;
-		
-		default:
-		return redirect()->to(site_url('auth'));
-	}
+	return match($zone) {
+		'graph' => \App\ThirdParty\jpgraph::blank(5, 5),
+		default => redirect()->to(site_url('auth'))
+	};
 }
 
 public function after($request, $response, $arguments = null) {
-	// not strictly auth related
+	// not strictly auth
 	// discourage search engines
 	$response->setHeader('X-Robots-Tag', ['noindex', 'nofollow']);
-	# var_dump($response->getHeaders()); die;
 	return $response;
 }
 	

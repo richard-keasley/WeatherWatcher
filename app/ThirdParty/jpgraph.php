@@ -78,11 +78,9 @@ static function stroke($jpgraph, $cache_data=[]) {
 	}
 	
 	$response
-		->setHeader('X-Robots-Tag', ['noindex', 'nofollow'])
 		->setHeader('content-type', 'image/png')
-		->setBody($imgdata)
-		->send();
-	die;
+		->setBody($imgdata);
+	return $response;
 }
 
 static function blank($width=0, $height=0) {
@@ -107,12 +105,10 @@ static function blank($width=0, $height=0) {
 	
 	$response = \Config\Services::response();
 	$response
-		->setHeader('X-Robots-Tag', ['noindex', 'nofollow'])
 		->setHeader('content-type', 'image/png')
 		->setCache($cache_opts)
-		->setBody($imgdata)
-		->send();
-	die;
+		->setBody($imgdata);
+	return $response;
 }
 
 static function periodise($data, $key_format='Ymd') {

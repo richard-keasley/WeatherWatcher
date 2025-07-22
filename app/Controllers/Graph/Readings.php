@@ -28,7 +28,7 @@ private function stroke($map, $options) {
 	
 	# d($segments); return;
 	$cache_data = $this->check_cache($segments);
-	# d($cache_data); return;
+	if($cache_data['status']) return $this->send_cached($cache_data);
 	
 	// load data
 	$raw_data = model('Readings')
@@ -124,12 +124,10 @@ private function stroke($map, $options) {
 		
 		$graph->title->Set($title);
 		#d($graph->yaxis); return;		
-		\App\ThirdParty\jpgraph::stroke($graph, $cache_data);
-		die;
+		return \App\ThirdParty\jpgraph::stroke($graph, $cache_data);
 	}
 	
-	\App\ThirdParty\jpgraph::blank();
-	die;
+	return \App\ThirdParty\jpgraph::blank();
 }
 
 public function getRain($start='', $end='', $display=null) {

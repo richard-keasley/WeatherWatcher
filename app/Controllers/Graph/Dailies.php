@@ -20,6 +20,7 @@ private function stroke($map, $options) {
 	
 	# d($segments); return;
 	$cache_data = $this->check_cache($segments);
+	if($cache_data['status']) return $this->send_cached($cache_data);
 		
 	// load data
 	$raw_data = model('Dailies')
@@ -105,12 +106,10 @@ private function stroke($map, $options) {
 		$title = $options['title'] ?? 'Daily averages';
 		if($title) $graph->title->Set($title);
 		# d($graph); return;
-		\App\ThirdParty\jpgraph::stroke($graph, $cache_data);
-		die;
+		return \App\ThirdParty\jpgraph::stroke($graph, $cache_data);
 	}
 	
-	\App\ThirdParty\jpgraph::blank();
-	die;
+	return \App\ThirdParty\jpgraph::blank();
 }
 
 public function getRain($start='', $end='', $display=null) {
