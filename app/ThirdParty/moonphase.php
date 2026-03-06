@@ -2,8 +2,8 @@
 
 class moonphase {
 
-const version = '3.2.0';
-const date = '2025-02-25';
+const version = '3.3.0';
+const date = '2026-03-05';
 
 public $moonphase = null;
 public $datetime = null;
@@ -17,8 +17,8 @@ static function load($datetime=null) {
 	}
 	catch(\Exception $e ) {
 		echo new \App\Views\Htm\alert($e->getMessage());
+		die;
 	}
-	# die;
 }
 
 static function img($moonphase, $test=false) {
