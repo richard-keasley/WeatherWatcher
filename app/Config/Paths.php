@@ -25,7 +25,7 @@ class Paths
      */
 
 	public string $systemDirectory = 
-		'/home/basecamp/weather.base-camp.uk/ci/4.6.4/system';
+		'/home/basecamp/weather.base-camp.uk/ci/4.7.3/system';
 
     /**
      * ---------------------------------------------------------------
