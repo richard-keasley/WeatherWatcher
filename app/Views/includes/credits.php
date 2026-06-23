@@ -5,7 +5,7 @@
 <?php
 $ul = [
 	['https://realfavicongenerator.net/', 'Favicon Generator'],
-	['https://moonphases.co.uk/', 'moon images'],
+	['https://github.com/BitAndBlack/php-moon-phase', 'moon phases'],
 	['https://www.astropixels.com/', 'Solstice info'],
 	['https://jpgraph.net/', 'JP graph'],
 	['https://github.com/Moskito89/php-moon-phase', 'Moon phase calculations'],
