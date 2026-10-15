@@ -24,8 +24,8 @@ class Paths
      * the path if the folder is not in the same directory as this file.
      */
 
-	public string $systemDirectory = 
-		'/home/basecamp/weather.base-camp.uk/ci/4.7.3/system';
+	public string $systemDirectory = '/home/basecamp/ci/4.7.5/system';
+		# '/home/basecamp/weather.base-camp.uk/ci/4.7.3/system';
 
     /**
      * ---------------------------------------------------------------
